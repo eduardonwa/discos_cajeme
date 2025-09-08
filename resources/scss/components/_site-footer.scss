@@ -4,6 +4,94 @@
   background-color: $footer-background-color;
   color: $footer-text-color;
 
+  &__top {
+    .footer-links {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(12rem, 1fr));
+      padding-block: $size-6;
+
+      @include mq(large) {
+        grid-template-columns: repeat(3, minmax(12rem, 1fr));
+      }
+      
+      &__group {
+        padding: $size-2 $size-6;
+
+        .footer-title {
+          font-family: $footer-list-header-font-family;
+          font-size: $footer-list-header-font-size;
+          text-transform: $footer-list-header-text-transform;
+          color: $footer-list-header-color;
+        }
+
+        ul > li {
+          padding-block: $size-1;
+        }
+      }
+    }
+
+    .footer-brand {
+      padding-block-end: $size-10;
+      padding-inline: $size-6;
+
+      .brand {
+        &__tagline {
+          color: $color-primary-300;
+          font-size: $font-size-500;
+        }
+      }
+      
+      .newsletter {
+        display: flex;
+        flex-direction: column;
+        gap: $size-4;
+
+        input {
+          background: transparent;
+          border: 1px solid $color-primary-100;
+          color: $color-primary-100;
+        }
+
+        button {
+          background: transparent;
+          color: $color-primary-100;
+          border: 1px solid $color-primary-100;
+        }
+      }
+    }
+  }
+
+  hr {
+    margin-inline: $size-6;
+    color: $color-primary-400;
+  }
+
+  &__bottom {
+    padding: $size-10 $size-6;
+    display: flex;
+    flex-direction: column;
+    gap: $size-8;
+
+    .legal-copy {
+      color: $color-primary-400;
+      font-family: $font-family-semibold;
+    }
+
+    .legal-links {
+      ul {
+        display: flex;
+        gap: $size-4;
+      }
+    }
+
+    .social {
+      ul {
+        display: flex;
+        gap: $size-8;
+      }
+    }
+  }
+
   a {
     color: $footer-link-color;
     text-decoration: $footer-link-text-decoration;
