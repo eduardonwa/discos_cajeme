@@ -5,6 +5,7 @@
     display: grid;
   }
 }
+
 label {
   color: $form-label-color;
   font-family: $form-label-font-family;
@@ -20,6 +21,12 @@ input:not(.button) {
   padding: $form-input-padding;
   border: $form-input-border-default;
   border-radius: $form-input-border-radius;
+}
+
+input:focus {
+  outline: none;
+  border-color: $color-accent-500;
+  box-shadow: 0 0 0 2px rgba($color-accent-500, .3);
 }
 
 ::placeholder {

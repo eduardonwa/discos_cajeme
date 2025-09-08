@@ -7,6 +7,8 @@ body {
   color: $body-text-color;
   background-color: $body-background-color;
   line-height: $body-line-height;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 a {
