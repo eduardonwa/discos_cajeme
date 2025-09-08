@@ -1,4 +1,4 @@
-<nav x-data="{ open: false }" class="nav">
+<nav x-data="{ open: false }" x-effect="document.body.classList.toggle('menu-open', open)" class="nav">
     <div class="site-header">
         <article class="site-header__inner">
             <button @click="open = ! open" class="burger-icon | ui-icon-btn">
@@ -28,14 +28,14 @@
 
                 @auth
                     <div class="action-links__auth">
-                        <x-dropdown align="right" width="48">
+                        <x-dropdown align="right" width="sm">
                             <x-slot name="trigger">
                                 <div>
                                     <x-icon :size="24" decorative fill="#344D55">
                                         <x-ui.icons.account />
                                     </x-icon>
                                     
-                                    <svg class="ui-icon ms-2 -me-0.5 size-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                    <svg class="ui-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
                                     </svg>
                                 </div>
@@ -61,7 +61,7 @@
                                     </x-dropdown-link>
                                 @endif
 
-                                <div class="border-t border-gray-200"></div>
+                                <hr>
 
                                 <!-- Authentication -->
                                 <form method="POST" action="{{ route('logout') }}" x-data>
