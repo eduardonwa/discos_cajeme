@@ -11,6 +11,8 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+body.menu-open { overflow: hidden; }
+
 a {
   color: $link-color;
 }

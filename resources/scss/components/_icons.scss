@@ -5,6 +5,7 @@
   height: var(--icon-size, 24px);
   display: inline-block;
   color: currentColor;
+  cursor: pointer;
 
   svg { width: 100%; height: 100%; display: block; }
 }
