@@ -3,8 +3,18 @@
 .site-footer {
   background-color: $footer-background-color;
   color: $footer-text-color;
+  
+  @include mq(extraLarge) {
+    padding-inline: $size-10;
+  }
 
   &__top {
+    @include mq(large) {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
     .footer-links {
       display: grid;
       grid-template-columns: repeat(2, minmax(12rem, 1fr));
@@ -12,6 +22,7 @@
 
       @include mq(large) {
         grid-template-columns: repeat(3, minmax(12rem, 1fr));
+        order: 2;
       }
       
       &__group {
@@ -34,6 +45,12 @@
       padding-block-end: $size-10;
       padding-inline: $size-6;
 
+      @include mq(large) {
+        order: 1;
+        padding-block-end: 0;
+        padding: $size-10 $size-6;
+      }
+
       .brand {
         &__tagline {
           color: $color-primary-300;
@@ -45,17 +62,22 @@
         display: flex;
         flex-direction: column;
         gap: $size-4;
+        @include mq(large) { flex-direction: row; }
 
         input {
           background: transparent;
           border: 1px solid $color-primary-100;
           color: $color-primary-100;
+          @include mq(large) { width: 400px; }
         }
 
         button {
           background: transparent;
           color: $color-primary-100;
           border: 1px solid $color-primary-100;
+          width: 200px;
+          margin-block: auto;
+          @include mq(large) { width: fit-content; }
         }
       }
     }
@@ -88,6 +110,10 @@
       ul {
         display: flex;
         gap: $size-8;
+
+        @include mq(large) {
+          justify-content: flex-end;
+        }
       }
     }
   }
