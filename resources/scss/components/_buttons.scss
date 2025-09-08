@@ -15,6 +15,11 @@
   border-radius: $button-border-radius;
   transition: 275ms ease;
 
+  &:focus {
+    outline: $button-border-focus;
+    transition: none;
+  }
+
   &[data-type="accent"] {
     background-color: $button-accent-background;
     color: $button-accent-color;
