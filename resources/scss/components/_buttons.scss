@@ -34,4 +34,10 @@
       color: $button-primary-color-hover;
     }
   }
+
+  &[data-type="newsletter"] {
+    border-radius: 0;
+    padding: $size-3;
+    text-transform: none;
+  }
 }

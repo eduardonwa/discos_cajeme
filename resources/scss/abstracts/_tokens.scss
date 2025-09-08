@@ -88,12 +88,16 @@ $navigation-font-family: $body-font-family;
 $navigation-font-weight: $body-font-weight;
 
 // site footer
-$footer-background-color: $color-primary-300;
+$footer-background-color: $color-primary-800;
 $footer-text-color: $color-primary-900;
 $footer-link-color: $color-neutral-100;
 $footer-link-color-hover: $color-primary-200;
 $footer-link-font-family: $font-family-base;
 $footer-link-text-decoration: none;
+$footer-list-header-font-family: $font-family-bold;
+$footer-list-header-font-size: $font-size-500;
+$footer-list-header-text-transform: uppercase;
+$footer-list-header-color: $color-primary-200;
 
 // buttons
 $button-font-family: $body-font-family;
@@ -139,7 +143,7 @@ $form-input-background-color: $color-neutral-100;
 $form-input-border-default: 3px solid $color-primary-200;
 $form-input-border-focus: 3px solid $color-primary-400;
 $form-input-padding: $size-3;
-$form-input-border-radius: $border-radius-1;
+$form-input-border-radius: 0;
 
 $form-placeholder-color: $color-primary-300;
 $form-placeholder-font-family: $form-input-font-family;

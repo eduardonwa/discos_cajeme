@@ -20,7 +20,7 @@
         <!-- Styles -->
         @livewireStyles
     </head>
-    <body class="font-sans antialiased">
+    <body>
         <x-banner />
 
         <div class="min-h-screen bg-gray-100">
@@ -39,6 +39,8 @@
             <main class="max-w-4xl mx-auto">
                 {{ $slot }}
             </main>
+
+            <x-ui.footer />
         </div>
         
         <x-toaster-hub/>
