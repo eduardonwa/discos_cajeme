@@ -41,7 +41,7 @@
         @if ($verano)
             <article class="collection">
                 <header class="collection__header">
-                    <a href="href="{{ route('collection', $verano) }}" class="clr-primary-800 no-decor uppercase ff-bold fs-700">{{ $verano->name }}</a>
+                    <a href="{{ route('collection', $verano) }}" class="clr-primary-800 no-decor uppercase ff-bold fs-700">{{ $verano->name }}</a>
                 </header>
     
                 <div class="collection__slider">
@@ -67,7 +67,7 @@
         @if ($onSale)
             <article class="collection">
                 <header class="collection__header">
-                    <a href="href="{{ route('collection', $onSale) }}" class="clr-primary-800 no-decor uppercase ff-bold fs-700">{{ $onSale->name }}</a>
+                    <a href="{{ route('collection', $onSale) }}" class="clr-primary-800 no-decor uppercase ff-bold fs-700">{{ $onSale->name }}</a>
                 </header>
     
                 <div class="collection__slider">
