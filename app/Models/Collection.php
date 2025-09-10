@@ -16,4 +16,9 @@ class Collection extends Model
     {
         return $query->where('is_active', true);
     }
+
+    public function getRouteKeyName(): string
+    {
+        return 'slug';
+    }
 }

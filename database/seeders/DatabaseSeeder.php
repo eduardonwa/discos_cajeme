@@ -4,7 +4,6 @@ namespace Database\Seeders;
 
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use App\Models\Image;
 use App\Models\Product;
 use App\Models\Attribute;
 use App\Models\ProductVariant;
@@ -12,7 +11,8 @@ use Illuminate\Database\Seeder;
 use App\Models\AttributeVariant;
 use Database\Seeders\RoleSeeder;
 use Spatie\Permission\Models\Role;
-use Illuminate\Database\Eloquent\Factories\Sequence;
+use Database\Seeders\VariantSeeder;
+use Database\Seeders\ProductCatalogSeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -21,7 +21,11 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        $this->call(RoleSeeder::class);
+        $this->call([
+            RoleSeeder::class,
+            ProductCatalogSeeder::class,
+            VariantSeeder::class
+        ]);
         
         $adminRole = Role::where('name', 'admin')->first();
 
@@ -33,10 +37,10 @@ class DatabaseSeeder extends Seeder
 
         $adminUser->assignRole($adminRole);
 
-        $colorAttribute = Attribute::factory()->create(['key' => 'Color']);
-        $sizeAttribute = Attribute::factory()->create(['key' => 'Tamaño']);
+        /* $colorAttribute = Attribute::factory()->create(['key' => 'Color']);
+        $sizeAttribute = Attribute::factory()->create(['key' => 'Tamaño']); */
 
-        $products = Product::factory()
+/*         $products = Product::factory()
             ->count(10)
             ->create()
             ->each(function ($product) use ($colorAttribute, $sizeAttribute) {
@@ -61,6 +65,6 @@ class DatabaseSeeder extends Seeder
                 $product->update([
                     'total_product_stock' => $product->variants()->sum('total_variant_stock')
                 ]);
-            });
+            }); */
     }
 }
