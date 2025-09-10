@@ -1,15 +1,27 @@
 @use "../abstracts" as *;
 
+/* SVG */
 .ui-icon {
   width: var(--icon-size, 24px);
   height: var(--icon-size, 24px);
   display: inline-block;
   color: currentColor;
   cursor: pointer;
+  transform-origin: center;
+  transform-box: fill-box;
+  transition: transform .2s ease;
 
-  svg { width: 100%; height: 100%; display: block; }
+  svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  &.left  { transform: none; }
+  &.right { transform: scaleX(-1); }
 }
 
+/* WRAPPER */
 .ui-icon-btn {
   display: inline-flex;
   align-items: center;
@@ -21,26 +33,48 @@
   cursor: pointer;
   transition: color .15s ease, background-color .15s ease;
 
-  &:hover { color: $color-primary-700; }
-  &:focus { outline: none; color: $color-neutral-600; }
-}
-
-.cart-icon {
-  position: relative;
+  /* estados */
+  &:hover {
+    color: $color-primary-700;
+  }
   
-  span {
-    position: absolute;
-    right: -3px;
-    top: 0px;
-    background: red;
-    color: white;
-    font-weight: bold;
-    font-size: 14px;
-    border-radius: 50%;
-    height: 20px;
-    width: 20px;
-    display: flex;
-    align-items: c;
-    justify-content: center;
+  &:focus {
+    outline: none;
+    color: $color-neutral-600;
+  }
+
+  &:disabled,
+  &[aria-disabled="true"] {
+    opacity: .6;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+
+  /* variaciones */
+  &[data-type="cart"] {
+    position: relative;
+
+    span {
+      position: absolute;
+      right: -3px;
+      top: 0px;
+      background: red;
+      color: white;
+      font-weight: bold;
+      font-size: 14px;
+      border-radius: 50%;
+      height: 20px;
+      width: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+
+  &[data-type="arrow"] {
+    background: $color-secondary-400;
+    color: $color-secondary-900;
+    height: 32px;
+    width: 32px;
   }
 }

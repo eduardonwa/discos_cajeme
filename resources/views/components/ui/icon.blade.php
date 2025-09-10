@@ -4,9 +4,13 @@
   'color' => '#344D55',
   'decorative' => false,
   'href' => null,
+  'orientation' => 'right',
 ])
 
-@php $sizeValue = is_numeric($size) ? $size.'px' : $size; @endphp
+@php
+  $sizeValue = is_numeric($size) ? $size.'px' : $size;
+  $dir = $orientation === 'left' ? 'left' : 'right';
+@endphp
 
 @if($href)
   <a href="{{ $href }}" class="ui-icon-btn" aria-label="{{ $label }}" target="_blank">
@@ -25,10 +29,14 @@
     </svg>
   </a>
 @else
-  <button class="ui-icon-btn" aria-label="Buscar">
+  <button
+    {{ $attributes->merge(['class' => 'ui-icon-btn']) }}
+    aria-label="Buscar"
+    type="button"
+  >
     <svg
       {{ $attributes
-          ->merge(['class' => 'ui-icon'])
+          ->merge(['class' => "ui-icon $dir"])
           ->merge($decorative ? ['aria-hidden' => 'true', 'role' => 'img'] : ['role' => 'img', 'aria-label' => $label])
       }}
       viewBox="0 0 24 24"
