@@ -34,6 +34,8 @@ class Product extends Model implements HasMedia
         'low_stock_threshold' => 'integer'
     ];
 
+    // relaciones
+
     public function variants(): HasMany
     {
         return $this->hasMany(ProductVariant::class);
@@ -59,16 +61,48 @@ class Product extends Model implements HasMedia
         return $this->belongsToMany(Collection::class, 'collection_product');
     }
 
-    public function getHasVariantsAttribute(): bool
+    public function coupons()
     {
-        return $this->variants()->exists();
+        return $this->morphToMany(Coupon::class, 'couponable');
     }
-    
+
+    // getters
     public function getTotalStockAttribute()
     {
         return $this->variants->isNotEmpty() 
             ? $this->variants->sum('total_variant_stock') 
             : $this->total_product_stock;
+    }
+
+    public function getHasVariantsAttribute(): bool
+    {
+        return $this->variants()->exists();
+    }
+
+    public function getAvailableStock(): int
+    {
+        if ($this->has_variants) {
+            return $this->variants->sum('total_variant_stock');
+        }
+        
+        // Considerar lo que ya existe en el carrito
+        $inCart = Auth::user()->cart?->items()
+            ->where('product_id', $this->id)
+            ->whereNull('product_variant_id')
+            ->sum('quantity') ?? 0;
+            
+        return max(0, $this->total_product_stock - $inCart);
+    }
+
+    // helpers
+    public function canFulfill(int $quantity): bool
+    {
+        return $this->getAvailableStock() >= $quantity;
+    }
+
+    public function isAvailable(): bool
+    {
+        return $this->getAvailableStock() > 0;
     }
 
     public function updateStockFromVariants()
@@ -77,6 +111,19 @@ class Product extends Model implements HasMedia
             $this->total_product_stock = $this->variants->sum('total_variant_stock');
         }
         $this->save();
+    }
+
+    public function activeCoupons()
+    {
+        return $this->coupons()->where('is_active', true)
+            ->where(function($query) {
+                $query->whereNull('starts_at')
+                    ->orWhere('starts_at', '<=', now());
+            })
+            ->where(function($query) {
+                $query->whereNull('expires_at')
+                    ->orWhere('expires_at', '>=', now());
+            });
     }
 
     public function updateStockStatus()
@@ -102,31 +149,13 @@ class Product extends Model implements HasMedia
         });
     }
 
-    public function isAvailable(): bool
+    // scopes
+    public function scopePublished($q)
     {
-        return $this->getAvailableStock() > 0;
+        return $q->where('published', true);
     }
 
-    public function getAvailableStock(): int
-    {
-        if ($this->has_variants) {
-            return $this->variants->sum('total_variant_stock');
-        }
-        
-        // Considerar lo que ya existe en el carrito
-        $inCart = Auth::user()->cart?->items()
-            ->where('product_id', $this->id)
-            ->whereNull('product_variant_id')
-            ->sum('quantity') ?? 0;
-            
-        return max(0, $this->total_product_stock - $inCart);
-    }
-
-    public function canFulfill(int $quantity): bool
-    {
-        return $this->getAvailableStock() >= $quantity;
-    }
-
+    // colecciones spatie
     public function registerMediaCollections(): void
     {
         $this->addMediaCollection('featured')
@@ -153,23 +182,5 @@ class Product extends Model implements HasMedia
             ->fit(Fit::Contain, 1080, 1080)
             ->format('webp')
             ->nonQueued(); 
-    }
-
-    public function coupons()
-    {
-        return $this->morphToMany(Coupon::class, 'couponable');
-    }
-
-    public function activeCoupons()
-    {
-        return $this->coupons()->where('is_active', true)
-            ->where(function($query) {
-                $query->whereNull('starts_at')
-                    ->orWhere('starts_at', '<=', now());
-            })
-            ->where(function($query) {
-                $query->whereNull('expires_at')
-                    ->orWhere('expires_at', '>=', now());
-            });
     }
 }

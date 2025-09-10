@@ -13,6 +13,9 @@
 }
 .container[data-type="wide"] {
   --max-width: #{$container-max-width-wide};
+  @include mq(extraLarge) {
+    --max-width: clamp(1280px, 86vw, 1600px);
+  }
 }
 .container[data-type="full-bleed"] {
   --max-width: 100%;
