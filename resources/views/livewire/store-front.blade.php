@@ -39,23 +39,53 @@
 
     <div class="container" data-type="wide">
         @if ($verano)
-            <article>
-                <header>
-                    <h2 class="uppercase ff-bold fs-700">{{ $verano->name }}</h2>
+            <article class="collection">
+                <header class="collection__header">
+                    <a href="href="{{ route('collection', $verano) }}" class="clr-primary-800 no-decor uppercase ff-bold fs-700">{{ $verano->name }}</a>
                 </header>
     
-                <div>
+                <div class="collection__slider">
                     @foreach ($verano->products as $product)
                         <a
+                            class="slide"
                             wire:navigate
                             href="{{ route('product', $product) }}"
                         >
-                            <img src="{{ $product->getFirstMediaUrl('images') }}" alt="{{ $product->name }}">
-                            <h2>{{ $product->name }}</h2>
-                            <p>{{ $product->price }}</p>
-                            <span>40%</span>
+                            <span class="slide__badge">40%</span>
+                            <img class="slide__image" src="{{ $product->getFirstMediaUrl('images') }}" alt="{{ $product->name }}">
+                            <div class="slide__meta">
+                                <h2 class="product">{{ $product->name }}</h2>
+                                <p class="price">{{ $product->price }}</p>
+                            </div>
                         </a>
                     @endforeach
+                    <a class="button" data-type="button" wire:navigate href="{{ route('collection', $verano) }}">Ver más</a>
+                </div>
+            </article>
+        @endif
+
+        @if ($onSale)
+            <article class="collection">
+                <header class="collection__header">
+                    <a href="href="{{ route('collection', $onSale) }}" class="clr-primary-800 no-decor uppercase ff-bold fs-700">{{ $onSale->name }}</a>
+                </header>
+    
+                <div class="collection__slider">
+                    @foreach ($onSale->products as $product)
+                        <a
+                            class="slide"
+                            wire:navigate
+                            href="{{ route('product', $product) }}"
+                        >
+                            <span class="slide__badge">40%</span>
+                            <img class="slide__image" src="{{ $product->getFirstMediaUrl('images') }}" alt="{{ $product->name }}">
+                            <div class="slide__meta">
+                                <h2 class="product">{{ $product->name }}</h2>
+                                <p class="price">{{ $product->price }}</p>
+                            </div>
+                        </a>
+                    @endforeach
+                    <a class="button" data-type="button" wire:navigate href="{{ route('collection', $onSale) }}">Ver más</a>
                 </div>
             </article>
         @endif

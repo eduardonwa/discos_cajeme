@@ -37,15 +37,15 @@ class StoreFront extends Component
     private function getCollectionWithProducts(string $slug, int $limit)
     {
         return Collection::query()
-            ->active()                              // tu scope
+            ->active()
             ->where('slug', $slug)
             ->with(['products' => function ($q) use ($limit) {
                 $q->where('published', true)
-                  ->with(['media','collections'])   // Spatie + chips sin N+1
+                  ->with(['media','collections'])
                   ->orderByDesc('products.created_at')
                   ->limit($limit);
             }])
-            ->first(); // devuelve Collection|null
+            ->first();
     }
 
     public function render()

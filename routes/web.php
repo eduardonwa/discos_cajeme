@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', \App\Livewire\StoreFront::class)->name('home');
 Route::get('/product/{productId}', \App\Livewire\Product::class)->name('product');
 Route::get('/cart', \App\Livewire\Cart::class)->name('cart');
+Route::get('/collections/{collection}', \App\Livewire\Collections::class)->name('collection');
 
 Route::get('/preview', function() {
     $order = \App\Models\Order::with('items.variant.attributes')->first();
