@@ -44,4 +44,26 @@
     padding: $size-3;
     text-transform: none;
   }
+
+  &[data-type="mas"] {
+    border: 2px solid $color-neutral-900;
+    margin-block: auto;
+    width: 100%;
+    font-size: $font-size-700;
+    line-height: 1.4;
+    color: $color-neutral-900;
+    text-align: center;
+
+    @include mq(large) {
+        width: fit-content;
+        margin-inline: auto;
+    }
+  }
+
+  &[data-type="cart"] {
+    background: $color-neutral-900;
+    font-size: $font-size-500;
+    color: $color-neutral-100;
+    text-transform: none;
+  }
 }

@@ -51,8 +51,8 @@ class StoreFront extends Component
     public function render()
     {
         // Cada colección por separado (sueltas)
-        $verano     = $this->getCollectionWithProducts('verano-libre-40', 3);
-        $onSale     = $this->getCollectionWithProducts('on-sale', 3);
+        $verano     = $this->getCollectionWithProducts('verano-libre-40', 4);
+        $onSale     = $this->getCollectionWithProducts('on-sale', 4);
         $atemporal  = $this->getCollectionWithProducts('atemporal', 6);
         $comodidad  = $this->getCollectionWithProducts('comodidad-moderna', 6);
 

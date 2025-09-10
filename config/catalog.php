@@ -219,7 +219,19 @@ return [
             'collections' => ['verano-libre-40'],
             'images' => ['catalog/verano-libre/verano-libre-shorts.png'],
         ],
-
+        [
+            'name' => 'Falda plisada “Cocoa Swing”',
+            'slug' => 'cocoa-swing-skirt',
+            'description' => 'Falda midi plisada en tono cacao, tela ligera con caída fluida y cintura elástica para mayor comodidad.',
+            'price' => 419,
+            'published' => true,
+            'total_product_stock' => 9,
+            'stock_status' => 'in_stock',
+            'low_stock_threshold' => 5,
+            'cached_quantity_sold' => 0,
+            'collections' => ['verano-libre-40'],
+            'images' => ['catalog/verano-libre/cocoa-swing-skirt.png'],
+        ],
         // --- ON SALE --- //
         [
             'name' => 'Sudadera gris “Urban Chill”',
@@ -259,6 +271,19 @@ return [
             'cached_quantity_sold' => 0,
             'collections' => ['on-sale'],
             'images' => ['catalog/on-sale/everyday-fit-tee.png'],
+        ],
+        [
+            'name' => 'Camisa blanca “Classic White”',
+            'slug' => 'classic-white-shirt',
+            'description' => 'Camisa de manga larga en algodón transpirable, corte slim, cuello clásico y puños ajustables. Ideal para oficina o eventos.',
+            'price' => 899,
+            'published' => true,
+            'total_product_stock' => 12,
+            'stock_status' => 'in_stock',
+            'low_stock_threshold' => 5,
+            'cached_quantity_sold' => 0,
+            'collections' => ['on-sale'],
+            'images' => ['catalog/on-sale/classic-white-shirt.png'],
         ],
     ],
 ];

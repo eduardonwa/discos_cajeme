@@ -1,33 +1,43 @@
 @use "../abstracts/" as *;
 
 .collection {
-    margin-block: $size-13;
+    margin-block: $size-10;
+
+    &__header{
+        padding-block: $size-6;
+    }
 
     &__slider {
         display: flex;
         gap: $size-4;
         overflow-x: auto;
         scroll-snap-type: x mandatory;
-        
-        .button {
-            border: 2px solid $color-neutral-900;
-            margin-block: auto;
-            width: 100%;
-            font-size: $font-size-700;
-            line-height: 1.4;
-            color: $color-neutral-900;
-            text-align: center;
+        /* scrollbar firefox */
+        scrollbar-width: thin;
+        scrollbar-color: $color-primary-500 transparent;
 
-            @include mq(large) {
-                width: fit-content;
-                margin-inline: auto;
-            }
+        /* Chrome/Edge/Safari */
+        &::-webkit-scrollbar {
+            height: 8px;
         }
+        &::-webkit-scrollbar-thumb {
+            background: $color-primary-500;
+            border-radius: 999px;
+            border: 2px solid transparent;
+            background-clip: content-box;
+        }
+        &::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        /* opcional */
+        scrollbar-gutter: stable both-edges;
 
         .slide {
             position: relative;
             display: block;
             flex: 0 0 clamp(220px, 75vw, 316px);
+            aspect-ratio: 3 / 2;
             scroll-snap-stop: always;
             overflow: hidden;
 
@@ -46,7 +56,13 @@
             &__image {
                 display: block;
                 width: 100%;
+                height: 100%;
                 object-fit: cover;
+                object-position: top;
+                transform: translateZ(0) scale(1);
+                transform-origin: center;
+                transition: transform .35s cubic-bezier(.2,.6,.2,1);
+                will-change: transform;
             }
 
             &__badge {
@@ -76,6 +92,40 @@
                 .price {
                     font-size: $font-size-600;
                 }
+            }
+        }
+        
+        .slide:hover .slide__image { transform: translateZ(0) scale(1.06); }
+    }
+
+    &[data-type="full-price"] {
+        .slide {
+            aspect-ratio: auto;
+            display: flex;
+            flex-direction: column;
+            gap: $size-4;
+
+            &::after {
+                content: none;
+            }
+
+            &__media {
+                position: relative;
+                overflow: hidden;
+                height: 250px;
+
+                &__image {
+                    width: 100%;
+                    height: 100%;
+                }
+            }
+
+            &__meta {
+                position: relative;
+                bottom: 0;
+                left: 0;
+                text-shadow: none;
+                color: $color-primary-900;
             }
         }
     }

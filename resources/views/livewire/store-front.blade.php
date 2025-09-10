@@ -59,7 +59,7 @@
                             </div>
                         </a>
                     @endforeach
-                    <a class="button" data-type="button" wire:navigate href="{{ route('collection', $verano) }}">Ver más</a>
+                    <a class="button" data-type="mas" wire:navigate href="{{ route('collection', $verano) }}">Ver más</a>
                 </div>
             </article>
         @endif
@@ -85,36 +85,36 @@
                             </div>
                         </a>
                     @endforeach
-                    <a class="button" data-type="button" wire:navigate href="{{ route('collection', $onSale) }}">Ver más</a>
+                    <a class="button" data-type="mas" wire:navigate href="{{ route('collection', $onSale) }}">Ver más</a>
+                </div>
+            </article>
+        @endif
+
+        @if ($atemporal)
+            <article class="collection" data-type="full-price">
+                <header class="collection__header">
+                    <a href="{{ route('collection', $atemporal) }}" class="clr-primary-800 no-decor uppercase ff-bold fs-700">{{ $atemporal->name }}</a>
+                </header>
+    
+                <div class="collection__slider">
+                    @foreach ($atemporal->products as $product)
+                        <a
+                            class="slide | no-decor"
+                            wire:navigate
+                            href="{{ route('product', $product) }}"
+                        >
+                            <div class="slide__media">
+                                <img class="slide__image" src="{{ $product->getFirstMediaUrl('images') }}" alt="{{ $product->name }}">
+                            </div>    
+                            <div class="slide__meta">
+                                <h2 class="product">{{ $product->name }}</h2>
+                                <p class="price">{{ $product->price }}</p>
+                            </div>
+                            <button class="button" data-type="cart">Agregar al carrito</button>
+                        </a>
+                    @endforeach
                 </div>
             </article>
         @endif
     </div>
-{{--     <div class="flex justify-between">
-        <h1 class="text-xl ff-base uppercase">Our Products</h1>
-        <div>
-            <x-input wire:model.live.debounce="searchQuery" type="text" placeholder="Escribe algo"/>
-        </div>
-    </div>
-
-    <div class="grid grid-cols-4 gap-4 mt-12">
-        <p>{{ now()->isoFormat('DD MMMM YYYY') }}</p>
-        @foreach ($this->productsQuery as $query)
-            <x-order-panel class="relative">
-                <a
-                    wire:navigate
-                    href="{{ route('product', $product) }}"
-                    class="absolute inset-0 w-full h-full"
-                >
-                    <img src="{{ $product->getFirstMediaUrl('featured', 'md_thumb') }}" class="rounded" alt="">
-                    <h2 class="font-medium text-lg">{{ $product->name }}</h2>
-                    <span class="text-gray-700 text-sm">{{ $product->price }}</span>
-                </a>
-            </x-order-panel>
-        @endforeach
-    </div>
-    
-    <div class="mt-6">
-        {{ $this->products->links() }}
-    </div> --}}
 </div>

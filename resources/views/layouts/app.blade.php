@@ -15,7 +15,7 @@
             [x-cloak] { display: none !important; }
         </style>
         <!-- Scripts -->
-        @vite(['resources/js/app.js'])
+        @vite(['resources/scss/main.scss', 'resources/js/app.js'])
 
         <!-- Styles -->
         @livewireStyles
