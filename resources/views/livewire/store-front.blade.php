@@ -38,9 +38,9 @@
     @endif
 
     <div class="container" data-type="wide">
-        <x-collection-carousel :collection="$verano" type="rebajas" :showMore="true" />
-        <x-collection-carousel :collection="$onSale" type="rebajas" :showMore="true" />
-        <x-collection-carousel :collection="$atemporal" type="full-price" />
-        <x-collection-carousel :collection="$comodidad" type="full-price" />
+        <x-collections-carousel :collection="$verano" type="rebajas" :showMore="true" />
+        <x-collections-carousel :collection="$onSale" type="rebajas" :showMore="true" />
+        <x-collections-carousel :collection="$atemporal" type="full-price" />
+        <x-collections-carousel :collection="$comodidad" type="full-price" />
     </div>
 </div>

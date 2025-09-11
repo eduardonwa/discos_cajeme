@@ -92,7 +92,7 @@
         </article>
         
         <div class="desktop-collection text-center padding-block-6">
-            <x-ui.product-collections />
+            <x-ui.collections-header />
         </div>
     </div>
 
@@ -137,7 +137,7 @@
                 {{ __('global.home') }}
             </x-responsive-nav-link>
 
-            <x-ui.product-collections />
+            <x-ui.collections-header />
 
             @auth
                 <article class="mobile-menu__auth">

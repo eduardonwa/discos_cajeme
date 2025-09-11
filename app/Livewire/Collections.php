@@ -33,6 +33,6 @@ class Collections extends Component
             ->orderByDesc('products.created_at')
             ->paginate($this->perPage);
 
-        return view('livewire.collections', compact('products'));
+        return view('livewire.collections-page', compact('products'));
     }
 }
