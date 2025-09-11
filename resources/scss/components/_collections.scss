@@ -105,10 +105,21 @@
                 justify-content: space-between;
 
                 .slide-buttons {
+                    display: none;
+
                     span {
                         background: $color-secondary-400;
                         color: $color-secondary-100;
                         padding: $size-4;
+                    }
+
+                    @include mq(large) {
+                        display: flex;
+                        gap: $size-4;
+                        
+                        .ui-icon-btn {
+                            border: 1px solid $color-secondary-500;
+                        }
                     }
                 }
             }
