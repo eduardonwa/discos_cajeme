@@ -38,7 +38,8 @@
 >
     <header class="collection__header">
       <a href="{{ route('collection', $collection) }}"
-         class="clr-primary-800 no-decor uppercase ff-bold fs-700">
+        class="clr-primary-800 no-decor uppercase ff-bold fs-700"
+      >
         {{ $collection->name }}
       </a>
 
@@ -60,27 +61,22 @@
     <div class="collection__slider" x-ref="slider" tabindex="0" role="listbox">
       @foreach ($collection->products as $product)
         @if ($type === 'rebajas')
-          <a class="slide" wire:navigate href="{{ route('product', $product) }}">
-            {{-- Usa el % real si lo tienes (product->discount_percentage), si no, hardcode 40% --}}
-            <span class="slide__badge">{{ $product->discount_percentage ?? 'REBAJA' }}</span>
-            <img class="slide__image" src="{{ $product->getFirstMediaUrl('images') }}" alt="{{ $product->name }}">
-            <div class="slide__meta">
-              <h2 class="product">{{ $product->name }}</h2>
-              <p class="price">{{ $product->price }}</p>
-            </div>
-          </a>
+          <div class="item">
+            <x-ui.product-card
+              :product="$product"
+              :href="route('product', $product)"
+              variant="overlay"
+              :badge="$product->discount_percentage ?? 'REBAJA'"
+            />
+          </div>
         @else
-          <article class="slide">
-            <a class="slide__link | no-decor" wire:navigate href="{{ route('product', $product) }}">
-              <div class="slide__media">
-                <img class="slide__image" src="{{ $product->getFirstMediaUrl('images') }}" alt="{{ $product->name }}">
-              </div>
-              <div class="slide__meta">
-                <h2 class="product">{{ $product->name }}</h2>
-                <p class="price">{{ $product->price }}</p>
-              </div>
-            </a>
-          </article>
+          <div class="item">
+            <x-ui.product-card
+              :product="$product"
+              :href="route('product', $product)"
+              variant="vertical"
+            />
+          </div>
         @endif
       @endforeach
 
