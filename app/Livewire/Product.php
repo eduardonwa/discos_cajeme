@@ -93,6 +93,7 @@ class Product extends Component
                 couponCode: $this->discountApplied ? $this->couponCode : null
             );
 
+            $this->dispatch('$refresh')->to(NavigationCart::class);
             $this->banner('Producto agregado al carrito');
             $this->dispatch('productAddedToCart'); // Disparar evento de actualización
             

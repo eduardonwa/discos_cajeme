@@ -23,7 +23,7 @@
                     <x-icon :size="24" decorative fill="#344D55">
                         <x-ui.icons.search />
                     </x-icon>
-                    @livewire('navigation-cart')
+                    @livewire('navigation-cart', [], key('nav-cart'))
                 </div>
 
                 @auth

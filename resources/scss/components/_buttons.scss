@@ -14,9 +14,17 @@
   border: $button-border;
   transition: 275ms ease;
 
+  /* estados */
   &:focus {
     outline: $button-border-focus;
     transition: none;
+  }
+
+  &:disabled,
+  &[aria-disabled="true"] {
+    opacity: .6;
+    cursor: not-allowed;
+    pointer-events: none;
   }
 
   &[data-type="accent"] {

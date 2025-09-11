@@ -3,22 +3,29 @@
 namespace App\Livewire;
 
 use Livewire\Component;
-use App\Factories\CartFactory;
+use Livewire\Attributes\On;
 use Livewire\Attributes\Computed;
 
 class NavigationCart extends Component
 {
+    public int $bump = 0; // fuerza morphdom
 
-    public $listeners = [
-        'productAddedToCart' => '$refresh',
-        'productRemovedFromCart' => '$refresh',
-        'cartUpdated' => '$refresh'
-    ];
+    #[On('productAddedToCart')]
+    #[On('productRemovedFromCart')]
+    #[On('cartUpdated')]
+    public function refreshBadge(): void
+    {
+        $this->bump++; // garantiza re-render
+    }
 
     #[Computed]
-    public function count()
+    public function count(): int
     {
-        return CartFactory::make()->items()->sum('quantity');
+        $cart = \App\Factories\CartFactory::make()->fresh(['items']);
+        // Si manejas modelo CartItem, preferible:
+        // return \App\Models\CartItem::where('cart_id', $cart->id)->sum('quantity');
+
+        return (int) $cart->items()->sum('quantity');
     }
 
     public function render()

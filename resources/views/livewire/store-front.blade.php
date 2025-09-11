@@ -120,15 +120,6 @@
                                     <p class="price">{{ $product->price }}</p>
                                 </div>
                             </a>
-                            <button
-                                class="button"
-                                data-type="cart"
-                                type="button"
-                                wire:click.prevent="addToCart({{ $product->id }})"
-                                aria-label="Agregar {{ $product->name }} al carrito"
-                            >
-                                Agregar al carrito
-                            </button>
                         </article>
                     @endforeach
                 </div>
@@ -159,21 +150,12 @@
                             >
                                 <div class="slide__media">
                                     <img class="slide__image" src="{{ $product->getFirstMediaUrl('images') }}" alt="{{ $product->name }}">
-                                </div>    
+                                </div>
                                 <div class="slide__meta">
                                     <h2 class="product">{{ $product->name }}</h2>
                                     <p class="price">{{ $product->price }}</p>
                                 </div>
                             </a>
-                            <button
-                                class="button"
-                                data-type="cart"
-                                type="button"
-                                wire:click.prevent="addToCart({{ $product->id }})"
-                                aria-label="Agregar {{ $product->name }} al carrito"
-                            >
-                                Agregar al carrito
-                            </button>
                         </article>
                     @endforeach
                 </div>

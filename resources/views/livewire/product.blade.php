@@ -93,12 +93,14 @@
             @enderror
 
             <!-- boton de compra -->
-            <x-button
+            <button
+                class="button"
+                data-type="cart"
                 wire:click="addToCart"
-                :disabled="$this->availableStock < 1"
+                @disabled($this->availableStock < 1)
             >
-                {{ $this->availableStock > 0 ? 'AÑADIR AL CARRITO' : 'AGOTADO' }}
-            </x-button>
+                {{ $this->availableStock > 0 ? 'Añadir al carrito' : 'AGOTADO' }}
+            </button>
 
             @error('variant')
                 <p class="mt-2 text-red-500">{{ $message }}</p>

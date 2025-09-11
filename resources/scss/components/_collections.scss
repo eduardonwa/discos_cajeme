@@ -113,11 +113,13 @@
                 }
             }
         }
+
         .slide {
             aspect-ratio: auto;
             display: flex;
             flex-direction: column;
             gap: $size-4;
+            margin-block-end: $size-3;
 
             &__link {
                 display: block;
@@ -137,6 +139,10 @@
                 &__image {
                     width: 100%;
                     height: 100%;
+
+                    &:hover {
+                        border: 1px solid red;
+                    }
                 }
             }
 
@@ -146,7 +152,16 @@
                 left: 0;
                 text-shadow: none;
                 color: $color-primary-900;
+                margin-block-start: $size-4;
+
+                .price {
+                    font-size: $font-size-600;
+                    font-family: $font-family-semibold;
+                }
             }
         }
+
+        .slide:hover .slide__image { transform: none; }
+        .slide__link:hover .slide__image { transform: translateZ(0) scale(1.06); }
     }
 }
