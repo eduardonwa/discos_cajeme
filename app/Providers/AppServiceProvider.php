@@ -94,7 +94,7 @@ class AppServiceProvider extends ServiceProvider
 
         Blade::component('components.ui.icon', 'icon');
 
-        View::composer('components.ui.product-collections', function ($view) {
+        View::composer('components.ui.collections-header', function ($view) {
             $view->with('productCollections', Collection::active()
                 ->select('id', 'name', 'slug')
                 ->get());
