@@ -3,8 +3,22 @@
 .collection {
     margin-block: $size-10;
 
-    &__header{
-        padding-block: $size-6;
+    &__header {
+        position: relative;
+        margin-block: $size-4;
+
+        .slide-buttons {
+            display: none;
+
+            @include mq(large) {
+                display: block;
+                position: absolute;
+                right: 0;
+                top: 5px;
+                display: flex;
+                gap: $size-4;
+            }
+        }
     }
 
     &__slider {
@@ -12,10 +26,12 @@
         gap: $size-4;
         overflow-x: auto;
         scroll-snap-type: x mandatory;
+        align-items: stretch;
+        scrollbar-gutter: stable both-edges;
+
         /* scrollbar firefox */
         scrollbar-width: thin;
         scrollbar-color: $color-primary-500 transparent;
-
         /* Chrome/Edge/Safari */
         &::-webkit-scrollbar {
             height: 8px;
@@ -30,149 +46,10 @@
             background: transparent;
         }
 
-        /* opcional */
-        scrollbar-gutter: stable both-edges;
-
-        .slide {
-            position: relative;
-            display: block;
+        .item {
             flex: 0 0 clamp(220px, 75vw, 316px);
-            aspect-ratio: 3 / 2;
-            scroll-snap-stop: always;
-            overflow: hidden;
-
-            &::after {
-                content: "";
-                position: absolute;
-                inset: 0;
-                z-index: 1;
-                background: linear-gradient(
-                    to top,
-                    rgba(black, .9) 0%,
-                    rgba(black, 0) 70%
-                );
-            }
-
-            &__image {
-                display: block;
-                width: 100%;
-                height: 100%;
-                object-fit: cover;
-                object-position: center;
-                transform: translateZ(0) scale(1);
-                transform-origin: center;
-                transition: transform .35s cubic-bezier(.2,.6,.2,1);
-                will-change: transform;
-            }
-
-            &__badge {
-                position: absolute;
-                top: 15px;
-                right: 0;
-                z-index: 2;
-                padding: 2px 8px;
-                font-size: $font-size-600;
-                background: rgb(236, 7, 7);
-                color: $color-neutral-100;
-            }
-
-            &__meta {
-                position: absolute;
-                left: 12px;
-                right: 12px;
-                bottom: 12px;
-                z-index: 2;
-                color: $color-neutral-100;
-                text-shadow: 0 1px 2px rgba(0,0,0,.25);
-
-                .product {
-                    font-size: $font-size-500;
-                }
-
-                .price {
-                    font-size: $font-size-600;
-                }
-            }
-        }
-        .slide:hover .slide__image { transform: translateZ(0) scale(1.06); }
-    }
-
-    &[data-type="full-price"] {
-        .collection {
-            &__header {
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-
-                .slide-buttons {
-                    display: none;
-
-                    span {
-                        background: $color-secondary-400;
-                        color: $color-secondary-100;
-                        padding: $size-4;
-                    }
-
-                    @include mq(large) {
-                        display: flex;
-                        gap: $size-4;
-                        
-                        .ui-icon-btn {
-                            border: 1px solid $color-secondary-500;
-                        }
-                    }
-                }
-            }
-        }
-
-        .slide {
-            aspect-ratio: auto;
+            scroll-snap-align: start;
             display: flex;
-            flex-direction: column;
-            gap: $size-4;
-            margin-block-end: $size-3;
-
-            &__link {
-                display: block;
-                flex: 1 1 auto;
-                min-height: 0;
-            }
-
-            &::after {
-                content: none;
-            }
-
-            &__media {
-                position: relative;
-                overflow: hidden;
-                height: 250px;
-
-                &__image {
-                    width: 100%;
-                    height: 100%;
-
-                    &:hover {
-                        border: 1px solid red;
-                    }
-                }
-            }
-
-            &__meta {
-                position: relative;
-                bottom: 0;
-                left: 0;
-                text-shadow: none;
-                color: $color-primary-900;
-                margin-block-start: $size-4;
-
-                .price {
-                    font-size: $font-size-600;
-                    font-family: $font-family-semibold;
-                }
-            }
         }
-
-        .slide:hover .slide__image { transform: none; }
-        .slide__link:hover .slide__image { transform: translateZ(0) scale(1.06); }
     }
 }

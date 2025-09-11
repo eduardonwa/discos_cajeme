@@ -1,4 +1,12 @@
-<div>
-    esta es la coleccion
-    {{-- Because she competes with no one, no one can compete with her. --}}
+<div class="section">
+    <div class="container" data-type="wide">
+        <h2>{{ $collection->name }}</h2>
+    
+        @foreach ($products as $product)
+            <article>
+                <h2>{{ $product->name }}</h2>
+                <p>{{ $product->price }}</p>
+            </article>
+        @endforeach
+    </div>
 </div>
