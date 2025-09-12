@@ -11,6 +11,7 @@ use Laravel\Cashier\Cashier;
 use Laravel\Fortify\Fortify;
 use App\Factories\CartFactory;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 use Money\Currencies\ISOCurrencies;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\View;
@@ -98,6 +99,36 @@ class AppServiceProvider extends ServiceProvider
             $view->with('productCollections', Collection::active()
                 ->select('id', 'name', 'slug')
                 ->get());
+        });
+
+        View::composer('components.ui.collections-filter', function ($view) {
+            /** @var \App\Models\Collection|null $collection */
+            $collection = $view->getData()['collection'] ?? null;
+            if (!$collection) return;
+
+            $rows = DB::table('attributes')
+                ->join('attribute_variants', 'attributes.id', '=', 'attribute_variants.attribute_id')
+                ->join('product_variants', 'product_variants.id', '=', 'attribute_variants.product_variant_id')
+                ->join('products', 'products.id', '=', 'product_variants.product_id')
+                ->join('collection_product', 'collection_product.product_id', '=', 'products.id')
+                ->where('collection_product.collection_id', $collection->id)
+                // opcional: solo disponibles
+                ->where('products.stock_status', '!=', 'sold_out')
+                ->groupBy('attributes.key', 'attribute_variants.value')
+                ->orderBy('attributes.key')
+                ->orderBy('attribute_variants.value')
+                ->select([
+                    'attributes.key',
+                    'attribute_variants.value',
+                    DB::raw('COUNT(DISTINCT product_variants.id) as count'),
+                ])
+                ->get();
+
+                $facets = $rows->groupBy('key')->map(function ($group) {
+                    return $group->map(fn ($r) => ['value' => $r->value, 'count' => (int)$r->count])->values();
+                });
+
+                $view->with('facets', $facets);
         });
     }
 }

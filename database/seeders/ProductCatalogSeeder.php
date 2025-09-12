@@ -22,7 +22,10 @@ class ProductCatalogSeeder extends Seeder
             ->mapWithKeys(function ($c) {
                 $model = Collection::firstOrCreate(
                     ['slug' => $c['slug']],
-                    ['name' => $c['name']]
+                    [
+                        'name' => $c['name'],
+                        'description' => $c['description'],
+                    ],
                 );
                 return [$c['slug'] => $model];
             });
