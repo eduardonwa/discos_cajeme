@@ -74,4 +74,11 @@
     color: $color-neutral-100;
     text-transform: none;
   }
+
+  &[data-type="mobile-full"] {
+    width: 100%;
+    border: 2px solid $color-primary-900;
+    background: $color-neutral-100;
+    font-family: $font-family-semibold;
+  }
 }
