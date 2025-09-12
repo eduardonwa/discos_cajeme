@@ -1,0 +1,29 @@
+@use '../abstracts/' as *;
+
+.slide-enter {
+    transition: transform 200ms ease-out, opacity 200ms ease-out;
+}
+
+.slide-enter-start {
+    transform: translateY(100%);
+    opacity: 0;
+}
+
+.slide-enter-end {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+.slide-leave {
+    transition: transform 150ms ease-in, opacity 150ms ease-in;
+}
+
+.slide-leave-start {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+.slide-leave-end {
+    transform: translateY(100%);
+    opacity: 0;
+}

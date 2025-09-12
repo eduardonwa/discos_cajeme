@@ -54,6 +54,30 @@
     }
 }
 
-.collection-filters {
-    
+.collections-filter {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    max-height: 70vh;
+    overflow-y: auto;
+    width: 100%;
+    z-index: 1000;
+    background: $color-neutral-100;
+    padding: $size-8;
+
+    header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    footer {
+        display: flex;
+        justify-content: center;
+
+        .button {
+            border: 1px solid $color-neutral-900;
+        }
+    }
 }
