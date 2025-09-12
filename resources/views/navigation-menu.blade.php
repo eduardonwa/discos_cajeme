@@ -188,17 +188,12 @@
     </nav>
     
     {{-- filtros --}}
-    <div
-        x-show="filtersOpen"
-        x-transition.opacity
-        @click="filtersOpen = false"
-        aria-hidden="true"></div>
-    {{-- panel de filtros --}}
     <section
         x-show="filtersOpen"
         x-trap.noscroll.inert="filtersOpen"
         @keydown.escape.window="filtersOpen = false"
         role="dialog" aria-modal="true" aria-label="Filtros"
+        class="collections-filter"
     >
         <header>
             <h2>Filtros</h2>
