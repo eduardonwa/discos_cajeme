@@ -10,6 +10,7 @@ use Filament\Tables\Table;
 use Illuminate\Support\Str;
 use Filament\Resources\Resource;
 use Filament\Forms\Components\Toggle;
+use Filament\Forms\Components\Textarea;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use App\Filament\Resources\CollectionResource\Pages;
@@ -50,6 +51,9 @@ class CollectionResource extends Resource
                     ->required()
                     ->maxLength(255)
                     ->unique(ignoreRecord: true),
+                Textarea::make('description')
+                    ->columnSpanFull()
+                    ->maxLength(255),
                 Toggle::make('is_active')
                     ->label(fn (Get $get) => $get('is_active') ? 'Desactivar' : 'Activar')
                     ->live()

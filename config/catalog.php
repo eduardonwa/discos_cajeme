@@ -1,10 +1,10 @@
 <?php
 return [
     'collections' => [
-        ['name' => 'Atemporal', 'slug' => 'atemporal'],
-        ['name' => 'Comodidad Moderna', 'slug' => 'comodidad-moderna'],
-        ['name' => 'Verano Libre (40%)', 'slug' => 'verano-libre-40'],
-        ['name' => 'On Sale', 'slug' => 'on-sale'],
+        ['name' => 'Atemporal', 'slug' => 'atemporal', 'description' => 'Piezas esenciales que trascienden temporadas. Diseños simples, cómodos y versátiles hechos para acompañarte todos los días.'],
+        ['name' => 'Comodidad Moderna', 'slug' => 'comodidad-moderna', 'description' => 'Prendas relajadas con cortes actuales. Diseños que combinan ligereza y estilo para un día sin complicaciones.'],
+        ['name' => 'Verano Libre (40%)', 'slug' => 'verano-libre-40', 'description' => 'Colores vibrantes y telas frescas para disfrutar cada día soleado. Piezas hechas para acompañarte en vacaciones y momentos al aire libre.'],
+        ['name' => 'On Sale', 'slug' => 'on-sale', 'description' => 'Tus favoritos a precios irresistibles. Oportunidad de renovar tu guardarropa con básicos y tendencias al mejor valor.'],
     ],
 
     'products' => [
