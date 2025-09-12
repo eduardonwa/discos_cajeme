@@ -192,12 +192,20 @@
         x-show="filtersOpen"
         x-trap.noscroll.inert="filtersOpen"
         @keydown.escape.window="filtersOpen = false"
+        x-transition:enter="slide-enter"
+        x-transition:enter-start="slide-enter-start"
+        x-transition:enter-end="slide-enter-end"
+        x-transition:leave="slide-leave"
+        x-transition:leave-start="slide-leave-start"
+        x-transition:leave-end="slide-leave-end"
         role="dialog" aria-modal="true" aria-label="Filtros"
         class="collections-filter"
     >
         <header>
             <h2>Filtros</h2>
-            <button @click="filtersOpen = false" aria-label="Cerrar filtros">✕</button>
+            <x-icon @click="filtersOpen = false" aria-lable="Cerrar filtros">
+                <x-ui.icons.close />
+            </x-icon>
         </header>
 
         {{-- <div wire:key="filters-wrap-{{ $filtersKey }}">
@@ -206,5 +214,8 @@
                 'filters'    => $filters,
             ])
         </div> --}}
+        <footer>
+            <button @click="filtersOpen = false" type="button" class="button uppercase" data-type="ghost">Ver resultados</button>
+        </footer>
     </section>
 </div>
