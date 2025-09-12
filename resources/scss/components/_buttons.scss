@@ -81,4 +81,8 @@
     background: $color-neutral-100;
     font-family: $font-family-semibold;
   }
+
+  &[data-type="ghost"] {
+    background: transparent;
+  }
 }
