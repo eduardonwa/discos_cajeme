@@ -4,7 +4,7 @@
         $groupStateHash = md5(json_encode($filters[$bindKey] ?? []));
     @endphp
 
-    <fieldset wire:key="facet-group-{{ $collection->id }}-{{ $bindKey }}-{{ $groupStateHash }}">
+    <fieldset class="collection-filters" wire:key="facet-group-{{ $collection->id }}-{{ $bindKey }}-{{ $groupStateHash }}">
         <legend class="uppercase">{{ strtoupper($key) }}</legend>
 
         @if (!empty($filters[$bindKey] ?? []))
