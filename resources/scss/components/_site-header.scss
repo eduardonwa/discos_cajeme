@@ -53,6 +53,11 @@
       &__icons {
         display: flex;
         align-items: center;
+        gap: $size-2;
+
+        .button {
+          padding: .75em .5em;
+        }
       }
 
       &__guest {
