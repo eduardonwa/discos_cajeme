@@ -47,5 +47,26 @@
         
         @stack('modals')
         @livewireScripts
+        
+        <script>
+        document.addEventListener('alpine:init', () => {
+        // tu store global
+        Alpine.store('ui', { navOpen:false, filtersOpen:false });
+
+        // componente reutilizable para breakpoints
+        Alpine.data('filtersShell', () => ({
+            isDesktop: false,
+            init() {
+                const mql = window.matchMedia('(min-width: 1024px)');
+                const set = e => {
+                    this.isDesktop = e.matches;
+                    if (this.isDesktop) $store.ui.filtersOpen = false; // cierra sheet al pasar a desktop
+                };
+                set(mql);
+                (mql.addEventListener ? mql.addEventListener('change', set) : mql.addListener(set));
+                }
+            }));
+        });
+        </script>
     </body>
 </html>

@@ -5,7 +5,7 @@ namespace App\Livewire;
 use App\Models\Product;
 use Livewire\Component;
 use App\Models\Collection;
-use Illuminate\Support\Str;
+use Livewire\Attributes\On;
 use Livewire\WithPagination;
 
 class Collections extends Component
@@ -16,7 +16,6 @@ class Collections extends Component
     public string $search = '';
     public int $perPage = 12;
     public array $filters = [];
-    public int $filtersKey = 0;
 
     public function mount(Collection $collection)
     {
@@ -24,39 +23,15 @@ class Collections extends Component
         $this->collection = $collection;
     }
 
-    public function updatingFilters() { $this->resetPage(); }
-
-    public function toggleFilter(string $bindKey, string $value): void
+    public function updatingFilters()
     {
-        $bindKey = Str::slug($bindKey, '_');
-
-        $current = $this->filters[$bindKey] ?? [];
-        $idx = array_search($value, $current, true);
-
-        if ($idx !== false) {
-            // quitar
-            unset($current[$idx]);
-            $current = array_values($current);
-        } else {
-            // agregar
-            $current[] = $value;
-        }
-
-        $this->filters[$bindKey] = $current;
         $this->resetPage();
     }
 
-    public function clearGroup(string $bindKey): void
+    #[On('filters-updated')]
+    public function refreshOnFiltersUpdated()
     {
-        $bindKey = \Illuminate\Support\Str::slug($bindKey, '_');
-        $this->filters[$bindKey] = [];
-        $this->filtersKey++;
-    }
-
-    public function clearAll(): void
-    {
-        $this->filters = [];
-        $this->filtersKey++;
+        $this->resetPage();
     }
 
     public function render()
@@ -64,21 +39,21 @@ class Collections extends Component
         $query = Product::query()
             ->published()
             ->whereHas('collections', fn($q) => $q->whereKey($this->collection->id));
-        
+
         foreach ($this->filters as $bindKey => $values) {
-            $values = array_values(array_filter((array)$values, fn($v) => $v !== '' && $v !== null));
+            $values = array_values(array_filter((array) $values, fn($v) => $v !== '' && $v !== null));
             if (!empty($values)) {
                 $query->whereHas('variants.attributes', function ($q) use ($bindKey, $values) {
                     $q->whereIn('attribute_variants.value', $values)
-                      ->whereHas('attribute', function ($aq) use ($bindKey) {
-                          $aq->whereRaw('REPLACE(LOWER(`key`), " ", "_") = ?', [Str::slug($bindKey, '_')]);
-                      });
+                    ->whereHas('attribute', fn ($aq) => $aq->whereRaw(
+                        'REPLACE(LOWER(`key`), " ", "_") = ?',
+                        [\Illuminate\Support\Str::slug($bindKey, '_')]
+                    ));
                 });
             }
         }
-        
-        $products = $query
-            ->with(['media','collections'])
+
+        $products = $query->with(['media','collections'])
             ->orderByDesc('products.created_at')
             ->paginate($this->perPage);
 
