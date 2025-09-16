@@ -1,3 +1,4 @@
+@php $isCollection = request()->routeIs('collection'); @endphp
 <nav x-data class="nav">
     <div class="site-header">
         <article class="site-header__inner">
@@ -22,79 +23,84 @@
                     <x-icon :size="24" decorative fill="#344D55">
                         <x-ui.icons.search />
                     </x-icon>
+                    
                     @livewire('navigation-cart', [], key('nav-cart'))
 
-                    <button
-                        @click="$store.ui.filtersOpen = true"
-                        type="button"
-                        class="button uppercase ff-semibold" data-type="ghost"
-                    >
-                        filtros
-                    </button>
+                    @if ($isCollection)
+                        <button
+                            @click="$store.ui.filtersOpen = true"
+                            type="button"
+                            class="button uppercase ff-semibold" data-type="ghost"
+                        >
+                            filtros
+                        </button>
+                    @endunless
                 </div>
 
-                @auth
-                    <div class="action-links__auth">
-                        <x-dropdown align="right" width="sm">
-                            <x-slot name="trigger">
-                                <div>
-                                    <x-icon :size="24" decorative fill="#344D55">
-                                        <x-ui.icons.account />
-                                    </x-icon>
-                                    
-                                    <svg class="ui-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
-                                    </svg>
-                                </div>
-                            </x-slot>
+                @unless ($isCollection)
+                    @auth
+                        <div class="action-links__auth">
+                            <x-dropdown align="right" width="sm">
+                                <x-slot name="trigger">
+                                    <div>
+                                        <x-icon :size="24" decorative fill="#344D55">
+                                            <x-ui.icons.account />
+                                        </x-icon>
+                                        
+                                        <svg class="ui-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+                                        </svg>
+                                    </div>
+                                </x-slot>
 
-                            <x-slot name="content">
-                                <!-- Account Management -->
-                                <div class="block px-4 py-2 text-xs text-gray-400">
-                                    {{ __('profile.manage_account') }}
-                                </div>
+                                <x-slot name="content">
+                                    <!-- Account Management -->
+                                    <div class="block px-4 py-2 text-xs text-gray-400">
+                                        {{ __('profile.manage_account') }}
+                                    </div>
 
-                                <x-dropdown-link wire:navigate href="{{ route('profile.show') }}">
-                                    {{ __('profile.profile') }}
-                                </x-dropdown-link>
-
-                                <x-dropdown-link wire:navigate href="{{ route('my-orders') }}">
-                                    {{ __('profile.my_orders') }}
-                                </x-dropdown-link>
-
-                                @if (Laravel\Jetstream\Jetstream::hasApiFeatures())
-                                    <x-dropdown-link href="{{ route('api-tokens.index') }}">
-                                        {{ __('API Tokens') }}
+                                    <x-dropdown-link wire:navigate href="{{ route('profile.show') }}">
+                                        {{ __('profile.profile') }}
                                     </x-dropdown-link>
-                                @endif
 
-                                <hr>
-
-                                <!-- Authentication -->
-                                <form method="POST" action="{{ route('logout') }}" x-data>
-                                    @csrf
-
-                                    <x-dropdown-link href="{{ route('logout') }}"
-                                            @click.prevent="$root.submit();">
-                                        {{ __('auth.log_out') }}
+                                    <x-dropdown-link wire:navigate href="{{ route('my-orders') }}">
+                                        {{ __('profile.my_orders') }}
                                     </x-dropdown-link>
-                                </form>
-                            </x-slot>
-                        </x-dropdown>
-                    </div>
-                @endauth
 
-                @guest
-                    <div class="action-links__guest">
-                        <x-nav-link class="uppercase fs-200" wire:navigate href="{{ route('login') }}">
-                            {{ __('auth.log_in') }}
-                        </x-nav-link>
-                        
-                        <x-nav-link class="uppercase fs-200" wire:navigate href="{{ route('register') }}">
-                            {{ __('auth.register') }}
-                        </x-nav-link>
-                    </div>
-                @endguest
+                                    @if (Laravel\Jetstream\Jetstream::hasApiFeatures())
+                                        <x-dropdown-link href="{{ route('api-tokens.index') }}">
+                                            {{ __('API Tokens') }}
+                                        </x-dropdown-link>
+                                    @endif
+
+                                    <hr>
+
+                                    <!-- Authentication -->
+                                    <form method="POST" action="{{ route('logout') }}" x-data>
+                                        @csrf
+
+                                        <x-dropdown-link href="{{ route('logout') }}"
+                                                @click.prevent="$root.submit();">
+                                            {{ __('auth.log_out') }}
+                                        </x-dropdown-link>
+                                    </form>
+                                </x-slot>
+                            </x-dropdown>
+                        </div>
+                    @endauth
+
+                    @guest
+                        <div class="action-links__guest">
+                            <x-nav-link class="uppercase fs-200" wire:navigate href="{{ route('login') }}">
+                                {{ __('auth.log_in') }}
+                            </x-nav-link>
+                            
+                            <x-nav-link class="uppercase fs-200" wire:navigate href="{{ route('register') }}">
+                                {{ __('auth.register') }}
+                            </x-nav-link>
+                        </div>
+                    @endguest
+                @endunless
             </div>
         </article>
         

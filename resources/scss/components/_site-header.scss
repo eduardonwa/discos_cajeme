@@ -57,6 +57,7 @@
 
         .button {
           padding: .75em .5em;
+          @include mq(large) { display: none; }
         }
       }
 
