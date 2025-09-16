@@ -7,7 +7,7 @@
 
 @if ($collection)
   <article
-    class="collection"
+    class="c-collection-rail"
     @if($type === 'full-price')
         data-type="full-price"
         x-data="{
@@ -36,7 +36,7 @@
         }"    
     @endif
 >
-    <header class="collection__header">
+    <header class="c-collection-rail__header">
       <a href="{{ route('collection', $collection) }}"
         class="clr-primary-800 no-decor uppercase ff-bold fs-700"
       >
@@ -58,7 +58,7 @@
       @endif
     </header>
 
-    <div class="collection__slider" x-ref="slider" tabindex="0" role="listbox">
+    <div class="c-collection-rail__track" x-ref="slider" tabindex="0" role="listbox">
       @foreach ($collection->products as $product)
         @if ($type === 'rebajas')
           <div class="item">

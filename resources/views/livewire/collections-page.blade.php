@@ -1,14 +1,22 @@
-<div x-data="filtersShell()" x-init="init()"
-     x-cloak
-     x-effect="document.body.classList.toggle('menu-open', !isDesktop && $store.ui.filtersOpen)"
+<div
+    x-data="filtersShell()"
+    x-init="init()"
+    x-cloak
+    x-effect="document.body.classList.toggle('menu-open', !isDesktop && $store.ui.filtersOpen)"
 >
     <div class="section">
-        <div class="container" data-type="wide">
+        <main class="p-collections container" data-type="wide">
             {{-- info --}}
-            <h2>{{ $collection->name }}</h2>
-            <p>{{ $collection->description }}</p>
-            
-            <section id="filters-panel" x-cloak
+            <header class="p-collections__header">
+                <h2 class="name">{{ $collection->name }}</h2>
+                <p class="description">{{ $collection->description }}</p>
+            </header>
+
+            {{-- filtros --}}
+            <section
+                class="p-collections__filters"
+                x-cloak
+                id="filters-panel"
                 x-show="isDesktop || $store.ui.filtersOpen"
                 x-trap.noscroll.inert="!isDesktop && $store.ui.filtersOpen"
                 @keydown.escape.window="!isDesktop && ($store.ui.filtersOpen=false)"
@@ -18,12 +26,18 @@
                 x-transition:leave="slide-leave"
                 x-transition:leave-start="slide-leave-start"
                 x-transition:leave-end="slide-leave-end"
-                :class="isDesktop ? 'collections-filter mode-sidebar' : 'collections-filter mode-sheet'"
+                :class="isDesktop ? 'p-collections-filter mode-sidebar' : 'p-collections-filter mode-sheet'"
                 role="dialog" aria-modal="true" aria-label="Filtros"
             >
                 <header>
                     <h2 class="ff-semibold">Filtros</h2>
-                    <button x-show="!isDesktop" @click="$store.ui.filtersOpen = false" aria-label="Cerrar filtros">✕</button>
+                    <x-icon 
+                        x-show="!isDesktop" 
+                        @click="$store.ui.filtersOpen = false" 
+                        label="Cerrar filtros"
+                    >
+                        <x-ui.icons.close /> 
+                    </x-icon>
                 </header>
 
                 <livewire:filters-panel
@@ -45,13 +59,27 @@
             </section>
 
             {{-- productos --}}
-            @foreach ($products as $product)
-                <article>
-                    <h2>{{ $product->name }}</h2>
-                    <p>{{ $product->price }}</p>
-                </article>
-            @endforeach
-        </div>
+            <section class="p-collections__products">
+                @if ($hero)
+                    <x-ui.product-card
+                        :product="$hero"
+                        :href="route('product', $hero)"
+                        class="is-hero"
+                    />
+                @endif
+
+                @foreach ($products as $product)
+
+                    <x-ui.product-card
+                        :product="$product"
+                        :href="route('product', $product)"
+                        variant="minimal"
+                        :badge="$product->badge"
+                    />
+                @endforeach
+            </section>
+        </main>
+        {{ $products->links() }}
     </div>
 </div>
 

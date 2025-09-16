@@ -1,60 +1,61 @@
 @use "../abstracts/" as *;
 
-.collection {
-    margin-block: $size-10;
+@mixin filters-panel-options {
+    border: none;
+    display: flex;
+    flex-direction: column;
+    gap: $size-1;
+    margin-block: $size-4;
 
-    &__header {
-        position: relative;
-        margin-block: $size-4;
-
-        .slide-buttons {
-            display: none;
-
-            @include mq(large) {
-                display: block;
-                position: absolute;
-                right: 0;
-                top: 5px;
-                display: flex;
-                gap: $size-4;
-            }
-        }
+    .variant-category {
+        margin-block: $size-1;
     }
 
-    &__slider {
+    .item {
         display: flex;
-        gap: $size-4;
-        overflow-x: auto;
-        scroll-snap-type: x mandatory;
-        align-items: stretch;
-        scrollbar-gutter: stable both-edges;
+        align-items: center;
+        gap: $size-2;
+        padding-block: $size-1;
+        cursor: pointer;
 
-        /* scrollbar firefox */
-        scrollbar-width: thin;
-        scrollbar-color: $color-primary-500 transparent;
-        /* Chrome/Edge/Safari */
-        &::-webkit-scrollbar {
-            height: 8px;
-        }
-        &::-webkit-scrollbar-thumb {
-            background: $color-primary-500;
-            border-radius: 999px;
-            border: 2px solid transparent;
-            background-clip: content-box;
-        }
-        &::-webkit-scrollbar-track {
-            background: transparent;
-        }
-
-        .item {
-            flex: 0 0 clamp(220px, 75vw, 316px);
-            scroll-snap-align: start;
-            display: flex;
+        input {
+            height: 18px;
+            width: 18px;
         }
     }
 }
 
-.collections-filter.mode-sheet {
+/* GRID LAYOUT */
+@include mq(medium) {
+    .p-collections {
+        display: grid;
+        grid-template-columns: .8fr 2fr 2fr auto;
+        grid-template-rows: auto 1fr;
+        gap: $size-4;
+        align-items: start;
+        align-content: start;
+        grid-template-areas:
+        "filters header     header   ."
+        "filters products   products .";
+
+        &__header {
+            grid-area: header;
+            height: fit-content;
+        }
+
+        &__filters {
+            grid-area: filters;
+        }
+
+        &__products {
+            grid-area: products;
+        }
+    }
+}
+
+/* MENU DE FILTROS */
+/* Móviles */
+.p-collections-filter.mode-sheet {
     position: fixed;
     bottom: 0;
     left: 0;
@@ -72,20 +73,115 @@
         justify-content: space-between;
     }
 
-    footer {
-        display: flex;
-        justify-content: center;
+    .filters-panel {
+        &__options {
+            @include filters-panel-options;
+        }
 
+        &__footer {
+            display: flex;
+            margin-block: $size-4;
+
+            .button {
+                border: transparent;
+                color: $color-secondary-700;
+                text-decoration: underline;
+                text-decoration-thickness: 2px;
+            }
+        }
+    }
+
+    /* este footer es el boton de "VER RESULTADOS" */
+    footer {
         .button {
-            border: 1px solid $color-neutral-900;
+            margin-block-start: $size-2;
+            border: 2px solid $color-neutral-600;
+            width: 100%;
+            color: $color-neutral-600;
         }
     }
 }
 
-.collections-filter.mode-sidebar {
+/* Escritorios */
+.p-collections-filter.mode-sidebar {
     position: sticky;
     align-self: start;
     overflow: auto;
-    border-radius: 12px;
     z-index: 1;
+
+    header {
+        display: none
+    }
+
+    .filters-panel {
+        &__options {
+            @include filters-panel-options;
+            .button { display: none; }
+        }
+
+        &__footer {
+            margin-block-start: $size-8;
+            .button {
+                padding: 0;
+                color: $color-neutral-600;
+            }
+        }
+    }
+}
+
+/* HEADER */
+@include mq(large) {
+    .p-collections {        
+        &__header {
+            font-size: $font-size-500;
+            
+            .name {
+                font-family: $font-family-semibold;
+                font-size: 24px;
+                text-transform: uppercase;
+            }
+
+            .description {
+                position: relative;
+                padding-block-end: $size-4;
+                margin-block-end: $size-4;
+
+                &::after {
+                    content: "";
+                    position: absolute;
+                    left: 0;
+                    bottom: 0;
+                    width: 100%;
+                    height: 1px;
+                    background: $color-neutral-500;
+                }
+            }
+        }
+    }
+}
+
+/* PRODUCTS */
+.p-collections__products {
+    display: grid;
+    gap: $size-4;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    grid-auto-flow: dense;
+
+    .card.card--minimal { 
+        .card__media {
+            width: 100%;
+            aspect-ratio: 4 / 3;
+            overflow: hidden;
+
+            img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
+        }
+    }
+
+    .is-hero {
+        border: 1px solid red;
+    }
 }

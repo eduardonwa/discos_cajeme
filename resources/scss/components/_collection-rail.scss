@@ -1,0 +1,55 @@
+@use "../abstracts/" as *;
+
+.c-collection-rail {
+    margin-block: $size-10;
+
+    &__header {
+        position: relative;
+        margin-block: $size-4;
+
+        .slide-buttons {
+            display: none;
+
+            @include mq(large) {
+                display: block;
+                position: absolute;
+                right: 0;
+                top: 5px;
+                display: flex;
+                gap: $size-4;
+            }
+        }
+    }
+
+    &__track {
+        display: flex;
+        gap: $size-4;
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        align-items: stretch;
+        scrollbar-gutter: stable both-edges;
+
+        /* scrollbar firefox */
+        scrollbar-width: thin;
+        scrollbar-color: $color-primary-500 transparent;
+        /* Chrome/Edge/Safari */
+        &::-webkit-scrollbar {
+            height: 8px;
+        }
+        &::-webkit-scrollbar-thumb {
+            background: $color-primary-500;
+            border-radius: 999px;
+            border: 2px solid transparent;
+            background-clip: content-box;
+        }
+        &::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .item {
+            flex: 0 0 clamp(220px, 75vw, 316px);
+            scroll-snap-align: start;
+            display: flex;
+        }
+    }
+}

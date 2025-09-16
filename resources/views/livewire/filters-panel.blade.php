@@ -5,11 +5,11 @@
         $groupStateHash = md5(json_encode($filters[$bindKey] ?? [])); // fuerza re-render solo del grupo
     @endphp
 
-    <fieldset wire:key="facet-group-{{ $collection->id }}-{{ $bindKey }}-{{ $groupStateHash }}">
-      <legend class="uppercase">{{ strtoupper($group['key']) }}</legend>
+    <fieldset class="filters-panel__options" wire:key="facet-group-{{ $collection->id }}-{{ $bindKey }}-{{ $groupStateHash }}">
+      <legend class="variant-category | ff-semibold uppercase">{{ strtoupper($group['key']) }}</legend>
 
       @if (!empty($filters[$bindKey] ?? []))
-        <button type="button" wire:click="clearGroup('{{ $bindKey }}')">
+        <button class="button" type="button" wire:click="clearGroup('{{ $bindKey }}')">
           Limpiar {{ $group['key'] }}
         </button>
       @endif
@@ -21,7 +21,7 @@
             $itemKey = md5($val);
         @endphp
 
-        <label wire:key="facet--{{ $collection->id }}-{{ $bindKey }}-{{ $itemKey }}">
+        <label class="item" wire:key="facet--{{ $collection->id }}-{{ $bindKey }}-{{ $itemKey }}">
           <input
             type="checkbox"
             @checked(in_array($val, $filters[$bindKey] ?? [], true))
@@ -33,7 +33,7 @@
     </fieldset>
   @endforeach
 
-  <footer class="filters__footer">
-    <button type="button" class="btn" wire:click="clearAll">Limpiar todo</button>
+  <footer class="filters-panel__footer">
+    <button type="button" class="button" data-type="ghost" wire:click="clearAll">Limpiar todo</button>
   </footer>
 </div>

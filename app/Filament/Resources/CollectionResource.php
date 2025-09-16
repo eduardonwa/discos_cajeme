@@ -15,6 +15,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use App\Filament\Resources\CollectionResource\Pages;
 use App\Filament\Resources\CollectionResource\RelationManagers\ProductsRelationManager;
+use Filament\Forms\Components\Select;
 
 class CollectionResource extends Resource
 {
@@ -59,6 +60,12 @@ class CollectionResource extends Resource
                     ->live()
                     ->default(true)
                     ->required(),
+                Select::make('featured_product_id')
+                    ->label('Producto destacado')
+                    ->relationship('featuredProduct', 'name')
+                    ->searchable()
+                    ->preload()
+                    ->nullable(),
             ]);
     }
 
