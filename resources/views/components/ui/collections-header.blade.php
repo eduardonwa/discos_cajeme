@@ -2,7 +2,7 @@
     <ul class="product-collections">
         @foreach ($productCollections as $collection)
             <li class="no-list-style">
-                <a href="{{ $collection->slug }}">
+                <a href="{{ route('collection', $collection->slug) }}">
                     {{ $collection->name }}
                 </a>
             </li>
