@@ -21,4 +21,8 @@ class Collection extends Model
     {
         return 'slug';
     }
+
+    public function featuredProduct() {
+        return $this->belongsTo(Product::class, 'featured_product_id');
+    }
 }
