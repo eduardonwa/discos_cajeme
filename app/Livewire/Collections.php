@@ -11,7 +11,8 @@ use Livewire\WithPagination;
 class Collections extends Component
 {
     use WithPagination;
-
+    
+    public ?Product $hero = null;
     public Collection $collection;
     public string $search = '';
     public int $perPage = 12;
@@ -20,7 +21,8 @@ class Collections extends Component
     public function mount(Collection $collection)
     {
         abort_unless($collection->is_active, 404);
-        $this->collection = $collection;
+        $this->collection = $collection->load('featuredProduct');
+        $this->hero = $this->collection->featuredProduct;
     }
 
     public function updatingFilters()
@@ -38,7 +40,14 @@ class Collections extends Component
     {
         $query = Product::query()
             ->published()
-            ->whereHas('collections', fn($q) => $q->whereKey($this->collection->id));
+            ->whereHas('collections', fn($q) =>
+                $q->whereKey($this->collection->id)
+            );
+
+        // excluye el ID del "hero" del render
+        if ($this->hero) {
+            $query->where('products.id', '!=', $this->hero->getKey());
+        }
 
         foreach ($this->filters as $bindKey => $values) {
             $values = array_values(array_filter((array) $values, fn($v) => $v !== '' && $v !== null));
