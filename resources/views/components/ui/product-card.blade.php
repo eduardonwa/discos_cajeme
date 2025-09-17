@@ -17,7 +17,7 @@
   <div class="card__media">
     <img
       class="image"
-      src="{{ $product->getFirstMediaUrl('images') }}"
+      src="{{ $product->getFirstMediaUrl('featured') }}"
       alt="{{ $product->name }}"
   >
     @if ($badge)

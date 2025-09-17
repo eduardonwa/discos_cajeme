@@ -66,25 +66,10 @@ class ProductsRelationManager extends RelationManager
                     ->label('Estado')
                     ->sortable()
                     ->badge()
-                    ->formatStateUsing(fn (bool $state): string => $state ? 'Activo' : 'Inactivo')
+                    ->formatStateUsing(fn (bool $state): string => $state ? 'Disponible' : 'Agotado')
                     ->color(fn (bool $state): string => $state ? 'success' : 'danger'),
             ])
             ->headerActions([
-                Tables\Actions\CreateAction::make()
-                    ->label('Agregar productos')
-                    ->form([
-                        ProductSelector::make('selected_products')
-                            ->label('Seleccionar productos')
-                            ->required()
-                    ])
-                    ->action(function (array $data) {
-                        $productIds = is_array($data['selected_products']) 
-                            ? $data['selected_products'] 
-                            : json_decode($data['selected_products'], true) ?? [];
-                        $this->getOwnerRecord()->products()->syncWithoutDetaching($productIds);
-                    })
-            ])
-            ->actions([
                 Tables\Actions\Action::make('manage_products')
                     ->label('Gestionar productos')
                     ->form([
@@ -101,6 +86,8 @@ class ProductsRelationManager extends RelationManager
                     })
                     ->slideOver()
                     ->modalHeading('Agregar productos a esta colección'),
+            ])
+            ->actions([
                 Tables\Actions\DetachAction::make()
                     ->label('Quitar')
                     ->hidden(),

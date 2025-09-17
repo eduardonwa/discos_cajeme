@@ -18,6 +18,7 @@
     position: relative;
     overflow: hidden;
     z-index: 0;
+    aspect-ratio: 1 / 1;
     
     .image {
       display: block;
@@ -36,7 +37,7 @@
       right: 0;
       z-index: 2;
       padding: 2px 8px;
-      font-size: $font-size-600;
+      font-size: $font-size-400;
       background: rgb(236, 7, 7);
       color: $color-neutral-100;
       border-radius: 0;
@@ -65,7 +66,7 @@
   padding: 0;
   gap: 0;
   line-height: 1.5;
-  border-radius: none;
+  border-radius: 0;
 
   .card__media {
     aspect-ratio: 16 / 9;
@@ -106,8 +107,6 @@
   border-radius: 0;
   gap: 0;
   margin-block-end: $size-4;
-
-  .card__media { height: 250px; }
 
   .card__meta {
     position: relative;
