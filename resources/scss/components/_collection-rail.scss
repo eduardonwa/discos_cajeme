@@ -48,7 +48,6 @@
 
         .item {
             flex: 0 0 clamp(220px, 75vw, 316px);
-            scroll-snap-align: start;
             display: flex;
         }
     }

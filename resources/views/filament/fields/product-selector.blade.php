@@ -59,18 +59,24 @@
                 <div style="font-weight: 500;" x-text="product.price"></div>
 
                 <div style="display: flex; justify-content: space-between; margin-bottom: 0.25rem;">
-                    <span style="font-size: 0.75rem;">Inventario total:</span>
+                    <span style="font-size: 0.75rem; display:flex; justify-content: space-between;" :class="product.stock_status_class">
+                        <span x-text="product.stock_status === 'in_stock' ? 'Disponible' 
+                            : product.stock_status === 'low_stock' ? 'Bajo stock' 
+                            : 'Agotado'">
+                        </span>
+                    </span>
+                </div>
+
+                <div style="display: flex; justify-content: space-between; margin-bottom: 0.25rem;">
+                    <span style="font-size: 0.75rem;">Inventario total</span>
                     <span style="font-size: 0.75rem;" x-text="product.total_stock"></span>
                 </div>
 
                 <div style="display: flex; justify-content: space-between; margin-bottom: 0.25rem;">
-                    <span style="font-size: 0.75rem;">Estado:</span>
-                    <span style="font-size: 0.75rem;" :class="product.stock_status_class">
-                        <span x-text="product.stock_status === 'in_stock' ? 'Disponible' 
-                                   : product.stock_status === 'low_stock' ? 'Bajo stock' 
-                                   : 'Agotado'"></span>
-                        <span x-show="product.has_variants" style="margin-left: 0.25rem;">
-                            (<span x-text="product.variants_count"></span> variantes)
+                    <span style="font-size: 0.75rem;">Variantes</span>
+                    <span style="font-size: 0.75rem;">
+                        <span x-show="product.has_variants">
+                            <span x-text="product.variants_count"></span>
                         </span>
                     </span>
                 </div>

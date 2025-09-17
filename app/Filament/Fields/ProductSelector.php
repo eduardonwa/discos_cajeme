@@ -47,7 +47,7 @@ class ProductSelector extends Field
                     'price' => FormatMoney::format($product->price),
                     'total_stock' => $product->total_stock,
                     'has_variants' => $product->has_variants,
-                    'variants_count' => $product->variants->count(), // Nuevo campo
+                    'variants_count' => $product->variants->count(),
                     'stock_status' => $product->stock_status,
                     'stock_status_class' => $this->getStockStatusClass($product->stock_status),
                 ];

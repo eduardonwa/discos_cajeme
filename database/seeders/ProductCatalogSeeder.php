@@ -66,14 +66,14 @@ class ProductCatalogSeeder extends Seeder
             }
 
             // 4) Importar imagenes a Spatie (desde public/catalog/)
-            $product->clearMediaCollection('images');
+            $product->clearMediaCollection('featured');
 
             foreach (($p['images'] ?? []) as $path) {
                 $full = public_path($path);
                 if(is_file($full)) {
                     $product->addMedia($full)
                         ->preservingOriginal()
-                        ->toMediaCollection('images');
+                        ->toMediaCollection('featured');
                 }
             }
         }
