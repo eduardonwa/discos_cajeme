@@ -59,7 +59,7 @@
 
         {{-- productos --}}
         <section class="p-collections__products">
-            @if ($hero)
+            @if ($showHero)
                 <x-ui.product-card
                     :product="$hero"
                     :href="route('product', $hero)"
@@ -79,7 +79,7 @@
             @endforeach
         </section>
     </main>
-    {{ $products->links() }}
+    {{ $products->links('pagination::tailwind', ['totalWithHero' => $totalWithHero]) }}
 </div>
 
 <script>

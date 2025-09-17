@@ -66,6 +66,9 @@ class Collections extends Component
             ->orderByDesc('products.created_at')
             ->paginate($this->perPage);
 
-        return view('livewire.collections-page', compact('products'));
+        $showHero = $this->hero && $products->currentPage() === 1;
+        $totalWithHero = $products->total() + ($this->hero ? 1 : 0);
+
+        return view('livewire.collections-page', compact('products', 'showHero', 'totalWithHero'));
     }
 }

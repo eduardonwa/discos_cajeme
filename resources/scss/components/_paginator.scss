@@ -1,0 +1,52 @@
+@use "../abstracts" as *;
+
+/* version compacta */
+.paginator {
+    margin: $size-4;
+
+    &--compact {
+        text-align: center;
+        
+        @include mq(large) {
+            display: none;
+        }
+    }
+
+    &--complete {
+        display: none;
+        @include mq(large) {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            font-size: $font-size-400;
+
+            .navigation {
+                margin-block: $size-4;
+                display: flex;
+                align-items: center;
+                gap: $size-4;
+                font-size: $font-size-500;
+
+                [aria-disabled="true"] {
+                    opacity: .6;
+                }
+
+                [aria-current="page"] {
+                    color: $color-neutral-100;
+                    background: $color-neutral-900;
+                    padding-inline: $size-2;
+                }
+
+                a[aria-label^="Go to page"] {
+                    border: 1px solid transparent;
+                    padding-inline: $size-2;
+                    
+                    &:hover {
+                        border: 1px solid;
+                    }
+                }
+            }
+        }
+    }
+}
