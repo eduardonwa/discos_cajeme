@@ -85,4 +85,8 @@
   &[data-type="ghost"] {
     background: transparent;
   }
+
+  &[data-type="buy-now"] {
+    text-transform: none;
+  }
 }

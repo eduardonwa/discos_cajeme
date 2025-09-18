@@ -51,12 +51,17 @@ class ProductVariant extends Model implements HasMedia
     public function decreaseStock(int $quantity): void
     {
         DB::transaction(function () use ($quantity) {
+            if ($this->total_variant_stock < $quantity) {
+                throw new \RuntimeException('No hay stock suficiente en la variante.');
+            }
+
             $this->update([
                 'total_variant_stock' => max($this->total_variant_stock - $quantity, 0)
             ]);
             
+            // sincronizza y recalcula el padre
             $this->product->updateStockFromVariants();
-            $this->product->updateStockStatus(); // Actualiza el estado del producto padre
+            $this->product->refreshStockStatus();
         });
     }
 

@@ -166,8 +166,9 @@
 .p-collections__products {
     display: grid;
     gap: $size-4;
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
     grid-auto-flow: row;
+    @include mq(medium) { grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); }
 
     .card.card--minimal { 
         .card__media {

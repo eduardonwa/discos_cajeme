@@ -16,7 +16,10 @@ return new class extends Migration
             $table->string('name');
             $table->text('description');
             $table->unsignedInteger('price');
+            $table->unsignedInteger('compare_at_price')->nullable();
+            $table->string('promo_label')->nullable();
             $table->boolean('published')->default(false);
+            $table->boolean('buy_now_enabled')->default(false);
             $table->unsignedInteger('total_product_stock')->default(0);
             $table->enum('stock_status', ['in_stock', 'low_stock', 'sold_out'])->default('in_stock');
             $table->integer('low_stock_threshold')->default(5);

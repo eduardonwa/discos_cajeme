@@ -5,6 +5,8 @@ namespace App\Filament\Resources;
 use Money\Money;
 use Filament\Tables;
 use App\Models\Product;
+use Filament\Forms\Get;
+use Filament\Forms\Set;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Filament\Support\RawJs;
@@ -13,10 +15,12 @@ use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
+use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Components\Textarea;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Actions\Action;
 use App\Filament\Resources\ProductResource\Pages;
 use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
@@ -42,6 +46,29 @@ class ProductResource extends Resource
 
     public static function form(Form $form): Form
     {
+        $hydrate = function ($component, $state) {
+            if ($state instanceof \Money\Money) $state = (int) $state->getAmount();
+            $cents = (int) ($state ?? 0);
+            $mxn = $cents / 100;
+            $component->state(
+                fmod($mxn, 1) == 0
+                    ? number_format($mxn, 0, '.', ',')
+                    : number_format($mxn, 2, '.', ',')
+            );
+        };
+
+        $dehydrate = function ($state) {
+            $state = str_replace([',', '$', ' '], '', (string) $state);
+            return (int) round(((float) $state) * 100);
+        };
+
+        $toCents = fn ($v) => (int) round((float) str_replace([',', '$', ' '], '', (string) $v) * 100);
+
+        $toPesosStr = fn ($v) => number_format(
+            (float) str_replace([',', '$', ' '], '', (string) $v),
+            2, '.', ','
+        );
+
         return $form
             ->schema([
                 Grid::make(2)
@@ -82,40 +109,13 @@ class ProductResource extends Resource
                                             ->rows(4),
                                         Grid::make(2)
                                             ->schema([
-                                                TextInput::make('price')
-                                                    ->label('Precio')
-                                                    ->placeholder('1,000')
-                                                    ->mask(RawJs::make('$money($input, ",")'))
-                                                    ->stripCharacters([',', '$'])
-                                                    ->numeric()
-                                                    ->required()
-                                                    ->rules(['min:0'])
-                                                    ->afterStateHydrated(function ($component, $state) {
-                                                        // Si $state es un objeto Money, extraer su valor numérico
-                                                        if ($state instanceof \Money\Money) {
-                                                            $state = $state->getAmount(); // Obtiene el valor en centavos
-                                                        }
-                                                        // Convertir el valor de centavos a un formato legible (por ejemplo, 4444 a 44.44)
-                                                        $valueInPesos = $state / 100;
-                                                        // Verificar si el valor tiene decimales distintos de cero
-                                                        if (fmod($valueInPesos, 1) == 0) {
-                                                            // Si no tiene decimales, formatear sin los dos ceros
-                                                            $formattedPrice = number_format($valueInPesos, 0, '.', ',');
-                                                        } else {
-                                                            // Si tiene decimales, formatear con dos decimales
-                                                            $formattedPrice = number_format($valueInPesos, 2, '.', ',');
-                                                        }
-                                                        $component->state($formattedPrice);
-                                                    })
-                                                    ->dehydrateStateUsing(function ($state) {
-                                                        // Eliminar comas y simbolos antes de convertirlo a centavos
-                                                        $state = str_replace([',', '$'], '', $state);
-                                                        // Convertir el valor formateado de vuelta a centavos para la base de datos
-                                                        return (int) round($state * 100);
-                                                    }),
+                                                Toggle::make('buy_now_enabled')
+                                                    ->label('Activar "Comprar ahora"')
+                                                    ->default(false)
+                                                    ->helperText('Se mostrará junto al botón de "Agregar al carrito"'),
                                                 Toggle::make('published')
                                                     ->label('Publicar en tienda')
-                                                    ->inline(false)
+                                                    ->inline(true)
                                                     //->disabled(fn ($get) => $get('stock_status') === 'sold_out'),
                                             ])
                                     ]),
@@ -157,6 +157,71 @@ class ProductResource extends Resource
                                             ->numeric()
                                             ->minValue(1)
                                             ->default(5),
+                                    ]),
+                                Tab::make('Ofertas')
+                                    ->schema([
+                                        TextInput::make('price')
+                                            ->label('Precio (actual)')
+                                            ->inputMode('decimal') // ayuda al teclado móvil
+                                            ->mask(RawJs::make(<<<'JS'
+                                                $input => {
+                                                let v = $input.replace(/[^0-9.,]/g, '');
+                                                v = v.replace(/,/g, ',');         // permite comas de miles si quisieras post-procesar
+                                                // normaliza: solo un punto decimal
+                                                let parts = v.split('.');
+                                                if (parts.length > 2) parts = [parts[0], parts.slice(1).join('')];
+                                                if (parts[1]?.length > 2) parts[1] = parts[1].slice(0,2);
+                                                return parts.join('.');
+                                                }
+                                            JS))
+                                            ->afterStateHydrated($hydrate)
+                                            ->dehydrateStateUsing($dehydrate)
+                                            ->required(),
+
+                                        TextInput::make('compare_at_price')
+                                            ->label('Precio de referencia (tachado)')
+                                            ->inputMode('decimal')
+                                            ->mask(RawJs::make(<<<'JS'
+                                                $input => {
+                                                let v = $input.replace(/[^0-9.]/g, '');
+                                                let parts = v.split('.');
+                                                if (parts.length > 2) parts = [parts[0], parts.slice(1).join('')];
+                                                if (parts[1]?.length > 2) parts[1] = parts[1].slice(0,2);
+                                                return parts.join('.');
+                                                }
+                                            JS))
+                                            ->afterStateHydrated($hydrate)
+                                            ->dehydrateStateUsing($dehydrate)
+                                            ->reactive()
+                                            ->hint(function ($get) use ($toCents) {
+                                                $price   = $toCents($get('price'));
+                                                $compare = $toCents($get('compare_at_price'));
+                                                if ($price > 0 && $compare > $price) {
+                                                    $p = (int) round((1 - ($price / $compare)) * 100);
+                                                    return "Mostrará {$p}% de descuento";
+                                                }
+                                                return 'Dejar vacío si no hay oferta';
+                                            })
+                                            ->rule(function ($get) use ($toCents) {
+                                                $price = $toCents($get('price'));
+                                                return fn ($attr, $value, $fail) =>
+                                                    ($value !== null && $toCents($value) <= $price)
+                                                        ? $fail('Debe ser mayor que el Precio para mostrar oferta.')
+                                                        : null;
+                                            }),
+                                        TextInput::make('promo_label')
+                                            ->label('Etiqueta promocional (opcional)')
+                                            ->placeholder('REBAJA / LIQUIDACIÓN / NUEVO')
+                                            ->maxLength(50),
+                                        // Acción: copiar el price actual a compare_at_price
+                                        Actions::make([
+                                            Action::make('marcar_oferta')
+                                                ->label('Usar precio actual como "antes"')
+                                                ->action(function ($get, $set) use ($toPesosStr) {
+                                                    // price esta en PESOS (string) en el estado de form
+                                                    $set('compare_at_price', $toPesosStr($get('price')));
+                                                })
+                                            ]),
                                     ])
                             ]),
                 ])->columnSpan([
@@ -168,73 +233,73 @@ class ProductResource extends Resource
             ])->columns(12);
     }
 
-    public static function table(Table $table): Table
-    {
-        return $table
-            ->columns([
-                SpatieMediaLibraryImageColumn::make('Imagen')
-                    ->collection('featured')
-                    ->size(50)
-                    ->extraImgAttributes([
-                        'style' => 'border-radius: 0.5rem;'
-                    ]),
-                TextColumn::make('name')
-                    ->label('Nombre')
-                    ->sortable()
-                    ->searchable(),
-                TextColumn::make('price')
-                    ->label('Precio')
-                    ->searchable()
-                    ->sortable(),
-                TextColumn::make('total_product_stock')
-                    ->label('Inventario')
-                    ->searchable()
-                    ->sortable()
-                    ->formatStateUsing(function ($state, $record) {
-                        // Si el producto tiene variantes, suma el stock desde la tabla pivote
-                        if ($record->variants()->exists()) {
-                            return $record->variants()->sum('product_variants.total_variant_stock');
-                        }
-                        // Si no tiene variantes, muestra el valor manual
-                        return $state ?? 0;
-                    }),
-                TextColumn::make('variants_count')
-                    ->label('Variaciones')
-                    ->counts('variants')
-                    ->sortable(),
-                TextColumn::make('published')
-                    ->label('Estado')
-                    ->badge()
-                    ->sortable()
-                    ->formatStateUsing(fn (bool $state): string => $state ? 'Activo' : 'Inactivo')
-                    ->color(fn (bool $state): string => $state ? 'success' : 'danger'),
-            ])
-            ->filters([
-                //
-            ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
-            ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
-            ]);
-    }
+            public static function table(Table $table): Table
+            {
+                return $table
+                    ->columns([
+                        SpatieMediaLibraryImageColumn::make('Imagen')
+                            ->collection('featured')
+                            ->size(50)
+                            ->extraImgAttributes([
+                                'style' => 'border-radius: 0.5rem;'
+                            ]),
+                        TextColumn::make('name')
+                            ->label('Nombre')
+                            ->sortable()
+                            ->searchable(),
+                        TextColumn::make('price')
+                            ->label('Precio')
+                            ->searchable()
+                            ->sortable(),
+                        TextColumn::make('total_product_stock')
+                            ->label('Inventario')
+                            ->searchable()
+                            ->sortable()
+                            ->formatStateUsing(function ($state, $record) {
+                                // Si el producto tiene variantes, suma el stock desde la tabla pivote
+                                if ($record->variants()->exists()) {
+                                    return $record->variants()->sum('product_variants.total_variant_stock');
+                                }
+                                // Si no tiene variantes, muestra el valor manual
+                                return $state ?? 0;
+                            }),
+                        TextColumn::make('variants_count')
+                            ->label('Variaciones')
+                            ->counts('variants')
+                            ->sortable(),
+                        TextColumn::make('published')
+                            ->label('Estado')
+                            ->badge()
+                            ->sortable()
+                            ->formatStateUsing(fn (bool $state): string => $state ? 'Activo' : 'Inactivo')
+                            ->color(fn (bool $state): string => $state ? 'success' : 'danger'),
+                    ])
+                    ->filters([
+                        //
+                    ])
+                    ->actions([
+                        Tables\Actions\EditAction::make(),
+                    ])
+                    ->bulkActions([
+                        Tables\Actions\BulkActionGroup::make([
+                            Tables\Actions\DeleteBulkAction::make(),
+                        ]),
+                    ]);
+            }
 
-    public static function getRelations(): array
-    {
-        return [
-            VariantsRelationManager::class,
-        ];
-    }
+            public static function getRelations(): array
+            {
+                return [
+                    VariantsRelationManager::class,
+                ];
+            }
 
-    public static function getPages(): array
-    {
-        return [
-            'index' => Pages\ListProducts::route('/'),
-            'create' => Pages\CreateProduct::route('/create'),
-            'edit' => Pages\EditProduct::route('/{record}/edit'),
-        ];
-    }
-}
+            public static function getPages(): array
+            {
+                return [
+                    'index' => Pages\ListProducts::route('/'),
+                    'create' => Pages\CreateProduct::route('/create'),
+                    'edit' => Pages\EditProduct::route('/{record}/edit'),
+                ];
+            }
+        }

@@ -33,25 +33,21 @@ class ProductSelector extends Field
 
     public function getProducts(): array
     {
-        return Product::with(['media', 'variants']) // Asegúrate de cargar la relación
+        return Product::with(['media', 'variants'])
             ->whereHas('media')
             ->limit(100)
             ->get()
-            ->map(function (Product $product) {
-                $product->updateStockStatus();
-                
-                return [
-                    'id' => $product->id,
-                    'name' => $product->name,
-                    'image_url' => $product->getFirstMediaUrl('featured', 'sm_thumb'),
-                    'price' => FormatMoney::format($product->price),
-                    'total_stock' => $product->total_stock,
-                    'has_variants' => $product->has_variants,
-                    'variants_count' => $product->variants->count(),
-                    'stock_status' => $product->stock_status,
-                    'stock_status_class' => $this->getStockStatusClass($product->stock_status),
-                ];
-            })
+            ->map(fn(Product $p) => [
+                'id' => $p->id,
+                'name' => $p->name,
+                'image_url' => $p->getFirstMediaUrl('featured', 'sm_thumb'),
+                'price' => \App\Helpers\FormatMoney::format($p->price),
+                'total_stock' => $p->computed_total_stock,
+                'has_variants' => $p->has_variants,
+                'variants_count' => $p->variants->count(),
+                'stock_status' => $p->stock_status,
+                'stock_status_class' => $this->getStockStatusClass($p->stock_status),
+            ])
             ->toArray();
     }
 

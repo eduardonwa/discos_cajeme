@@ -66,7 +66,7 @@
               :product="$product"
               :href="route('product', $product)"
               variant="overlay"
-              :badge="$product->discount_percentage ?? 'REBAJA'"
+              :badge="$product->promo_label ?? 'REBAJA'"
             />
           </div>
         @else
