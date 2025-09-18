@@ -2,146 +2,56 @@
 
 namespace App\Livewire;
 
+use App\Actions\Webshop\AddProductToCart;
 use App\Models\Cart;
 use App\Models\Coupon;
-use Livewire\Component;
-use Livewire\Attributes\Computed;
 use Illuminate\Support\Facades\Auth;
-use App\Actions\Webshop\AddProductToCart;
 use Laravel\Jetstream\InteractsWithBanner;
+use Livewire\Attributes\Computed;
+use Livewire\Component;
+use Money\Money;
 
 class Product extends Component
 {
     use InteractsWithBanner;
 
+    // ─────────────────────────────────────────────────────────────
+    // Estado público
+    // ─────────────────────────────────────────────────────────────
     public $productId;
     public $variant;
-    public $couponCode;
-    public $discountApplied = false;
-    public $originalPrice;
-    public $finalPrice;
-    public $discountAmount = 0;
-  
+    public ?string $couponCode = null;
+    public bool $discountApplied = false;
+    public int $discountAmount = 0;
+    public int $quantity = 1;
+
     public $rules = [
-        'variant' => ['nullable', 'exists:App\Models\ProductVariant,id'],
-        'couponCode' => ['nullable', 'string', 'max:32'],
+        'variant'       => ['nullable', 'exists:App\Models\ProductVariant,id'],
+        'couponCode'    => ['nullable', 'string', 'max:32'],
+        'quantity'      => ['required', 'integer', 'min:1'],
     ];
 
-    protected function messages() 
+    protected $listeners = [
+        'couponApplied'     => 'handleCouponApplied',
+        'productAddedToCart'=> 'updateStockInfo',
+    ];
+
+    protected function messages()
     {
         return [
             'variant.exists' => 'La variante seleccionada no existe o es inválida.',
         ];
     }
 
-    protected $listeners = [
-        'couponApplied' => 'handleCouponApplied',
-        'productAddedToCart' => 'updateStockInfo'
-    ];
-
     public function mount()
     {
-        // obtiene el ID de la primera variante del producto
+        // Selecciona la primera variante disponible del producto
         $this->variant = $this->product->variants()->value('id');
-        $this->originalPrice = $this->product->price->getAmount();
-        $this->finalPrice = $this->originalPrice;
     }
 
-    public function applyCoupon()
-    {
-        $this->validate(['couponCode' => 'required|string']);
-
-        $coupon = Coupon::where('code', $this->couponCode)
-            ->whereHas('products', fn($q) => $q->where('id', $this->productId))
-            ->valid()
-            ->first();
-
-        if ($coupon) {
-            $this->finalPrice = $coupon->applyDiscount($this->originalPrice);
-            $this->discountApplied = true;
-            $this->dispatch('couponApplied', code: $this->couponCode);
-        } else {
-            $this->reset(['couponCode', 'discountApplied']);
-            $this->finalPrice = $this->originalPrice;
-        }
-    }
-
-    public function handleCouponApplied($code)
-    {
-        $this->couponCode = $code;
-        $this->discountApplied = true;
-
-        $coupon = Coupon::where('code', $this->couponCode)
-            ->whereHas('products', fn($q) => $q->where('products.id', $this->productId))
-            ->valid()
-            ->first();
-
-        if ($coupon) {
-            $this->finalPrice = $coupon->applyDiscount($this->originalPrice);
-        }
-    }
-
-    public function addToCart(AddProductToCart $cart)
-    {
-        $this->validate();
-        
-        try {
-            $cart->add(
-                productId: $this->productId,
-                variantId: $this->variant,
-                quantity: 1,
-                couponCode: $this->discountApplied ? $this->couponCode : null
-            );
-
-            $this->dispatch('$refresh')->to(NavigationCart::class);
-            $this->banner('Producto agregado al carrito');
-            $this->dispatch('productAddedToCart'); // Disparar evento de actualización
-            
-        } catch (\Exception $e) {
-            $this->addError('variant', $e->getMessage());
-        }
-    }
-
-    #[Computed]
-    public function selectedVariant()
-    {
-        return $this->variant
-            ? $this->product->variants->firstWhere('id', $this->variant)
-            : null;
-    }
-
-    #[Computed]
-    public function availableStock()
-    {
-        $cart = Auth::user()?->cart ?? Cart::where('session_id', session()->getId())->first();
-        
-        if ($this->variant) {
-            $variant = $this->selectedVariant();
-            if (!$variant) return 0;
-            
-            $inCart = $cart ? $cart->items()
-                ->where('product_variant_id', $this->variant)
-                ->sum('quantity') : 0;
-                
-            return max(0, $variant->total_variant_stock - $inCart);
-        }
-        
-        $inCart = $cart ? $cart->items()
-            ->where('product_id', $this->productId)
-            ->whereNull('product_variant_id')
-            ->sum('quantity') : 0;
-            
-        return max(0, $this->product->total_product_stock - $inCart);
-    }
-
-    #[Computed]
-    public function maxQuantity()
-    {
-        return $this->selectedVariant
-            ? $this->selectedVariant->total_variant_stock
-            : $this->product->total_product_stock;
-    }
-
+    // ─────────────────────────────────────────────────────────────
+    // Producto (cargado con relaciones).
+    // ─────────────────────────────────────────────────────────────
     #[Computed]
     public function product()
     {
@@ -151,32 +61,186 @@ class Product extends Component
         ])->findOrFail($this->productId);
     }
 
-    #[Computed] 
+    // ─────────────────────────────────────────────────────────────
+    // Pricing & Discounts (oferta + cálculo de precios)
+    // ─────────────────────────────────────────────────────────────
+    #[Computed]
+    public function hasDiscount(): bool
+    {
+        return $this->product->compare_at_price
+            && $this->product->compare_at_price->greaterThan($this->product->price);
+    }
+
+    // Precio “original” a mostrar tachado (si hay oferta)
+    #[Computed]
+    public function originalPrice(): Money
+    {
+        // Si hay oferta, compare; si no, price (asume 'price' nunca es null)
+        return $this->hasDiscount ? $this->product->compare_at_price : $this->product->price;
+    }
+
+    // Base sobre la que se aplica el cupón (precio vigente)
+    #[Computed]
+    public function basePrice(): Money
+    {
+        return $this->product->price;
+    }
+
+    // Precio final mostrado (oferta + cupón si aplica)
+    #[Computed]
+    public function finalPrice(): \Money\Money
+    {
+        $price = $this->product->price; // Money (no null)
+
+        if ($this->discountApplied && $this->couponPercent()) {
+            $off = (int) round($price->getAmount() * ($this->couponPercent() / 100));
+            $price = new \Money\Money($price->getAmount() - $off, $price->getCurrency());
+        }
+
+        return $price;
+    }
+
+    // ─────────────────────────────────────────────────────────────
+    // Cupones
+    // ─────────────────────────────────────────────────────────────
+    protected function couponPercent(): ?int
+    {
+        if (!$this->couponCode) return null;
+
+        $coupon = Coupon::where('code', $this->couponCode)
+            ->whereHas('products', fn ($q) => $q->where('products.id', $this->productId))
+            ->valid()
+            ->first();
+
+        return $coupon?->percent ?? null; // ajusta al campo real del modelo
+    }
+
+    public function applyCoupon()
+    {
+        $this->validate(['couponCode' => 'required|string']);
+
+        $percent = $this->couponPercent();
+
+        if ($percent) {
+            $this->discountApplied = true;
+            $this->dispatch('couponApplied', code: $this->couponCode);
+        } else {
+            $this->reset(['couponCode', 'discountApplied']);
+        }
+    }
+
+    public function handleCouponApplied($code)
+    {
+        $this->couponCode = $code;
+        $this->discountApplied = (bool) $this->couponPercent();
+    }
+
+    // ─────────────────────────────────────────────────────────────
+    // Stock / Variantes
+    // ─────────────────────────────────────────────────────────────
+    #[Computed]
+    public function selectedVariant()
+    {
+        return $this->variant
+            ? $this->product->variants->firstWhere('id', $this->variant)
+            : null;
+    }
+
+    #[Computed]
+    public function availableStock(): int
+    {
+        $cart = Auth::user()?->cart
+            ?? Cart::where('session_id', session()->getId())->first();
+
+        if ($this->variant) {
+            $variant = $this->selectedVariant();
+            if (! $variant) return 0;
+
+            $inCart = $cart?->items()
+                ->where('product_id', $this->productId)
+                ->where('product_variant_id', $this->variant)
+                ->sum('quantity') ?? 0;
+
+            return max(0, (int)$variant->total_variant_stock - (int)$inCart);
+        }
+
+        $inCart = $cart?->items()
+            ->where('product_id', $this->productId)
+            ->whereNull('product_variant_id')
+            ->sum('quantity') ?? 0;
+
+        return max(0, (int)$this->product->computed_total_stock - (int)$inCart);
+    }
+
+    #[Computed]
+    public function maxQuantity(): int
+    {
+        return $this->availableStock;
+    }
+
+    public function updatedVariant()
+    {
+        $this->quantity = 1;
+    }
+
+    // ─────────────────────────────────────────────────────────────
+    // Media
+    // ─────────────────────────────────────────────────────────────
+    #[Computed]
     public function allProductImages()
     {
         $images = [];
-        
-        // 1. colección 'images'
+
         foreach ($this->product->getMedia('images') as $media) {
             $images[] = [
-                'original' => $media->getUrl(),
-                'thumbnail' => $media->getUrl('sm_thumb')
+                'original'  => $media->getUrl(),
+                'thumbnail' => $media->getUrl('sm_thumb'),
             ];
         }
-        
-        // 2. colección 'product-variant-image'
+
         foreach ($this->product->variants as $variant) {
             if ($media = $variant->getFirstMedia('product-variant-image')) {
                 $images[] = [
-                    'original' => $media->getUrl(),
-                    'thumbnail' => $media->getUrl('sm_thumb')
+                    'original'  => $media->getUrl(),
+                    'thumbnail' => $media->getUrl('sm_thumb'),
                 ];
             }
         }
-        
+
         return $images;
     }
 
+    // ─────────────────────────────────────────────────────────────
+    // Acciones
+    // ─────────────────────────────────────────────────────────────
+    public function addToCart(AddProductToCart $cart)
+    {
+        $this->validate();
+
+        if ($this->quantity > $this->availableStock) {
+            $this->addError('quantity', 'No hay suficientes unidades disponibles.');
+            return;
+        }
+
+        try {
+            $cart->add(
+                quantity:   $this->quantity,
+                productId:  $this->productId,
+                variantId:  $this->variant,
+                couponCode: $this->discountApplied ? $this->couponCode : null
+            );
+
+            $this->dispatch('$refresh')->to(NavigationCart::class);
+            $this->banner('Producto agregado al carrito');
+            $this->dispatch('productAddedToCart');
+        } catch (\Exception $e) {
+            $this->addError('variant', $e->getMessage());
+        }
+    }
+
+    // ─────────────────────────────────────────────────────────────
+    // Render
+    // ─────────────────────────────────────────────────────────────
     public function render()
     {
         return view('livewire.product');

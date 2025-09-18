@@ -28,9 +28,9 @@ class HandleCheckoutSessionCompleted
                 ]);
 
                 \Log::debug('Stripe Session', [
-                    'total' => $session->amount_total / 100,
-                    'discount' => $session->total_details->amount_discount / 100,
-                    'metadata' => $session->metadata->toArray()
+                    'total'     => $session->amount_total / 100,
+                    'discount'  => $session->total_details->amount_discount / 100,
+                    'metadata'  => $session->metadata->toArray()
                 ]);
 
                 $totalTax = 0;
@@ -64,8 +64,8 @@ class HandleCheckoutSessionCompleted
                     $quantity = $lineItem->quantity;
 
                     // Manejar producto con o sin variantes
-                    $variantId = $product->metadata->product_variant_id ?? null;
                     $productId = $product->metadata->product_id ?? null;
+                    $variantId = $product->metadata->product_variant_id ?? null;
 
                     if ($variantId) {
                         $variant = ProductVariant::findOrFail($variantId);
@@ -106,11 +106,10 @@ class HandleCheckoutSessionCompleted
 
                 // Crear una nueva orden con los productos
                 $lineItems = Cashier::stripe()->checkout->sessions->allLineItems($session->id);
-                
-                \Log::debug('LineItems obtenidos de Stripe', ['count' => count($lineItems->all())]);
+                // \Log::debug('LineItems obtenidos de Stripe', ['count' => count($lineItems->all())]);
 
                 $lineItems = Cashier::stripe()->checkout->sessions->allLineItems($session->id);
-                \Log::debug('LineItems obtenidos de Stripe', ['count' => count($lineItems->all())]);
+                // \Log::debug('LineItems obtenidos de Stripe', ['count' => count($lineItems->all())]);
                 
                 $orderItems = collect($lineItems->all())->map(function (LineItem $line) {
                     try {
