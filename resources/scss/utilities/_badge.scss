@@ -3,14 +3,18 @@
 .badge {
     display: inline-flex;
     align-items: center;
-    gap: .35em;
     padding: $size-2;
-    border-radius: $border-radius-1;
+    border-radius: $badge-border-radius;
     line-height: 1;
-    font-size: 14px;
-    font-weight: 500;
+    font-size: $badge-font-size;
+    font-weight: $badge-font-weight;
     white-space: nowrap;
-    width: fit-content;
+    width: $badge-width;
 
     svg, img { width: 1em; height: 1em; }
+
+    &[data-type="product-page"] {
+        background: $color-accent-700;
+        color: $color-neutral-100;
+    }
 }
