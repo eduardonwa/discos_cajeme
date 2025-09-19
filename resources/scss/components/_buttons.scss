@@ -89,4 +89,9 @@
   &[data-type="buy-now"] {
     text-transform: none;
   }
+
+  &[data-type="coupon"] {
+    background: $color-primary-600;
+    color: $color-primary-100;
+  }
 }

@@ -1,10 +1,16 @@
-<div class="container" data-type="wide">
+<div class="product | container" data-type="wide">
     <header class="product__header">
-        <span>{{ $this->product->promo_label }}</span>
-        <h1 class="ff-semibold">{{ $this->product->name }}</h1>
+        @if ($this->product->promo_label)
+            <span class="badge" data-type="product-page">{{ $this->product->promo_label }}</span>
+        @endif
+        <h2 class="name | ff-semibold">{{ $this->product->name }}</h2>
+        <div class="reviews-summary" aria-live="polite">
+            <span class="reviews__stars" aria-hidden="true">★★★★★</span>
+            <span class="sr-only">Calificación promedio 4.7 de 5 basada en 128 reseñas</span>
+        </div>
     </header>
 
-    <article class="product__media">
+    <section class="product__media">
         <img class="mx-auto" src="{{ $this->product->getFirstMediaUrl('featured', 'lg_thumb') }}" alt="Featured Image">
         
         <div class="image-slider">
@@ -30,9 +36,9 @@
                 @endforeach
             </div>
         </div>
-    </article>
+    </section>
 
-    <article class="product__info">
+    <section class="product__info">
         {{-- precio --}}
         <div class="price">
             @if ($discountApplied || $this->hasDiscount)
@@ -46,32 +52,8 @@
                 <span class="price__final">{{ $this->finalPrice }}</span>
             @endif
         </div>
-        
-        {{-- cantidad y stock --}}
-        <div class="quantity">
-            <label for="qty">Cantidad</label>
-            <input
-                id="qty"
-                type="number"
-                min="1"
-                max="{{ $this->maxQuantity }}"
-                wire:model.lazy="quantity"
-                @if($this->availableStock < 1) disabled @endif
-            >
-            <small class="stock {{ $this->availableStock > 0 ? 'text-success' : 'text-error' }}">
-                @if($this->availableStock > 0)
-                    {{ $this->availableStock }} disponibles
-                    @if($this->availableStock <= $this->product->low_stock_threshold)
-                        (¡Últimas unidades!)
-                    @endif
-                @else
-                    Agotado
-                @endif
-            </small>
-        </div>
 
-        {{-- agregar al carrito --}}
-        <div class="action">
+        <div class="variants">
             @if ($this->product->variants->isNotEmpty())
                 <select
                     wire:model.live="variant"
@@ -97,11 +79,39 @@
             @endif
             
             @error('variant')
-                <div class="mt-2 text-red-600">
+                <div class="text-error">
                     {{ $message }}
                 </div>
             @enderror
+        </div>
+        
+        {{-- cantidad y stock --}}
+        <div class="quantity">
+            <div class="quantity__amount">
+                <label for="qty">Cantidad</label>
+                <small class="stock {{ $this->availableStock > 0 ? 'text-success' : 'text-error' }}">
+                    @if($this->availableStock > 0)
+                        {{ $this->availableStock }} disponibles
+                        @if($this->availableStock <= $this->product->low_stock_threshold)
+                            (¡Últimas unidades!)
+                        @endif
+                    @else
+                        Agotado
+                    @endif
+                </small>
+            </div>
+            <input
+                id="qty"
+                type="number"
+                min="1"
+                max="{{ $this->maxQuantity }}"
+                wire:model.lazy="quantity"
+                @if($this->availableStock < 1) disabled @endif
+            >
+        </div>
 
+        {{-- agregar al carrito --}}
+        <div class="action">
             <button
                 class="button"
                 data-type="cart"
@@ -121,50 +131,46 @@
         <div class="details" aria-label="Detalles del producto">
             <details open>
                 <summary>Detalles</summary>
-                <div>
-                    <ul class="no-list-style">
-                        <li>Material: 100& algodón</li>
-                        <li>Hecho en México</li>
-                    </ul>
+                <div class="content">
+                    <p>Material: 100% algodón. Hecho en México</p>
                 </div>
             </details>
 
             <details>
                 <summary>Envío y manipulación</summary>
-                <div>
+                <div class="content">
                     <p>Envío 2-5 días hábiles. Cambios y devoluciones en 30 días.</p>
                 </div>
             </details>
 
             <details>
                 <summary>Descripción</summary>
-                <div>
+                <div class="content">
                     <p>{!! nl2br(e($this->product->description)) !!}</p>
                 </div>
             </details>
         </div>
-    </article>
+    </section>
 
-    <article class="product__related-products"></article>
+    <section class="product__related-products"></section>
     
-    <article class="product__testimonials">
-        <h2>La confianza también se viste</h2>
+    <section class="product__reviews">
+        <h2 class="header">La confianza también se viste</h2>
 
-        <div>
-            <div>
-                <div>estrellas</div>
-                    <p>Lenina Crowne</p>
-                    <p>Me encanta cuando todo es simple. Si se ve bien y está de moda, lo quiero ahora.</p>
-                </div>
-            </div>
-            
-            <div>
-                <div>estrellas</div>
-                <div>
-                    <p>Thomas</p>
-                    <p>El orden comienza en cómo vestimos. Cada prenda tiene su función.</p>
-                </div>
-            </div>
+        <div class="review">
+            <p class="stars">★★★★★</p>
+            <p class="author">Lenina Crowne</p>
+            <p class="text">
+                Me encanta cuando todo es simple. Si se ve bien y está de moda, lo quiero ahora.
+            </p>
         </div>
-    </article>
+
+        <div class="review">
+            <p class="stars">★★★★☆</p>
+            <p class="author">Thomas</p>
+            <p class="text">
+                El orden comienza en cómo vestimos. Cada prenda tiene su función.
+            </p>
+        </div>
+    </section>
 </div>
