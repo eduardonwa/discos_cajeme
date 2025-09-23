@@ -112,7 +112,7 @@
     <!-- Responsive Navigation Menu -->
     <div x-cloak :class="{ 'is-block': $store.ui.navOpen, 'is-hidden': !$store.ui.navOpen }">
         <!-- Responsive Settings Options -->
-        <div class="mobile-menu" @keydown.escape.window="$store.ui.navOpen=false">
+        <div class="mobile-menu" x-trap.noscroll="$store.ui.navOpen" @keydown.escape.window="$store.ui.navOpen=false">
             <header class="mobile-menu__top">
                 <button
                     type="button"

@@ -38,45 +38,40 @@
         </div>
     </section>
 
-    <section class="product__info">
-        {{-- precio --}}
-        <div class="price">
-            @if ($discountApplied || $this->hasDiscount)
-                @if ($this->originalPrice->greaterThan($this->finalPrice))
-                    <span class="price__original">{{ $this->originalPrice }}</span>
-                    <span class="price__final">{{ $this->finalPrice }}</span>
-                @else
-                    <span class="price__final">{{ $this->finalPrice }}</span>
-                @endif
-            @else
-                <span class="price__final">{{ $this->finalPrice }}</span>
-            @endif
-        </div>
+    <hr line-type="base">
 
+    <section class="product__info">
         <div class="variants">
             @if ($this->product->variants->isNotEmpty())
-                <select
-                    wire:model.live="variant"
-                    class="block w-full rounded-md border-0 py-1.5 pr-10 text-gray-800"
-                >
-                    @foreach ($this->product->variants as $variant)
-                        <option value="{{ $variant->id }}"
-                            @if($variant->total_variant_stock == 0) 
-                                disabled
-                                title="Producto agotado"
-                                class="text-red-500 line-through"
-                            @endif
-                            @unless($variant->is_active) style="display: none;" @endunless
+                @foreach ($this->product->variants as $v)
+                    @php
+                        $isDisabled = $v->total_variant_stock == 0 || ! $v->is_active;
+                        $labelTxt = $v->attributes
+                            ->map(fn($av) => ($av->attribute->key ?? '').': '.$av->value)
+                            ->implode('<br>');
+                    @endphp
+
+                    <div class="variant">
+                        <input
+                            type="radio"
+                            id="variant-{{ $v->id }}"
+                            name="variant"
+                            value="{{ $v->id }}"
+                            wire:model.live="variant"
+                            @disabled($isDisabled)
+                            class="variant__input"
                         >
-                            @foreach ($variant->attributes as $attributeVariant)
-                                {{ $attributeVariant->attribute->key . ':' ?? '' }} {{ $attributeVariant->value }}
-                                @if (!$loop->last) / @endif
-                            @endforeach
-                            @if($variant->total_variant_stock == 0) (Agotado) @endif
-                        </option>
-                    @endforeach
-                </select>
+                            <label for="variant-{{ $v->id }}" class="variant__label" title="{{ $isDisabled ? 'Producto agotado' : '' }}">
+                                {!! $labelTxt !!} @if($v->total_variant_stock==0) (Agotado) @endif
+                            </label>
+                    </div>
+                @endforeach
+
+                @error('variant')
+                    <div class="text-error">{{ $message }}</div>
+                @enderror
             @endif
+
             
             @error('variant')
                 <div class="text-error">
@@ -84,11 +79,31 @@
                 </div>
             @enderror
         </div>
+
+        <hr line-type="inner">
         
-        {{-- cantidad y stock --}}
-        <div class="quantity">
-            <div class="quantity__amount">
-                <label for="qty">Cantidad</label>
+        <div class="main-info">
+            <div class="price">
+                @if ($discountApplied || $this->hasDiscount)
+                    @if ($this->originalPrice->greaterThan($this->finalPrice))
+                        <span class="price__original">{{ $this->originalPrice }}</span>
+                        <span class="price__final">{{ $this->finalPrice }}</span>
+                    @else
+                        <span class="price__final">{{ $this->finalPrice }}</span>
+                    @endif
+                @else
+                    <span class="price__final">{{ $this->finalPrice }}</span>
+                @endif
+            </div>
+    
+            {{-- cantidad --}}
+            <div
+                class="quantity"
+                x-data="{
+                    open:false,
+                    choose(n){ $wire.set('quantity', n); this.open=false; }
+                }"
+            >
                 <small class="stock {{ $this->availableStock > 0 ? 'text-success' : 'text-error' }}">
                     @if($this->availableStock > 0)
                         {{ $this->availableStock }} disponibles
@@ -99,58 +114,121 @@
                         Agotado
                     @endif
                 </small>
+
+                <!-- Botón que parece select -->
+                <button type="button" @click="open=true" class="quantity-trigger">
+                    <span>Cantidad: {{ $this->quantity }}</span>
+                    <svg width="16" height="16" viewBox="0 0 20 20"><path d="M5 7l5 6 5-6"/></svg>
+                </button>
+
+                <!-- Modal -->
+                <div
+                    class="quantity-modal"
+                    aria-modal="true"
+                    role="dialog"
+                    x-show="open"
+                    x-cloak
+                    x-transition
+                    @keydown.escape.window="open=false"
+                >
+                    <div class="quantity-modal__backdrop" @click="open=false"></div>
+                    <div class="quantity-modal__content" x-trap.noscroll="open" @click.stop>
+                        <div class="controls">
+                            <h2 class="ff-semibold fs-500">Cantidad:</h2>
+                            <x-icon @click="open=false" aria-label="Cerrar">
+                                <x-ui.icons.close />
+                            </x-icon>
+                        </div>
+                        <ul class="list-options">
+                            @for ($i = 1; $i <= $this->maxQuantity; $i++)
+                            <li>
+                                <button
+                                    type="button" @click="choose({{ $i }})"
+                                    class="list-options__button {{ $this->quantity === $i ? 'list-options__button--checked' : '' }}"
+                                >
+                                    {{ $i }}
+                                </button>
+                            </li>
+                            @endfor
+                        </ul>
+                    </div>
+                </div>
             </div>
-            <input
-                id="qty"
-                type="number"
-                min="1"
-                max="{{ $this->maxQuantity }}"
-                wire:model.lazy="quantity"
-                @if($this->availableStock < 1) disabled @endif
-            >
+    
+            {{-- agregar al carrito --}}
+            <div class="action">
+                <button
+                    class="button"
+                    data-type="cart"
+                    wire:click="addToCart"
+                    @disabled($this->availableStock < 1)
+                >
+                    {{ $this->availableStock > 0 ? 'Añadir al carrito' : 'AGOTADO' }}
+                </button>
+            </div>
         </div>
 
-        {{-- agregar al carrito --}}
-        <div class="action">
-            <button
-                class="button"
-                data-type="cart"
-                wire:click="addToCart"
-                @disabled($this->availableStock < 1)
-            >
-                {{ $this->availableStock > 0 ? 'Añadir al carrito' : 'AGOTADO' }}
-            </button>
-        </div>
+        <hr line-type="inner">
 
         {{-- cupones --}}
-        @unless($this->product->total_product_stock < 0)
+        {{-- @unless($this->product->total_product_stock < 0)
             <livewire:coupon-form context="product" :targetId="$productId"/>
-        @endunless
+        @endunless --}}
 
-        {{-- detalles, envio y descripcion --}}
-        <div class="details" aria-label="Detalles del producto">
-            <details open>
-                <summary>Detalles</summary>
-                <div class="content">
+        {{-- detalles del producto --}}
+        <div
+            class="details"
+            x-cloak
+            x-data="{ tab: 'details' }"
+            aria-label="Detalles del producto"
+        >
+            {{-- tab headers --}}
+            <div class="tabs">
+                <button
+                    @click="tab = 'details'"
+                    class="button"
+                    data-type="tab"
+                    :class="tab === 'details' ? 'tabs--active' : ''"
+                >
+                    Detalles
+                </button>
+
+                <button
+                    @click="tab = 'envio'"
+                    class="button"
+                    data-type="tab"
+                    :class="tab === 'envio' ? 'tabs--active' : ''"
+                >
+                    Envío y manipulación
+                </button>
+
+                <button
+                    @click="tab = 'description'"
+                    class="button"
+                    data-type="tab"
+                    :class="tab === 'description' ? 'tabs--active' : ''"
+                >
+                    Descripción
+                </button>
+            </div>
+            {{-- tab content --}}
+            <div class="content">
+                <div class="content__section" x-show="tab === 'details'">
                     <p>Material: 100% algodón. Hecho en México</p>
                 </div>
-            </details>
-
-            <details>
-                <summary>Envío y manipulación</summary>
-                <div class="content">
+    
+                <div class="content__section" x-show="tab === 'envio'">
                     <p>Envío 2-5 días hábiles. Cambios y devoluciones en 30 días.</p>
                 </div>
-            </details>
-
-            <details>
-                <summary>Descripción</summary>
-                <div class="content">
+    
+                <div class="content__section" x-show="tab === 'description'">
                     <p>{!! nl2br(e($this->product->description)) !!}</p>
                 </div>
-            </details>
+            </div>
         </div>
     </section>
+
+    <hr line-type="base">
 
     <section class="product__related-products"></section>
     
