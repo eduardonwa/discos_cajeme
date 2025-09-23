@@ -94,4 +94,12 @@
     background: $color-primary-600;
     color: $color-primary-100;
   }
+
+  &[data-type="tab"] {
+    text-transform: none;
+    background: transparent;
+    border-radius: $border-radius-1;
+    padding: $size-2;
+    border: 1px solid $color-secondary-900;
+  }
 }
