@@ -36,9 +36,9 @@
                 @endforeach
             </div>
         </div>
-    </section>
 
-    <hr line-type="base">
+        <hr line-type="base">
+    </section>
 
     <section class="product__info">
         <div class="variants">
@@ -79,101 +79,19 @@
                 </div>
             @enderror
         </div>
-
-        <hr line-type="inner">
         
-        <div class="main-info">
-            <div class="price">
-                @if ($discountApplied || $this->hasDiscount)
-                    @if ($this->originalPrice->greaterThan($this->finalPrice))
-                        <span class="price__original">{{ $this->originalPrice }}</span>
-                        <span class="price__final">{{ $this->finalPrice }}</span>
-                    @else
-                        <span class="price__final">{{ $this->finalPrice }}</span>
-                    @endif
+        <div class="price">
+            @if ($discountApplied || $this->hasDiscount)
+                @if ($this->originalPrice->greaterThan($this->finalPrice))
+                    <span class="price__original">{{ $this->originalPrice }}</span>
+                    <span class="price__final">{{ $this->finalPrice }}</span>
                 @else
                     <span class="price__final">{{ $this->finalPrice }}</span>
                 @endif
-            </div>
-    
-            {{-- cantidad --}}
-            <div
-                class="quantity"
-                x-data="{
-                    open:false,
-                    choose(n){ $wire.set('quantity', n); this.open=false; }
-                }"
-            >
-                <small class="stock {{ $this->availableStock > 0 ? 'text-success' : 'text-error' }}">
-                    @if($this->availableStock > 0)
-                        {{ $this->availableStock }} disponibles
-                        @if($this->availableStock <= $this->product->low_stock_threshold)
-                            (¡Últimas unidades!)
-                        @endif
-                    @else
-                        Agotado
-                    @endif
-                </small>
-
-                <!-- Botón que parece select -->
-                <button type="button" @click="open=true" class="quantity-trigger">
-                    <span>Cantidad: {{ $this->quantity }}</span>
-                    <svg width="16" height="16" viewBox="0 0 20 20"><path d="M5 7l5 6 5-6"/></svg>
-                </button>
-
-                <!-- Modal -->
-                <div
-                    class="quantity-modal"
-                    aria-modal="true"
-                    role="dialog"
-                    x-show="open"
-                    x-cloak
-                    x-transition
-                    @keydown.escape.window="open=false"
-                >
-                    <div class="quantity-modal__backdrop" @click="open=false"></div>
-                    <div class="quantity-modal__content" x-trap.noscroll="open" @click.stop>
-                        <div class="controls">
-                            <h2 class="ff-semibold fs-500">Cantidad:</h2>
-                            <x-icon @click="open=false" aria-label="Cerrar">
-                                <x-ui.icons.close />
-                            </x-icon>
-                        </div>
-                        <ul class="list-options">
-                            @for ($i = 1; $i <= $this->maxQuantity; $i++)
-                            <li>
-                                <button
-                                    type="button" @click="choose({{ $i }})"
-                                    class="list-options__button {{ $this->quantity === $i ? 'list-options__button--checked' : '' }}"
-                                >
-                                    {{ $i }}
-                                </button>
-                            </li>
-                            @endfor
-                        </ul>
-                    </div>
-                </div>
-            </div>
-    
-            {{-- agregar al carrito --}}
-            <div class="action">
-                <button
-                    class="button"
-                    data-type="cart"
-                    wire:click="addToCart"
-                    @disabled($this->availableStock < 1)
-                >
-                    {{ $this->availableStock > 0 ? 'Añadir al carrito' : 'AGOTADO' }}
-                </button>
-            </div>
+            @else
+                <span class="price__final">{{ $this->finalPrice }}</span>
+            @endif
         </div>
-
-        <hr line-type="inner">
-
-        {{-- cupones --}}
-        {{-- @unless($this->product->total_product_stock < 0)
-            <livewire:coupon-form context="product" :targetId="$productId"/>
-        @endunless --}}
 
         {{-- detalles del producto --}}
         <div
@@ -226,7 +144,44 @@
                 </div>
             </div>
         </div>
+
+        {{-- cupones --}}
+        {{-- @unless($this->product->total_product_stock < 0)
+            <livewire:coupon-form context="product" :targetId="$productId"/>
+        @endunless --}}
+
+        <hr line-type="inner">
     </section>
+    
+    <aside class="product__action" aria-labelledby="purchase-heading">
+        <h2 id="purchase-heading" class="sr-only">Comprar {{ $this->product->name }}</h2>
+
+        {{-- disponibilidad --}}
+        <p class="stock {{ $this->availableStock > 0 ? 'text-success' : 'text-error' }}">
+            @if($this->availableStock>0)
+                {{ $this->availableStock }} disponibles
+                @if($this->availableStock <= $this->product->low_stock_threshold) (¡Últimas unidades!) @endif
+            @else Agotado @endif
+        </p>
+
+        {{-- cantidad --}}
+        @include('components.ui.product-quantity-picker', [
+            'quantity' => $this->quantity,
+            'max'      => $this->maxQuantity,
+            'prop'     => 'quantity',
+            'disabled' => $this->availableStock < 1,
+            'label'    => 'Cantidad',
+        ])
+
+        <button
+            class="button"
+            data-type="cart"
+            wire:click="addToCart"
+            @disabled($this->availableStock < 1)"
+        >
+            {{ $this->availableStock > 0 ? 'Añadir al carrito' : 'AGOTADO' }}
+        </button>
+    </aside>
 
     <hr line-type="base">
 
