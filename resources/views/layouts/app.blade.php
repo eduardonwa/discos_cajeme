@@ -43,7 +43,7 @@
             <x-ui.footer />
         </div>
         
-        <x-toaster-hub/>
+        <x-toaster-hub />
         
         @stack('modals')
         @livewireScripts

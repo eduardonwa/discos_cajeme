@@ -2,6 +2,8 @@
   role="status"
   id="toaster"
   x-data="toasterHub(@js($toasts), @js($config))"
+  x-show="toasts.length > 0"
+  :class="{ 'is-empty': !toasts.length }"
   data-align="{{ $alignment->value }}"
   data-pos="{{ $position->value }}"
 >
@@ -9,7 +11,6 @@
     <div
       x-show="toast.isVisible"
       x-init="$nextTick(() => toast.show($el))"
-
       x-transition:enter="t-enter"
       @if($alignment->is('bottom'))
         x-transition:enter-start="t-enter-start--bottom"
