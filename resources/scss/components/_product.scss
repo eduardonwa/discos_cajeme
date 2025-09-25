@@ -34,13 +34,15 @@
     }
 
     &__info {
+        min-width: 0;
         grid-area: info;
         margin-block-start: $size-8;
         
         .variants {
             display: flex;
-            overflow-x: auto;
             gap: $size-4;
+            overflow-x: auto;
+            overflow-y: hidden;
             max-width: 100%;
             min-width: 0;
             scrollbar-width: none;
@@ -50,10 +52,7 @@
                display: none;
             }
 
-            .variant {
-                flex: 0 0 auto;
-                min-width: 0;
-
+            .variant {                
                 &__input {
                     position: absolute;
                     opacity: 0;
@@ -62,7 +61,6 @@
 
                 &__label {
                     white-space: normal;
-                    max-width: 100%;
                     display: flex;
                     padding: $size-4;
                     border: 1px solid $color-primary-400;
@@ -72,7 +70,8 @@
                 }
 
                 &__input:checked + .variant__label {
-                    border: 2px solid $color-primary-800;
+                    border-width: 2px;
+                    border-color: $color-primary-800;
                     background: $color-primary-100;
                     color: $color-primary-900;
                     box-shadow: 0 0 0 2px rgba($color-primary-400, .15);
@@ -256,10 +255,6 @@
                 font-family: $font-family-semibold;
                 color: $color-neutral-900;
             }
-
-            .text {
-
-            }
         }
     }
 
@@ -371,7 +366,7 @@
     }
 
     @include mq(large) {
-        gap: 0;
+        gap: $size-2 $size-10;
         grid-template-columns: minmax(360px, 1fr) minmax(0,1fr) 320px;
         grid-template-areas: 
             "media header   action"
@@ -380,7 +375,7 @@
 
         &__media {
             img {
-                width: clamp(337px, 40vw, 400px);
+                width: 100%;
             }
         }
 

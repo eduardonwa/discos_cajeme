@@ -1,0 +1,91 @@
+@use '../abstracts/' as *;
+
+.banner {
+  position: sticky;
+  top: 0;                      /* pegado arriba al hacer scroll */
+  /* NO inset-inline para sticky */
+  box-sizing: border-box;
+  width: 100%;
+  max-inline-size: 100%;
+  z-index: 1000;
+  padding: 0.75rem 1rem;
+
+  /* En sticky no necesitas safe-area */
+  /* padding-block-start: calc(0.75rem + env(safe-area-inset-top, 0));
+     padding-block-end:   calc(0.75rem + env(safe-area-inset-bottom, 0)); */
+
+  &--bottom {
+    position: sticky;
+    top: auto;
+    bottom: 0;                /* si quisieras pegajoso abajo */
+    /* idem: sin safe-area en sticky */
+  }
+
+  /* variantes */
+  &--success { background: #16a34a; }
+  &--danger  { background: #b91c1c; }
+  &--warning { background: #eab308; color:#000; }
+  &--info    { background: #6b7280; }
+  &--neutral { background: #6b7280; }
+
+  &__container {
+    max-width: 1280px;
+    margin-inline: auto;
+    padding-inline: 0.75rem;
+    box-sizing: border-box;
+
+    @include mq(medium) { padding-inline: 1.5rem; }
+    @include mq(large)  { padding-inline: 2rem; }
+  }
+
+  &__row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: .5rem;               /* en vez de márgenes negativos en el close */
+    min-width: 0;             /* importante */
+  }
+
+  &__left {
+    flex: 1 1 0%;
+    display: flex;
+    align-items: center;
+    min-width: 0;             /* evita que el texto empuje */
+  }
+
+  &__icon {
+    display: flex;
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+  }
+
+  &__message {
+    margin-inline-start: 0.75rem;
+    font-weight: 500;
+    font-size: $font-size-500;
+    color: $color-neutral-100;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    min-width: 0;
+  }
+
+  &__actions {
+    flex-shrink: 0;
+
+    .close {
+      /* sin márgenes negativos */
+      margin-inline-end: 0;
+      display: flex;
+      padding: 0.5rem;
+      border-radius: 0.375rem;
+      outline: none;
+      transition: background-color .2s;
+
+      &:hover, &:focus { background: #444; }
+    }
+
+    @include mq(medium) { margin-inline-start: 0.75rem; }
+  }
+}
