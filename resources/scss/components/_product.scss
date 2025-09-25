@@ -52,7 +52,7 @@
                display: none;
             }
 
-            .variant {                
+            .variant {
                 &__input {
                     position: absolute;
                     opacity: 0;
@@ -128,6 +128,12 @@
                 display: flex;
                 overflow-x: auto;
                 gap: $size-4;
+                scrollbar-width: none;
+                -ms-overflow-style: none;
+
+                @include mq(large) {
+                    display: none;
+                }
 
                 &--active {
                     background: $color-primary-300;
@@ -139,6 +145,17 @@
 
             .content {
                 margin-block: $size-4;
+
+                &__section {
+                    .subheader {
+                        display: none;
+                    }
+
+                    @include mq(large) {
+                        margin-block-end: $size-6;
+                        .subheader { display: block; }
+                    }
+                }
             }
         }
     }

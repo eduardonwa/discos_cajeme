@@ -97,7 +97,11 @@
         <div
             class="details"
             x-cloak
-            x-data="{ tab: 'details' }"
+            x-data="{
+                tab: 'details',
+                isTabs: window.innerWidth < 1280
+            }"
+            @resize.window="isTabs = window.innerWidth < 1280"
             aria-label="Detalles del producto"
         >
             {{-- tab headers --}}
@@ -107,40 +111,43 @@
                     class="button"
                     data-type="tab"
                     :class="tab === 'details' ? 'tabs--active' : ''"
-                >
-                    Detalles
-                </button>
+                    :aria-expanded="tab === 'details'"
+                >Detalles del producto</button>
 
                 <button
                     @click="tab = 'envio'"
                     class="button"
                     data-type="tab"
                     :class="tab === 'envio' ? 'tabs--active' : ''"
-                >
-                    Envío y manipulación
-                </button>
+                    :aria-expanded="tab === 'envio'"
+                >Envío y manipulación</button>
 
                 <button
                     @click="tab = 'description'"
                     class="button"
                     data-type="tab"
                     :class="tab === 'description' ? 'tabs--active' : ''"
-                >
-                    Descripción
-                </button>
+                    :aria-expanded="tab === 'description'"
+                >Descripción</button>
             </div>
             {{-- tab content --}}
             <div class="content">
-                <div class="content__section" x-show="tab === 'details'">
-                    <p>Material: 100% algodón. Hecho en México</p>
+                <div class="content__section"
+                     x-bind:hidden="isTabs && tab !== 'details'">
+                    <h3 class="subheader | ff-semibold fs-600">Detalles del producto</h3>
+                    <p class="padding-block-start-1">Material: 100% algodón. Hecho en México</p>
                 </div>
     
-                <div class="content__section" x-show="tab === 'envio'">
-                    <p>Envío 2-5 días hábiles. Cambios y devoluciones en 30 días.</p>
+                <div class="content__section"
+                     x-bind:hidden="isTabs && tab !== 'envio'">
+                    <h3 class="subheader | ff-semibold fs-600">Envío y manipulación</h3>
+                    <p class="padding-block-start-1">Envío 2-5 días hábiles. Cambios y devoluciones en 30 días.</p>
                 </div>
     
-                <div class="content__section" x-show="tab === 'description'">
-                    <p>{!! nl2br(e($this->product->description)) !!}</p>
+                <div class="content__section"
+                     x-bind:hidden="isTabs && tab !== 'description'">
+                    <h3 class="subheader | ff-semibold fs-600">Descripción</h3>
+                    <p class="padding-block-start-1">{!! nl2br(e($this->product->description)) !!}</p>
                 </div>
             </div>
         </div>
