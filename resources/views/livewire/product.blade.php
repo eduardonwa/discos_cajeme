@@ -8,36 +8,27 @@
             <span class="reviews__stars" aria-hidden="true">★★★★★</span>
             <span class="sr-only">Calificación promedio 4.7 de 5 basada en 128 reseñas</span>
         </div>
+        <hr line-type="inner" data-device="d">
     </header>
 
     <section class="product__media">
-        <img class="mx-auto" src="{{ $this->product->getFirstMediaUrl('featured', 'lg_thumb') }}" alt="Featured Image">
-        
-        <div class="image-slider">
-            <div class="navigation">
-                <x-icon orientation="left">
-                    <x-ui.icons.arrow />
-                </x-icon>
-    
-                <x-icon>
-                    <x-ui.icons.arrow />
-                </x-icon>
-            </div>
-
-            <div class="track">
-                @foreach ($this->allProductImages as $image)
-                    <div class="track__item">
-                        <img 
-                            src="{{ $image['thumbnail'] }}" 
-                            class=""
-                            onerror="this.src='{{ $image['original'] }}'"
-                        >
-                    </div>
-                @endforeach
-            </div>
+        <div class="frame">
+            <img class="mx-auto" src="{{ $this->product->getFirstMediaUrl('featured', 'lg_thumb') }}" alt="Featured Image">    
         </div>
 
-        <hr line-type="base">
+        <div class="track">
+            @foreach ($this->allProductImages as $image)
+                <div class="track__item">
+                    <img 
+                        src="{{ $image['thumbnail'] }}" 
+                        class=""
+                        onerror="this.src='{{ $image['original'] }}'"
+                    >
+                </div>
+            @endforeach
+        </div>
+
+        <hr line-type="base" data-device="m">
     </section>
 
     <section class="product__info">
@@ -93,17 +84,17 @@
             @endif
         </div>
 
-        {{-- detalles del producto --}}
-        <div
-            class="details"
-            x-cloak
-            x-data="{
+        <div class="details"
+             x-cloak
+             x-data="{
                 tab: 'details',
                 isTabs: window.innerWidth < 1280
-            }"
-            @resize.window="isTabs = window.innerWidth < 1280"
-            aria-label="Detalles del producto"
+             }"
+             @resize.window="isTabs = window.innerWidth < 1280"
+             aria-label="Detalles del producto"
         >
+            <hr line-type="inner" data-device="d">
+
             {{-- tab headers --}}
             <div class="tabs">
                 <button
@@ -150,14 +141,14 @@
                     <p class="padding-block-start-1">{!! nl2br(e($this->product->description)) !!}</p>
                 </div>
             </div>
-        </div>
 
+        </div>
         {{-- cupones --}}
         {{-- @unless($this->product->total_product_stock < 0)
             <livewire:coupon-form context="product" :targetId="$productId"/>
         @endunless --}}
 
-        <hr line-type="inner">
+        <hr line-type="inner" data-device="m">
     </section>
     
     <aside class="product__action" aria-labelledby="purchase-heading">
@@ -190,7 +181,7 @@
         </button>
     </aside>
 
-    <hr line-type="base">
+    <hr line-type="base" data-device="m">
 
     <section class="product__related-products"></section>
     

@@ -85,7 +85,7 @@ class ProductResource extends Resource
                             ->maxSize(1500)
                             ->collection('images')
                             ->multiple()
-                            ->maxFiles(3)
+                            // ->maxFiles(5)
                             ->image()
                             ->extraAttributes(['class' => 'clase'])
                             ->columnSpanFull()

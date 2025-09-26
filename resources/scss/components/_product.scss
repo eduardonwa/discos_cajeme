@@ -31,6 +31,36 @@
 
     &__media {
         grid-area: media;
+        min-width: 0;
+
+        .track {
+            display: flex;
+            overflow-x: auto;
+            overflow-y: hidden;
+            gap: $size-4;
+            padding-block: $size-4;
+            -webkit-overflow-scrolling: touch;
+            overscroll-behavior-x: contain;
+            scrollbar-width: none;
+
+            &::-webkit-scrollbar { display: none; }
+
+            &__item {
+                flex: 0 0 auto;
+                inline-size: clamp(96px, 35vw, 160px);
+                aspect-ratio: 1 / 1;
+                scroll-snap-align: start;
+                min-width: 0;
+            }
+
+            img {
+                display: block;
+                inline-size: 100%;
+                block-size: 100%;
+                object-fit: cover;
+                border-radius: $border-radius-1;
+            }
+        }
     }
 
     &__info {
@@ -40,39 +70,48 @@
         
         .variants {
             display: flex;
-            flex-direction: column;
-            gap: $size-4;
-            padding: $size-5;
-            border: 1px solid $color-primary-800;
-            border-radius: $border-radius-1;
-            height: 220px;
-            overflow-y: auto;
-            overflow-x: hidden;
+            flex-wrap: nowrap;
+            overflow-x: auto;
+            gap: $size-2;
+            min-width: 0;
+            overscroll-behavior-x: contain;
+            touch-action: pan-x;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
 
-            > .variant { min-width: 0; flex: 0 0 auto; }
-
-            @include mq(large) {
-                flex-direction: row;
-                height: auto;
-                border: none;
-                border-radius: 0;
-                padding: 0;
-            }
+            &::-webkit-scrollbar { display: none; }
 
             .variant {
+                flex: 0 0 auto;
+                min-width: 0;
+                min-inline-size: 96px;
+                box-sizing: border-box;
+                position: relative;
+                scroll-snap-align: start;
+                
                 &__input {
                     position: absolute;
                     opacity: 0;
+                    inset: 0;
                     pointer-events: none;
+
+                    &:focus-visible + .variant__label {
+                        outline: 2px solid Highlight;
+                        outline-offset: 2px;
+                    }
                 }
 
                 &__label {
-                    white-space: normal;
-                    display: flex;
-                    padding: $size-4;
-                    border: 1px solid $color-primary-400;
+                    display: inline-flex;
+                    justify-content: center;
+                    line-height: 1.2;
+                    width: 100%;
+                    padding: $size-3;
+                    border: 1px solid $color-primary-500;
                     border-radius: $border-radius-1;
+                    white-space: nowrap;
                     cursor: pointer;
+                    transition: border-color .2s, background-color .2s, box-shadow .2s, color .2s;
                     user-select: none;
                 }
 
@@ -264,10 +303,10 @@
 
         .header {
             font-size: $font-size-600;
-            color: $color-primary-900;
             font-family: $font-family-semibold;
-            text-align: center;
+            color: $color-primary-900;
             padding-block: $size-4;
+            text-align: center;
         }
 
         .review {
@@ -275,18 +314,27 @@
 
             .stars {
                 margin-block-end: $size-1;
-                font-size: $font-size-500;
+                font-size: 20px;
             }
 
             .author {
                 font-family: $font-family-semibold;
                 color: $color-neutral-900;
             }
+
+            .text {
+                font-size: $font-size-500;
+                line-height: 1.4;
+            }
         }
     }
 
     hr {
         margin-inline: -1rem;
+
+        &[data-device="d"] {
+            display: none;
+        }
 
         &[line-type="base"] {
             border: 2px solid $color-primary-300;        
@@ -304,7 +352,8 @@
         grid-template-areas: 
             "media header"
             "media info"
-            "media action";
+            "media action"
+            "reviews reviews";
         
         &__media {
             margin-block: 0;
@@ -347,13 +396,17 @@
                 order: 2;
                 flex-wrap: wrap;
                 margin-block: $size-4;
+                overflow-x: visible;
                 
                 .variant {
+                    max-inline-size: 100%;
+
                     &__label {
                         padding: $size-2;
+                        white-space: normal;
+                        overflow-wrap: anywhere;
                     }
                 }
-
             }
 
             .details {
@@ -384,10 +437,14 @@
         }
 
         &__reviews {
-            grid-column: 1 / -1;
+            grid-area: reviews;
+            
+            .header {
+                text-align: start;
+            }
         }
 
-        hr {
+        hr[data-device="m"] {
             display: none;
         }
     }
@@ -396,21 +453,42 @@
         gap: $size-2 $size-10;
         grid-template-columns: minmax(360px, 1fr) minmax(0,1fr) 320px;
         grid-template-areas: 
-            "media header   action"
-            "media info     action"
-            "media related  action";
-
-        &__media {
-            img {
-                width: 100%;
-            }
+            "media   header   action"
+            "media   info     action"
+            "media   related  action"
+            "reviews reviews  .";
+    
+        hr[data-device="d"] {
+            display: block;
+            margin-inline: 0;
+            margin-block: $size-2;
         }
 
-        &__info {
-            .action {
+        &__media {
+            align-self: start;
+            height: 100%;
+
+            .frame {
                 position: sticky;
                 top: $size-4;
-            }
+                max-height: calc(100dvh - (#{$size-4} * 2));
+                overflow: hidden;
+                z-index: 10;
+
+                img {
+                    display: block;
+                    width: 100%;
+                    height: 100%;
+                    object-fit: contain;
+                }
+            }            
+        }
+        
+        &__action {
+            outline: 1px solid $color-primary-300;
+            border-radius: $border-radius-1;
+            top: $size-4;
+            padding: $size-5;
         }
     }
 }
