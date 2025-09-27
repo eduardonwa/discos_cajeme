@@ -11,29 +11,18 @@
         <hr line-type="inner" data-device="d">
     </header>
 
-    <section class="product__media">
-        <div class="frame">
-            <img class="mx-auto" src="{{ $this->product->getFirstMediaUrl('featured', 'lg_thumb') }}" alt="Featured Image">    
-        </div>
-
-        <div class="track">
-            @foreach ($this->allProductImages as $image)
-                <div class="track__item">
-                    <img 
-                        src="{{ $image['thumbnail'] }}" 
-                        class=""
-                        onerror="this.src='{{ $image['original'] }}'"
-                    >
-                </div>
-            @endforeach
-        </div>
-
-        <hr line-type="base" data-device="m">
-    </section>
+    <x-ui.product-gallery 
+        :featured="[
+            'thumb' => $this->product->getFirstMediaUrl('featured', 'sm_thumb'),
+            'large' => $this->product->getFirstMediaUrl('featured', 'lg_thumb'),
+        ]"
+        :images="$this->allProductImages"
+        :name="$this->product->name"
+    />
 
     <section class="product__info">
-        <div class="variants">
-            @if ($this->product->variants->isNotEmpty())
+        @if ($this->product->variants->isNotEmpty())
+            <div class="variants">
                 @foreach ($this->product->variants as $v)
                     @php
                         $isDisabled = $v->total_variant_stock == 0 || ! $v->is_active;
@@ -61,15 +50,8 @@
                 @error('variant')
                     <div class="text-error">{{ $message }}</div>
                 @enderror
-            @endif
-
-            
-            @error('variant')
-                <div class="text-error">
-                    {{ $message }}
-                </div>
-            @enderror
-        </div>
+            </div>
+        @endif
         
         <div class="price">
             @if ($discountApplied || $this->hasDiscount)
@@ -85,13 +67,13 @@
         </div>
 
         <div class="details"
-             x-cloak
-             x-data="{
+                x-cloak
+                x-data="{
                 tab: 'details',
                 isTabs: window.innerWidth < 1280
-             }"
-             @resize.window="isTabs = window.innerWidth < 1280"
-             aria-label="Detalles del producto"
+                }"
+                @resize.window="isTabs = window.innerWidth < 1280"
+                aria-label="Detalles del producto"
         >
             <hr line-type="inner" data-device="d">
 
@@ -124,19 +106,19 @@
             {{-- tab content --}}
             <div class="content">
                 <div class="content__section"
-                     x-bind:hidden="isTabs && tab !== 'details'">
+                        x-bind:hidden="isTabs && tab !== 'details'">
                     <h3 class="subheader | ff-semibold fs-600">Detalles del producto</h3>
                     <p class="padding-block-start-1">Material: 100% algodón. Hecho en México</p>
                 </div>
     
                 <div class="content__section"
-                     x-bind:hidden="isTabs && tab !== 'envio'">
+                        x-bind:hidden="isTabs && tab !== 'envio'">
                     <h3 class="subheader | ff-semibold fs-600">Envío y manipulación</h3>
                     <p class="padding-block-start-1">Envío 2-5 días hábiles. Cambios y devoluciones en 30 días.</p>
                 </div>
     
                 <div class="content__section"
-                     x-bind:hidden="isTabs && tab !== 'description'">
+                        x-bind:hidden="isTabs && tab !== 'description'">
                     <h3 class="subheader | ff-semibold fs-600">Descripción</h3>
                     <p class="padding-block-start-1">{!! nl2br(e($this->product->description)) !!}</p>
                 </div>

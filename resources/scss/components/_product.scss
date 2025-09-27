@@ -33,6 +33,18 @@
         grid-area: media;
         min-width: 0;
 
+        .featured-img {
+            height: 400px;
+
+            img {
+                margin-inline: auto;
+                height: 100%;
+                width: auto;
+                object-fit: contain;
+                display: block;
+            }
+        }
+
         .track {
             display: flex;
             overflow-x: auto;
@@ -46,11 +58,21 @@
             &::-webkit-scrollbar { display: none; }
 
             &__item {
-                flex: 0 0 auto;
+                border: 2px solid transparent;
+                flex: 0 0 89px;
                 inline-size: clamp(96px, 35vw, 160px);
                 aspect-ratio: 1 / 1;
                 scroll-snap-align: start;
                 min-width: 0;
+                cursor: pointer;
+
+                &.is-checked {
+                    border-color: $color-primary-600;
+                    box-shadow: 0 0 0 2px rgba($color-primary-400, .25);
+                }
+
+                &:hover { border-color: $color-primary-600; }
+                &:disabled { cursor: not-allowed; opacity: .5; }
             }
 
             img {
@@ -58,7 +80,6 @@
                 inline-size: 100%;
                 block-size: 100%;
                 object-fit: cover;
-                border-radius: $border-radius-1;
             }
         }
     }
@@ -358,6 +379,10 @@
         &__media {
             margin-block: 0;
 
+            .track {
+                margin-inline: auto;
+            }
+            
             img {
                 width: clamp(280px, 40vw, 337px);
                 height: auto;
@@ -468,20 +493,24 @@
             align-self: start;
             height: 100%;
 
-            .frame {
-                position: sticky;
-                top: $size-4;
-                max-height: calc(100dvh - (#{$size-4} * 2));
-                overflow: hidden;
-                z-index: 10;
-
+            .featured-img {
                 img {
                     display: block;
                     width: 100%;
                     height: 100%;
                     object-fit: contain;
                 }
-            }            
+            }
+
+            .track {
+                // width: clamp(280px, 40vw, 337px);
+                margin-inline: $size-10;
+
+                img {
+                    display: block;
+                    height: 100%;
+                }
+            }
         }
         
         &__action {
