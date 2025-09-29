@@ -69,6 +69,43 @@ class ProductResource extends Resource
             2, '.', ','
         );
 
+        // Hidrata compare_at_price: si viene 0/empty → null; si no, formatea como MXN
+        $hydrateCompare = function ($component, $state) {
+            if ($state instanceof \Money\Money) {
+                $amount = (int) $state->getAmount();
+            } else {
+                $amount = (int) str_replace([',', '$', ' '], '', (string) $state);
+            }
+
+            if ($state === null || $state === '' || $amount <= 0) {
+                $component->state(null);
+                return;
+            }
+
+            // formateo tipo MXN (igual que tu $hydrate)
+            $mxn = $amount / 100;
+            $component->state(
+                fmod($mxn, 1) == 0
+                    ? number_format($mxn, 0, '.', ',')
+                    : number_format($mxn, 2, '.', ',')
+            );
+        };
+
+        // Deshidrata compare_at_price: nunca guardes 0/empty/<=price → null
+        $dehydrateCompare = function ($state, \Filament\Forms\Get $get) {
+            $raw = str_replace([',', '$', ' '], '', (string) $state);
+            $compare = (int) round(((float) $raw) * 100);
+
+            $rawPrice = str_replace([',', '$', ' '], '', (string) $get('price'));
+            $price = (int) round(((float) $rawPrice) * 100);
+
+            if ($state === null || $state === '' || $compare <= 0 || $compare <= $price) {
+                return null;
+            }
+
+            return $state; // válido
+        };
+
         return $form
             ->schema([
                 Grid::make(2)
@@ -165,34 +202,35 @@ class ProductResource extends Resource
                                             ->inputMode('decimal') // ayuda al teclado móvil
                                             ->mask(RawJs::make(<<<'JS'
                                                 $input => {
-                                                let v = $input.replace(/[^0-9.,]/g, '');
-                                                v = v.replace(/,/g, ',');         // permite comas de miles si quisieras post-procesar
-                                                // normaliza: solo un punto decimal
-                                                let parts = v.split('.');
-                                                if (parts.length > 2) parts = [parts[0], parts.slice(1).join('')];
-                                                if (parts[1]?.length > 2) parts[1] = parts[1].slice(0,2);
-                                                return parts.join('.');
+                                                    let v = $input.replace(/[^0-9.,]/g, '');
+                                                    v = v.replace(/,/g, ','); // permite comas de miles si quisieras post-procesar
+                                                    // normaliza: solo un punto decimal
+                                                    let parts = v.split('.');
+                                                    if (parts.length > 2) parts = [parts[0], parts.slice(1).join('')];
+                                                    if (parts[1]?.length > 2) parts[1] = parts[1].slice(0,2);
+                                                    return parts.join('.');
                                                 }
                                             JS))
                                             ->afterStateHydrated($hydrate)
                                             ->dehydrateStateUsing($dehydrate)
+                                            ->live(onBlur: false, debounce: 300)
                                             ->required(),
-
                                         TextInput::make('compare_at_price')
                                             ->label('Precio de referencia (tachado)')
+                                            ->reactive()
+                                            ->live(onBlur: false, debounce: 300)
                                             ->inputMode('decimal')
                                             ->mask(RawJs::make(<<<'JS'
                                                 $input => {
-                                                let v = $input.replace(/[^0-9.]/g, '');
-                                                let parts = v.split('.');
-                                                if (parts.length > 2) parts = [parts[0], parts.slice(1).join('')];
-                                                if (parts[1]?.length > 2) parts[1] = parts[1].slice(0,2);
-                                                return parts.join('.');
+                                                    let v = $input.replace(/[^0-9.]/g, '');
+                                                    let parts = v.split('.');
+                                                    if (parts.length > 2) parts = [parts[0], parts.slice(1).join('')];
+                                                    if (parts[1]?.length > 2) parts[1] = parts[1].slice(0,2);
+                                                    return parts.join('.');
                                                 }
                                             JS))
-                                            ->afterStateHydrated($hydrate)
-                                            ->dehydrateStateUsing($dehydrate)
-                                            ->reactive()
+                                            ->afterStateHydrated($hydrateCompare)       // 👈 usar el específico
+                                            ->dehydrateStateUsing($dehydrateCompare)    // 👈 usar el específico
                                             ->hint(function ($get) use ($toCents) {
                                                 $price   = $toCents($get('price'));
                                                 $compare = $toCents($get('compare_at_price'));
@@ -205,14 +243,39 @@ class ProductResource extends Resource
                                             ->rule(function ($get) use ($toCents) {
                                                 $price = $toCents($get('price'));
                                                 return fn ($attr, $value, $fail) =>
-                                                    ($value !== null && $toCents($value) <= $price)
+                                                    ($value !== null && $value !== '' && $toCents($value) <= $price)
                                                         ? $fail('Debe ser mayor que el Precio para mostrar oferta.')
                                                         : null;
                                             }),
                                         TextInput::make('promo_label')
                                             ->label('Etiqueta promocional (opcional)')
                                             ->placeholder('REBAJA / LIQUIDACIÓN / NUEVO')
-                                            ->maxLength(50),
+                                            ->maxLength(50)
+                                            ->suffixAction(
+                                                Action::make('usarPorcentaje')
+                                                    ->label('Usar -%')
+                                                    ->icon('heroicon-o-percent-badge')
+                                                    ->color('warning')
+                                                    ->disabled(fn (Get $get) =>
+                                                        blank($get('price')) ||
+                                                        blank($get('compare_at_price')) ||
+                                                        self::calcularDescuento($get) === null
+                                                    )
+                                                    ->tooltip('Usar porcentaje sugerido')
+                                                    ->visible(fn (Get $get) => self::calcularDescuento($get) !== null)
+                                                    ->action(function (Set $set, Get $get) {
+                                                        $p = self::calcularDescuento($get);
+                                                        if ($p !== null) {
+                                                            $set('promo_label', "-{$p}%");
+                                                        }
+                                                    })
+                                            )
+                                            ->helperText(function (Get $get) {
+                                                $p = self::calcularDescuento($get);
+                                                return $p !== null
+                                                    ? "Sugerencia: -{$p}% (basado en la comparación actual)"
+                                                    : '';
+                                            }),
                                         // Acción: copiar el price actual a compare_at_price
                                         Actions::make([
                                             Action::make('marcar_oferta')
@@ -301,5 +364,19 @@ class ProductResource extends Resource
                     'create' => Pages\CreateProduct::route('/create'),
                     'edit' => Pages\EditProduct::route('/{record}/edit'),
                 ];
+            }
+
+            protected static function calcularDescuento(Get $get): ?int
+            {
+                $toCents = fn ($v) => (int) round(((float) str_replace(',', '', (string) $v)) * 100);
+
+                $price   = $toCents($get('price'));
+                $compare = $toCents($get('compare_at_price'));
+
+                if ($price > 0 && $compare > $price) {
+                    return (int) round((1 - ($price / $compare)) * 100);
+                }
+
+                return null;
             }
         }

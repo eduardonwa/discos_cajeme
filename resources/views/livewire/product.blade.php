@@ -3,6 +3,7 @@
         @if ($this->product->promo_label)
             <span class="badge" data-type="product-page">{{ $this->product->promo_label }}</span>
         @endif
+
         <h2 class="name | ff-semibold">{{ $this->product->name }}</h2>
         <div class="reviews-summary" aria-live="polite">
             <span class="reviews__stars" aria-hidden="true">★★★★★</span>
@@ -52,20 +53,12 @@
                 @enderror
             </div>
         @endif
-        
-        <div class="price">
-            @if ($discountApplied || $this->hasDiscount)
-                @if ($this->originalPrice->greaterThan($this->finalPrice))
-                    <span class="price__original">{{ $this->originalPrice }}</span>
-                    <span class="price__final">{{ $this->finalPrice }}</span>
-                @else
-                    <span class="price__final">{{ $this->finalPrice }}</span>
-                @endif
-            @else
-                <span class="price__final">{{ $this->finalPrice }}</span>
-            @endif
-        </div>
 
+        <x-ui.price-tag 
+            :finalPrice="$this->product->price" 
+            :originalPrice="$this->originalPrice"
+        />
+        
         <div class="details"
                 x-cloak
                 x-data="{
@@ -125,16 +118,14 @@
             </div>
 
         </div>
-        {{-- cupones --}}
-        {{-- @unless($this->product->total_product_stock < 0)
-            <livewire:coupon-form context="product" :targetId="$productId"/>
-        @endunless --}}
 
         <hr line-type="inner" data-device="m">
     </section>
     
     <aside class="product__action" aria-labelledby="purchase-heading">
         <h2 id="purchase-heading" class="sr-only">Comprar {{ $this->product->name }}</h2>
+        
+        <p class="price">{{ $this->product->price }}</p>
 
         {{-- disponibilidad --}}
         <p class="stock {{ $this->availableStock > 0 ? 'text-success' : 'text-error' }}">
@@ -161,6 +152,11 @@
         >
             {{ $this->availableStock > 0 ? 'Añadir al carrito' : 'AGOTADO' }}
         </button>
+
+        {{-- cupones --}}
+        @unless($this->product->total_product_stock < 0)
+            <livewire:coupon-form context="product" :targetId="$productId"/>
+        @endunless
     </aside>
 
     <hr line-type="base" data-device="m">

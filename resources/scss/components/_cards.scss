@@ -98,6 +98,22 @@
     .heading {
       color: $color-neutral-100;
     }
+
+    .price {
+      &__original {
+        font-family: $font-family-base;
+        color: rgba(255,255,255,.7);
+        text-decoration: line-through;
+        text-decoration-thickness: .12em;
+        text-decoration-color: currentColor;
+        text-decoration-skip-ink: none;
+      }
+
+      &__final {
+        font-size: $font-size-600;
+        font-family: $font-family-semibold;
+      }
+    }
   }
 }
 
@@ -116,6 +132,22 @@
 
     .heading {
       color: $color-primary-700;
+    }
+
+    .price {
+      &__original {
+        font-family: $font-family-base;
+        color: rgb(187, 2, 2);
+        text-decoration: line-through;
+        text-decoration-thickness: .12em;
+        text-decoration-color: currentColor;
+        text-decoration-skip-ink: none;
+      }
+
+      &__final {
+        font-size: $font-size-600;
+        font-family: $font-family-semibold;
+      }
     }
   }
 }
