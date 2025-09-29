@@ -345,6 +345,27 @@
                 }
             }
         }
+
+        .coupon {
+            margin-block: $size-4;
+
+            &__zone {
+                input {
+                    margin-block: $size-3;
+                    width: 100%;
+                    border: 0;
+                }
+
+                .button[data-type="coupon"] {
+                    width: 100%;
+
+                    &:hover {
+                        background: $color-primary-600;
+                        color: $color-neutral-100;
+                    }
+                }
+            }
+        }
         
         .button[data-type="cart"] {
             width: 100%;
@@ -558,26 +579,10 @@
             }
 
             .coupon {
-                margin-block-start: $size-4;
-
-                &__zone {
-                    input {
-                        margin-block: $size-3;
-                        width: 100%;
-                        border: 0;
-                    }
-
-                    .button[data-type="coupon"] {
-                        width: 100%;
-                        background: transparent;
-                        color: $color-primary-600;
-                        border: 2px solid $color-primary-600;
-
-                        &:hover {
-                            background: $color-primary-600;
-                            color: $color-neutral-100;
-                        }
-                    }
+                .button[data-type="coupon"] {
+                    background: transparent;
+                    color: $color-primary-600;
+                    border: 2px solid $color-primary-600;
                 }
             }
         }
