@@ -45,6 +45,20 @@
             }
         }
 
+        .track-wrap {
+            position: relative;
+
+            .ui-icon-btn {
+                position: absolute;
+                top: 50%;
+                transform: translateY(-50%);
+                z-index: 10;
+            }
+
+            .ui-icon-btn.prev { left: .25rem }
+            .ui-icon-btn.next { right: .25rem }
+        }
+
         .track {
             display: flex;
             overflow-x: auto;
