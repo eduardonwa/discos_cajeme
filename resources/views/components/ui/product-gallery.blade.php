@@ -4,6 +4,8 @@
     current:  @js($featured['large']),
     selected: 'featured',
     pick(url,id){ this.current = url; this.selected = id; },
+    {{-- modal imagen --}}
+    showModal: false,
     {{-- manejo de thumbnails --}}
     skip: 3,
     next() {
@@ -21,7 +23,16 @@
   }"
 >
   <div class="featured-img">
-    <img :src="current" alt="{{ $name }}">
+    <img :src="current" @click="showModal = true" alt="{{ $name }}">
+  </div>
+
+  <div
+    class="featured-modal"
+    x-show="showModal"
+    x-transition.opacity.duration.300ms
+    @click="showModal = false"
+  >
+    <img :src="current" class="current-img">
   </div>
 
   @if (count($images) > 0)
