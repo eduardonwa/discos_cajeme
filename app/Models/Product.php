@@ -2,15 +2,16 @@
 
 namespace App\Models;
 
+use Money\Money;
 use App\Casts\MoneyCast;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\{HasMany, HasOne};
-use Illuminate\Support\Facades\DB;
-use Spatie\MediaLibrary\HasMedia;
-use Spatie\MediaLibrary\InteractsWithMedia;
-use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Spatie\Image\Enums\Fit;
+use Spatie\MediaLibrary\HasMedia;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Eloquent\Model;
+use Spatie\MediaLibrary\InteractsWithMedia;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
+use Illuminate\Database\Eloquent\Relations\{HasMany, HasOne};
 
 class Product extends Model implements HasMedia
 {
@@ -168,6 +169,18 @@ class Product extends Model implements HasMedia
         $p = $this->price->getAmount();
         $c = $this->compare_at_price->getAmount();
         return (int) round((1 - ($p / $c)) * 100);
+    }
+
+    // 👉 NUEVO: precio “antes” (tachado) o null
+    public function getOriginalPriceAttribute(): ?Money
+    {
+        return $this->has_discount ? $this->compare_at_price : null;
+    }
+
+    // 👉 NUEVO: precio final (el que se cobra hoy)
+    public function getFinalPriceAttribute(): Money
+    {
+        return $this->price;
     }
 
     /* ─────────────────────────────────────────

@@ -3,46 +3,27 @@
         @if ($this->product->promo_label)
             <span class="badge" data-type="product-page">{{ $this->product->promo_label }}</span>
         @endif
+
         <h2 class="name | ff-semibold">{{ $this->product->name }}</h2>
         <div class="reviews-summary" aria-live="polite">
             <span class="reviews__stars" aria-hidden="true">★★★★★</span>
             <span class="sr-only">Calificación promedio 4.7 de 5 basada en 128 reseñas</span>
         </div>
+        <hr line-type="inner" data-device="d">
     </header>
 
-    <section class="product__media">
-        <img class="mx-auto" src="{{ $this->product->getFirstMediaUrl('featured', 'lg_thumb') }}" alt="Featured Image">
-        
-        <div class="image-slider">
-            <div class="navigation">
-                <x-icon orientation="left">
-                    <x-ui.icons.arrow />
-                </x-icon>
-    
-                <x-icon>
-                    <x-ui.icons.arrow />
-                </x-icon>
-            </div>
-
-            <div class="track">
-                @foreach ($this->allProductImages as $image)
-                    <div class="track__item">
-                        <img 
-                            src="{{ $image['thumbnail'] }}" 
-                            class=""
-                            onerror="this.src='{{ $image['original'] }}'"
-                        >
-                    </div>
-                @endforeach
-            </div>
-        </div>
-    </section>
-
-    <hr line-type="base">
+    <x-ui.product-gallery 
+        :featured="[
+            'thumb' => $this->product->getFirstMediaUrl('featured', 'sm_thumb'),
+            'large' => $this->product->getFirstMediaUrl('featured', 'lg_thumb'),
+        ]"
+        :images="$this->allProductImages"
+        :name="$this->product->name"
+    />
 
     <section class="product__info">
-        <div class="variants">
-            @if ($this->product->variants->isNotEmpty())
+        @if ($this->product->variants->isNotEmpty())
+            <div class="variants">
                 @foreach ($this->product->variants as $v)
                     @php
                         $isDisabled = $v->total_variant_stock == 0 || ! $v->is_active;
@@ -70,118 +51,25 @@
                 @error('variant')
                     <div class="text-error">{{ $message }}</div>
                 @enderror
-            @endif
+            </div>
+        @endif
 
-            
-            @error('variant')
-                <div class="text-error">
-                    {{ $message }}
-                </div>
-            @enderror
-        </div>
-
-        <hr line-type="inner">
+        <x-ui.price-tag 
+            :finalPrice="$this->product->price" 
+            :originalPrice="$this->originalPrice"
+        />
         
-        <div class="main-info">
-            <div class="price">
-                @if ($discountApplied || $this->hasDiscount)
-                    @if ($this->originalPrice->greaterThan($this->finalPrice))
-                        <span class="price__original">{{ $this->originalPrice }}</span>
-                        <span class="price__final">{{ $this->finalPrice }}</span>
-                    @else
-                        <span class="price__final">{{ $this->finalPrice }}</span>
-                    @endif
-                @else
-                    <span class="price__final">{{ $this->finalPrice }}</span>
-                @endif
-            </div>
-    
-            {{-- cantidad --}}
-            <div
-                class="quantity"
+        <div class="details"
+                x-cloak
                 x-data="{
-                    open:false,
-                    choose(n){ $wire.set('quantity', n); this.open=false; }
+                tab: 'details',
+                isTabs: window.innerWidth < 1280
                 }"
-            >
-                <small class="stock {{ $this->availableStock > 0 ? 'text-success' : 'text-error' }}">
-                    @if($this->availableStock > 0)
-                        {{ $this->availableStock }} disponibles
-                        @if($this->availableStock <= $this->product->low_stock_threshold)
-                            (¡Últimas unidades!)
-                        @endif
-                    @else
-                        Agotado
-                    @endif
-                </small>
-
-                <!-- Botón que parece select -->
-                <button type="button" @click="open=true" class="quantity-trigger">
-                    <span>Cantidad: {{ $this->quantity }}</span>
-                    <svg width="16" height="16" viewBox="0 0 20 20"><path d="M5 7l5 6 5-6"/></svg>
-                </button>
-
-                <!-- Modal -->
-                <div
-                    class="quantity-modal"
-                    aria-modal="true"
-                    role="dialog"
-                    x-show="open"
-                    x-cloak
-                    x-transition
-                    @keydown.escape.window="open=false"
-                >
-                    <div class="quantity-modal__backdrop" @click="open=false"></div>
-                    <div class="quantity-modal__content" x-trap.noscroll="open" @click.stop>
-                        <div class="controls">
-                            <h2 class="ff-semibold fs-500">Cantidad:</h2>
-                            <x-icon @click="open=false" aria-label="Cerrar">
-                                <x-ui.icons.close />
-                            </x-icon>
-                        </div>
-                        <ul class="list-options">
-                            @for ($i = 1; $i <= $this->maxQuantity; $i++)
-                            <li>
-                                <button
-                                    type="button" @click="choose({{ $i }})"
-                                    class="list-options__button {{ $this->quantity === $i ? 'list-options__button--checked' : '' }}"
-                                >
-                                    {{ $i }}
-                                </button>
-                            </li>
-                            @endfor
-                        </ul>
-                    </div>
-                </div>
-            </div>
-    
-            {{-- agregar al carrito --}}
-            <div class="action">
-                <button
-                    class="button"
-                    data-type="cart"
-                    wire:click="addToCart"
-                    @disabled($this->availableStock < 1)
-                >
-                    {{ $this->availableStock > 0 ? 'Añadir al carrito' : 'AGOTADO' }}
-                </button>
-            </div>
-        </div>
-
-        <hr line-type="inner">
-
-        {{-- cupones --}}
-        {{-- @unless($this->product->total_product_stock < 0)
-            <livewire:coupon-form context="product" :targetId="$productId"/>
-        @endunless --}}
-
-        {{-- detalles del producto --}}
-        <div
-            class="details"
-            x-cloak
-            x-data="{ tab: 'details' }"
-            aria-label="Detalles del producto"
+                @resize.window="isTabs = window.innerWidth < 1280"
+                aria-label="Detalles del producto"
         >
+            <hr line-type="inner" data-device="d">
+
             {{-- tab headers --}}
             <div class="tabs">
                 <button
@@ -189,46 +77,89 @@
                     class="button"
                     data-type="tab"
                     :class="tab === 'details' ? 'tabs--active' : ''"
-                >
-                    Detalles
-                </button>
+                    :aria-expanded="tab === 'details'"
+                >Detalles del producto</button>
 
                 <button
                     @click="tab = 'envio'"
                     class="button"
                     data-type="tab"
                     :class="tab === 'envio' ? 'tabs--active' : ''"
-                >
-                    Envío y manipulación
-                </button>
+                    :aria-expanded="tab === 'envio'"
+                >Envío y manipulación</button>
 
                 <button
                     @click="tab = 'description'"
                     class="button"
                     data-type="tab"
                     :class="tab === 'description' ? 'tabs--active' : ''"
-                >
-                    Descripción
-                </button>
+                    :aria-expanded="tab === 'description'"
+                >Descripción</button>
             </div>
             {{-- tab content --}}
             <div class="content">
-                <div class="content__section" x-show="tab === 'details'">
-                    <p>Material: 100% algodón. Hecho en México</p>
+                <div class="content__section"
+                        x-bind:hidden="isTabs && tab !== 'details'">
+                    <h3 class="subheader | ff-semibold fs-600">Detalles del producto</h3>
+                    <p class="padding-block-start-1">Material: 100% algodón. Hecho en México</p>
                 </div>
     
-                <div class="content__section" x-show="tab === 'envio'">
-                    <p>Envío 2-5 días hábiles. Cambios y devoluciones en 30 días.</p>
+                <div class="content__section"
+                        x-bind:hidden="isTabs && tab !== 'envio'">
+                    <h3 class="subheader | ff-semibold fs-600">Envío y manipulación</h3>
+                    <p class="padding-block-start-1">Envío 2-5 días hábiles. Cambios y devoluciones en 30 días.</p>
                 </div>
     
-                <div class="content__section" x-show="tab === 'description'">
-                    <p>{!! nl2br(e($this->product->description)) !!}</p>
+                <div class="content__section"
+                        x-bind:hidden="isTabs && tab !== 'description'">
+                    <h3 class="subheader | ff-semibold fs-600">Descripción</h3>
+                    <p class="padding-block-start-1">{!! nl2br(e($this->product->description)) !!}</p>
                 </div>
             </div>
-        </div>
-    </section>
 
-    <hr line-type="base">
+        </div>
+
+        <hr line-type="inner" data-device="m">
+    </section>
+    
+    <aside class="product__action" aria-labelledby="purchase-heading">
+        <h2 id="purchase-heading" class="sr-only">Comprar {{ $this->product->name }}</h2>
+        
+        <p class="price">{{ $this->product->price }}</p>
+
+        {{-- disponibilidad --}}
+        <p class="stock {{ $this->availableStock > 0 ? 'text-success' : 'text-error' }}">
+            @if($this->availableStock>0)
+                {{ $this->availableStock }} disponibles
+                @if($this->availableStock <= $this->product->low_stock_threshold) (¡Últimas unidades!) @endif
+            @else Agotado @endif
+        </p>
+
+        {{-- cantidad --}}
+        @include('components.ui.product-quantity-picker', [
+            'quantity' => $this->quantity,
+            'max'      => $this->maxQuantity,
+            'prop'     => 'quantity',
+            'disabled' => $this->availableStock < 1,
+            'label'    => 'Cantidad',
+        ])
+
+        <button
+            class="button"
+            data-type="cart"
+            wire:click="addToCart"
+            @disabled($this->availableStock < 1)"
+        >
+            {{ $this->availableStock > 0 ? 'Añadir al carrito' : 'AGOTADO' }}
+        </button>
+
+        {{-- cupones --}}
+        @unless($this->product->total_product_stock < 0)
+            <livewire:coupon-form context="product" :targetId="$productId"/>
+        @endunless
+    </aside>
+
+    <hr line-type="base" data-device="m">
 
     <section class="product__related-products"></section>
     

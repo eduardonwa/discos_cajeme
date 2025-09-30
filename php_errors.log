@@ -11,3 +11,5 @@
 Stack trace:
 #0 {main}
   thrown in /var/www/html/shop/artisan on line 9
+[25-Sep-2025 06:36:26 UTC] PHP Fatal error:  Trait "Masmerise\Toaster\Toastable" not found in /var/www/html/shop/app/Livewire/Cart.php on line 16
+[25-Sep-2025 06:43:35 UTC] PHP Fatal error:  Trait "Masmerise\Toaster\Toastable" not found in /var/www/html/shop/app/Livewire/Cart.php on line 16

@@ -27,7 +27,10 @@
 
   <div class="card__meta">
     <h3 class="heading">{{ $product->name }}</h3>
-    <p class="price">{{ $product->price }}</p>
+    <x-ui.price-tag 
+      :finalPrice="$product->final_price" 
+      :originalPrice="$product->original_price" 
+    />
   </div>
 
   @if ($href)

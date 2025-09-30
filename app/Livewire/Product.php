@@ -67,16 +67,16 @@ class Product extends Component
     #[Computed]
     public function hasDiscount(): bool
     {
-        return $this->product->compare_at_price
+        return $this->product->compare_at_price !== null
             && $this->product->compare_at_price->greaterThan($this->product->price);
     }
 
     // Precio “original” a mostrar tachado (si hay oferta)
     #[Computed]
-    public function originalPrice(): Money
+    public function originalPrice(): ?Money
     {
         // Si hay oferta, compare; si no, price (asume 'price' nunca es null)
-        return $this->hasDiscount ? $this->product->compare_at_price : $this->product->price;
+        return $this->hasDiscount ? $this->product->compare_at_price : null;
     }
 
     // Base sobre la que se aplica el cupón (precio vigente)
