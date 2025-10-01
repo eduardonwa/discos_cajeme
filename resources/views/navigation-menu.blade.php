@@ -3,7 +3,7 @@
     <div class="site-header">
         <article class="site-header__inner">
             <button @click="$store.ui.navOpen = !$store.ui.navOpen" class="burger-icon ui-icon-btn" aria-expanded="$store.ui.navOpen">
-                <svg class="ui-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                <svg class="ui-icon" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
                 </svg>
             </button>
@@ -43,11 +43,11 @@
                             <x-dropdown align="right" width="sm">
                                 <x-slot name="trigger">
                                     <div>
-                                        <x-icon :size="24" decorative fill="#344D55">
+                                        <x-icon :size="24" decorative>
                                             <x-ui.icons.account />
                                         </x-icon>
                                         
-                                        <svg class="ui-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                        <svg class="ui-icon" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                                             <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
                                         </svg>
                                     </div>
@@ -55,7 +55,7 @@
 
                                 <x-slot name="content">
                                     <!-- Account Management -->
-                                    <div class="block px-4 py-2 text-xs text-gray-400">
+                                    <div>
                                         {{ __('profile.manage_account') }}
                                     </div>
 
@@ -137,11 +137,11 @@
                 @auth
                     <div class="flex-group" style="align-items: center;">
                         <!-- Account Management -->
-                        <x-responsive-nav-link href="{{ route('notifications') }}">
+                        <a href="{{ route('notifications') }}">
                             <x-icon :size="24" decorative fill="#F6F6F6">
                                 <x-ui.icons.notification />
                             </x-icon>
-                        </x-responsive-nav-link>
+                        </a>
                     </div>
                 @endauth
             </header>
@@ -154,17 +154,15 @@
 
             @auth
                 <article class="mobile-menu__auth">
-                    <div class="mt-3 space-y-1">
-                        <!-- Authentication -->
-                        <form method="POST" action="{{ route('logout') }}" x-data>
-                            @csrf
-    
-                            <x-responsive-nav-link href="{{ route('logout') }}"
-                                        @click.prevent="$root.submit();">
-                                {{ __('auth.log_out') }}
-                            </x-responsive-nav-link>
-                        </form>
-                    </div>
+                    <!-- Authentication -->
+                    <form method="POST" action="{{ route('logout') }}" x-data>
+                        @csrf
+
+                        <x-responsive-nav-link href="{{ route('logout') }}"
+                                    @click.prevent="$root.submit();">
+                            {{ __('auth.log_out') }}
+                        </x-responsive-nav-link>
+                    </form>
                 </article>
             @endauth
 

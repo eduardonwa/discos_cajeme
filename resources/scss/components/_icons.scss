@@ -10,6 +10,7 @@
   transform-origin: center;
   transform-box: fill-box;
   transition: transform .2s ease;
+  fill: currentColor;
 
   svg {
     width: 100%;
@@ -29,8 +30,9 @@
   padding: 6px;
   border: 0;
   background: transparent;
-  color: currentColor;
+  color: $color-primary-900;
   cursor: pointer;
+  fill: currentColor;
   transition: color .15s ease, background-color .15s ease;
 
   /* estados */

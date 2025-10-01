@@ -1,7 +1,7 @@
 @props(['title' => false])
-<div {{ $attributes->class(['bg-white rounded-lg shadow p-4 space-y-2']) }}>
+<div {{ $attributes->class(['cart__wrapper']) }}>
     @if($title)
-        <h2 class="font-medium text-lg">{{ $title }}</h2>
+        <h2 class="title">{{ $title }}</h2>
     @endif
     {{ $slot }}
 </div>

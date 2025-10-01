@@ -1,49 +1,40 @@
 @props([
   'size' => 24,
   'label' => null,
-  'color' => '#344D55',
   'decorative' => false,
   'href' => null,
   'orientation' => 'right',
+  'fill' => null,
+  'color' => null,
 ])
 
 @php
   $sizeValue = is_numeric($size) ? $size.'px' : $size;
   $dir = $orientation === 'left' ? 'left' : 'right';
+  $colorValue = $color ?? $fill;
+  $styleInline = "--icon-size: {$sizeValue};" . ($colorValue ? " color: {$colorValue};" : "");
 @endphp
 
 @if($href)
-  <a href="{{ $href }}" class="ui-icon-btn" aria-label="{{ $label }}" target="_blank">
+  <a {{ $attributes->class('ui-icon-btn') }} aria-label="{{ $label }}" target="_blank" style="{{ $styleInline }}">
     <svg
-      {{ $attributes
-          ->merge(['class' => 'ui-icon'])
-          ->merge($decorative ? ['aria-hidden' => 'true', 'role' => 'img'] : ['role' => 'img', 'aria-label' => $label])
-      }}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
+      class="ui-icon {{ $dir }}"
+      role="img"
+      viewBox="0 0 24 24" fill="currentColor" stroke="currentColor"
       style="--icon-size: {{ $sizeValue }};"
-      class="ui-icon"
+      @if($decorative) aria-hidden="true" @else aria-label="{{ $label }}" @endif
     >
       {{ $slot }}
     </svg>
   </a>
 @else
-  <button
-    {{ $attributes->merge(['class' => 'ui-icon-btn']) }}
-    aria-label="Buscar"
-    type="button"
-  >
+  <button type="button" {{ $attributes->class('ui-icon-btn') }} aria-label="{{ $label }}" style="{{ $styleInline }}">
     <svg
-      {{ $attributes
-          ->merge(['class' => "ui-icon $dir"])
-          ->merge($decorative ? ['aria-hidden' => 'true', 'role' => 'img'] : ['role' => 'img', 'aria-label' => $label])
-      }}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
+      class="ui-icon {{ $dir }}"
+      role="img"
+      viewBox="0 0 24 24" fill="currentColor" stroke="currentColor"
       style="--icon-size: {{ $sizeValue }};"
-      class="ui-icon"
+      @if($decorative) aria-hidden="true" @else aria-label="{{ $label }}" @endif
     >
       {{ $slot }}
     </svg>

@@ -90,6 +90,12 @@
     text-transform: none;
   }
 
+  &[data-type="catalogue"] {
+    background: $color-primary-900;
+    color: $color-primary-100;
+    outline-offset: 2px;
+  }
+
   &[data-type="coupon"] {
     background: $color-primary-600;
     color: $color-primary-100;
@@ -101,5 +107,14 @@
     border-radius: $border-radius-1;
     padding: $size-2;
     border: 1px solid $color-secondary-900;
+  }
+
+  &[data-type="cart-delete"] {
+    border: 2px solid $color-primary-600;
+    text-transform: none;
+    background: transparent;
+    border-radius: $border-radius-1;
+    padding: $size-2 $size-6;
+    color: $color-primary-600;
   }
 }
