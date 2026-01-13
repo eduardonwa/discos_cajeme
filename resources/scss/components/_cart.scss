@@ -1,8 +1,6 @@
 @use "../abstracts" as *;
 
 .cart {
-    margin-block-end: $size-12;
-
     &__empty {
         display: flex;
         align-items: center;
@@ -27,13 +25,16 @@
         }
 
         .item {
-            margin-block-end: $size-8;
+            margin-block-end: $size-4;
             display: grid;
             grid-template-columns: .5fr 1fr;
             grid-template-areas: 
                 "media   info"
                 "actions actions";
             gap: $size-3;
+            border: 1px solid $color-primary-400;
+            padding: $size-2;
+            border-radius: $border-radius-1;
 
             &__media {
                 grid-area: media;
@@ -52,14 +53,19 @@
                 color: $color-neutral-900;
 
                 .price {
-                    font-family: $font-family-semibold;
                     font-size: $font-size-500;
+                    font-family: $font-family-semibold;
                 }
 
                 .subtotal {
                     margin-block-start: $size-4;
                     display: flex;
+                    align-items: center;
                     justify-content: space-between;
+                    
+                    span {
+                        font-size: $font-size-500;
+                    }
                 }
             }
 
@@ -83,6 +89,94 @@
                         color: $color-primary-900;
                     }
                 }                
+            }
+        }
+
+        .footer {
+            background: $color-neutral-100;
+            padding: $size-3;
+            border-radius: $border-radius-1;
+            font-size: $font-size-500;
+            border: 1px solid $color-neutral-200;
+
+            .subtotal, .total, .discount__content {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+            }
+
+            .discount {
+                &__content {
+                    padding-block-start: $size-1;
+
+                    .ui-icon-btn {
+                        padding: 0;
+                        margin-inline-start: auto;
+                    }
+                }
+            }
+
+            .total {
+                position: relative;
+                margin-block-start: $size-3;
+                padding-block-start: $size-3;
+
+                &::after {
+                    content: '';
+                    position: absolute;
+                    top: 1px;
+                    width: 100%;
+                    border: 1px solid $color-neutral-200;
+                }
+            }
+        }
+
+        .coupon {
+            margin-block-start: $size-4;
+
+            &__zone {
+                margin-block-start: $size-2;
+                display: flex;
+                flex-direction: column;
+
+                input[data-type="coupon"] {
+                    margin-block: $size-4;
+                }
+            }
+        }
+
+        .checkout {
+            background: $color-neutral-100;
+            border-radius: $border-radius-1;
+            padding: $size-4;
+            outline: 1px solid $color-neutral-300;
+
+            .coupon {
+                font-size: $font-size-500;
+                margin-block: 0;
+
+                .code {
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                    padding-block-end: $size-2;
+
+                    .remove {
+                        cursor: pointer;
+                        color: $color-accent-500;
+                        transition: color 250ms ease;
+
+                        &:hover {
+                            text-decoration: underline;
+                            color: $color-accent-900;
+                        }
+                    }
+                }
+                margin-block-end: $size-6;
+            }
+
+            .auth-login {
+                outline: 1px solid;
             }
         }
     }

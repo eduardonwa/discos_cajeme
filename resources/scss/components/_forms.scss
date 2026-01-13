@@ -21,6 +21,13 @@ input:not(.button) {
   padding: $form-input-padding;
   border: $form-input-border-default;
   border-radius: $form-input-border-radius;
+  position: relative;
+
+  &[data-type="coupon"] {
+    background: transparent;
+    border: 2px dashed $color-secondary-700;
+    border-radius: $border-radius-1;
+  }
 }
 
 input:focus {

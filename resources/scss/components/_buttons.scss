@@ -110,11 +110,11 @@
   }
 
   &[data-type="cart-delete"] {
-    border: 2px solid $color-primary-600;
+    border: 2px solid transparent;
     text-transform: none;
-    background: transparent;
+    background: $color-primary-900;
     border-radius: $border-radius-1;
     padding: $size-2 $size-6;
-    color: $color-primary-600;
+    color: $color-primary-100;
   }
 }

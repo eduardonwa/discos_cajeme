@@ -367,13 +367,12 @@
         }
 
         .coupon {
-            margin-block: $size-4;
-
+            margin-block-start: $size-6;
+            
             &__zone {
                 input {
                     margin-block: $size-3;
                     width: 100%;
-                    border: 0;
                 }
 
                 .button[data-type="coupon"] {

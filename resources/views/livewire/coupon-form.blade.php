@@ -6,6 +6,7 @@
         <div class="coupon__zone">
             <input
                 type="text"
+                data-type="coupon"
                 wire:model="couponCode"
                 placeholder="@if($context === 'product') Cupón para este producto @else Cupón para el carrito @endif"
             >

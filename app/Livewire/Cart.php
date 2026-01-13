@@ -55,7 +55,7 @@ class Cart extends Component
     
         if ($coupon) {
             $this->cart->update(['coupon_code' => $code]);
-            $this->banner('¡Cupón aplicado correctamente!');
+            $this->banner('Cupón aplicado correctamente');
             $this->dispatch('cartUpdated');
         } else {
             $this->addError('coupon', 'Cupón no válido o expirado.');
@@ -153,7 +153,7 @@ class Cart extends Component
     
         if ($available < 1) {
             $this->dangerBanner(
-                '¡Ups! No hay más unidades disponibles'
+                '¡Ups! No hay más unidades'
             );
             return;
         }
