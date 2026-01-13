@@ -12,7 +12,6 @@ use Filament\Support\Colors\Color;
 use Filament\Pages\Auth\EditProfile;
 use Illuminate\Support\Facades\Vite;
 use App\Http\Middleware\CheckAdminRole;
-use Filament\Forms\Components\Component;
 use Filament\Navigation\NavigationGroup;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Support\Facades\FilamentAsset;
