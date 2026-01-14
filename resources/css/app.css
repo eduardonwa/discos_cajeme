@@ -5,3 +5,12 @@
 [x-cloak] {
     display: none;
 }
+
+.button-wrapper {
+    display: flex;
+    justify-content: center;
+}
+
+.button-wrapper button[type="submit"] {
+    width: 377px;
+}

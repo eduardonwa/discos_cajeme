@@ -1,8 +1,11 @@
 <x-filament::page>
     <form wire:submit.prevent="save">
         {{ $this->form }}
-        <x-filament::button type="submit" class="mt-4">
-            Guardar
-        </x-filament::button>
+
+        <div class="button-wrapper">
+            <x-filament::button type="submit">
+                Guardar
+            </x-filament::button>
+        </div>
     </form>
 </x-filament::page>
