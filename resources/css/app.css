@@ -2,20 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
-[x-cloak] {
-    display: none;
-}
+[x-cloak] { display: none; }
 
-.button-wrapper {
-    display: none;
-}
-
-/* .fi-header {
-  position: sticky;
-  top: 0;
-  z-index: 50;
-  padding-top: .6rem;
-} */
+/* home-page > boton "guardar" */
+.button-wrapper { display: none; }
 
 .fi-header {
   position: sticky;

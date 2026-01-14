@@ -90,7 +90,6 @@ class HomePageEditor extends Page implements HasForms
             Action::make('save')
                 ->label('Guardar')
                 ->action('save')
-                ->extraAttributes(['class' => 'mi-boton-sticky'])
         ];
     }
     

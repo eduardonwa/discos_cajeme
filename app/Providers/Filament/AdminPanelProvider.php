@@ -12,6 +12,9 @@ use Filament\Support\Colors\Color;
 use Filament\Pages\Auth\EditProfile;
 use Illuminate\Support\Facades\Vite;
 use App\Http\Middleware\CheckAdminRole;
+use Awcodes\FilamentQuickCreate\QuickCreatePlugin;
+use Awcodes\Overlook\OverlookPlugin;
+use Awcodes\Overlook\Widgets\OverlookWidget;
 use Filament\Navigation\NavigationGroup;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Support\Facades\FilamentAsset;
@@ -44,6 +47,7 @@ class AdminPanelProvider extends PanelProvider
             ->colors([
                 'primary' => Color::Amber,
             ])
+            ->viteTheme('resources/css/filament/admin/theme.css')
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
             ->discoverClusters(in: app_path('Filament/Clusters'), for: 'App\\Filament\\Clusters')
@@ -69,6 +73,25 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->authMiddleware([
                 Authenticate::class,
+            ])
+            ->plugins([
+                QuickCreatePlugin::make()
+                    ->excludes([
+                        \App\Filament\Resources\OrderResource::class
+                    ]),
+                OverlookPlugin::make()
+                    ->sort(2)
+                    ->columns([
+                        'default' => 1,
+                        'sm' => 2,
+                        'md' => 3,
+                        'lg' => 4,
+                        'xl' => 5,
+                        '2xl' => null
+                    ])
+            ])
+            ->widgets([
+                OverlookWidget::class
             ])
             ->navigationGroups([
                 NavigationGroup::make('Productos')
