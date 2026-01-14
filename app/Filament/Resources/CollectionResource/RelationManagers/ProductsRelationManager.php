@@ -2,17 +2,11 @@
 
 namespace App\Filament\Resources\CollectionResource\RelationManagers;
 
-use Filament\Forms;
 use Filament\Tables;
-use App\Models\Product;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
-use Illuminate\Support\Arr;
 use Filament\Tables\Columns\TextColumn;
 use App\Filament\Fields\ProductSelector;
-use Filament\Tables\Columns\ImageColumn;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
 

@@ -10,7 +10,6 @@ use App\Models\Collection;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Section;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Tabs\Tab;
@@ -29,7 +28,6 @@ class HomePageEditor extends Page implements HasForms
     protected static string $view = 'filament.pages.homepage';
     protected static ?string $navigationLabel = 'Homepage';
     protected static ?string $title = 'Homepage';
-
     public ?array $data = [];
 
     public HomePage $record;
@@ -124,31 +122,69 @@ class HomePageEditor extends Page implements HasForms
                                 ->label('Link')
                                 ->url()
                                 ->maxLength(255),
-                        ]),
+                        ])
+                ])
+                ->extraAttributes([
+                    'style' => '
+                        margin: 2rem 0 4rem 0;
+                        padding-bottom: 4rem;
+                        border-bottom: 1px solid #ececec71;
+                    '
                 ]),
-                
-                Section::make('Colecciones tab')
-                    ->schema([
+
+                // COLECCIONES TAB
+                Grid::make(12)->schema([
+                    Placeholder::make('Colecciones tab')
+                        ->content('Colecciones tab')
+                        ->label(false)
+                        ->columnSpan(12)
+                        ->extraAttributes([
+                            'class' => 'font-bold',
+                            'style' => 'font-size: 2.2rem;'
+                        ]),
+                    Grid::make(4)
+                        ->columnSpan(12)
+                        ->schema([
+                            TextInput::make('tab_collection_header')
+                                ->label('Encabezado')
+                                ->maxLength(255)
+                                ->columnSpan(3),
+                            TextInput::make('tab_products_limit')
+                                ->label('Límite de productos por tab')
+                                ->numeric()
+                                ->minValue(1)
+                                ->maxValue(18)
+                                ->required()
+                                ->columnSpan(1),
+                        ]),
                         Repeater::make('tab_collection_ids')
                             ->label('Colecciones')
                             ->defaultItems(0)
                             ->maxItems(4)
+                            ->grid([
+                                'default' => 1,
+                                'md' => 2,
+                                'lg' => 4,
+                            ])
+                            ->columnSpan(12)
                             ->schema([
                                 Select::make('id')
                                     ->label('Colección')
-                                    ->options(Collection::query()->where('is_active', true)->pluck('name', 'id'))
+                                    ->options(fn () => Collection::query()
+                                        ->where('is_active', true)
+                                        ->pluck('name', 'id'))
                                     ->searchable()
                                     ->distinct()
                                     ->required(),
-                            ]),
-
-                        TextInput::make('tab_products_limit')
-                            ->label('Límite de productos por tab')
-                            ->numeric()
-                            ->minValue(1)
-                            ->maxValue(18)
-                            ->required()
-                    ]),
+                            ])
+                ])
+                ->extraAttributes([
+                    'style' => '
+                        margin: 2rem 0 4rem 0;
+                        padding-bottom: 4rem;
+                        border-bottom: 1px solid #ececec71;
+                    '
+                ]),
                 
                 // 3) CTA
                 Grid::make(12)->schema([
@@ -207,9 +243,16 @@ class HomePageEditor extends Page implements HasForms
                                         ])
                                 ])                            
                         ]),
+                ])
+                ->extraAttributes([
+                    'style' => '
+                        margin: 2rem 0 4rem 0;
+                        padding-bottom: 4rem;
+                        border-bottom: 1px solid #ececec71;
+                    '
                 ]),
 
-                // SPOTLIGHT
+                // 4) SPOTLIGHT
                 Grid::make(12)->schema([
                     Placeholder::make('Spotlight')
                         ->content('Spotlight')
@@ -262,29 +305,77 @@ class HomePageEditor extends Page implements HasForms
                                         ]),
                                 ])->columnSpanFull()
                         ])
+                ])
+                ->extraAttributes([
+                    'style' => '
+                        margin: 2rem 0 4rem 0;
+                        padding-bottom: 4rem;
+                        border-bottom: 1px solid #ececec71;
+                    '
                 ]),
 
-                Section::make('Colecciones Riel')
-                    ->schema([
-                        TextInput::make('rail_collection_header')
-                            ->label('Encabezado')
-                            ->maxLength(255),
-                        Textarea::make('rail_collection_description')
-                            ->label('Descripción')
-                            ->rows(2), 
-                        Repeater::make('rail_collection_ids')
-                            ->label('Colecciones')
-                            ->defaultItems(0)
-                            ->maxItems(8)
-                            ->schema([
-                                Select::make('id')
-                                    ->label('Colección')
-                                    ->options(Collection::query()->where('is_active', true)->pluck('name', 'id'))
-                                    ->searchable()
-                                    ->distinct()
-                                    ->required(),
-                            ])
-                    ])
+                // 5) COLECCIONES RIEL
+                Grid::make(12)->schema([
+                    // Header tipo sección
+                    Placeholder::make('rail_collections_heading')
+                        ->content('Colecciones Riel')
+                        ->label(false)
+                        ->columnSpan(12)
+                        ->extraAttributes([
+                            'class' => 'font-bold mb-4 mt-6',
+                            'style' => 'font-size: 2.2rem;',
+                        ]),
+
+                    // Campos superiores (copy)
+                    Grid::make(12)
+                        ->columnSpan(12)
+                        ->schema([
+                            TextInput::make('rail_collection_header')
+                                ->label('Encabezado')
+                                ->maxLength(255)
+                                ->columnSpan([
+                                    'default' => 12,
+                                    'md' => 6,
+                                ]),
+
+                            Textarea::make('rail_collection_description')
+                                ->label('Descripción')
+                                ->rows(2)
+                                ->columnSpan([
+                                    'default' => 12,
+                                    'md' => 6,
+                                ]),
+                        ]),
+
+                    // Repeater horizontal
+                    Repeater::make('rail_collection_ids')
+                        ->label('Colecciones')
+                        ->defaultItems(0)
+                        ->maxItems(8)
+                        ->grid([
+                            'default' => 1,
+                            'md' => 2,
+                            'lg' => 4,
+                        ])
+                        ->columnSpan(12)
+                        ->schema([
+                            Select::make('id')
+                                ->label('Colección')
+                                ->options(fn () => Collection::query()
+                                    ->where('is_active', true)
+                                    ->pluck('name', 'id'))
+                                ->searchable()
+                                ->distinct()
+                                ->required(),
+                        ]),
+                ])
+                ->extraAttributes([
+                    'style' => '
+                        margin: 2rem 0 4rem 0;
+                        padding-bottom: 4rem;
+                        border-bottom: 1px solid #ececec71;
+                    '
+                ]),
             ]);
     }
 }
