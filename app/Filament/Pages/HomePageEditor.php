@@ -83,6 +83,16 @@ class HomePageEditor extends Page implements HasForms
             ->success()
             ->send();
     }
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            Action::make('save')
+                ->label('Guardar')
+                ->action('save')
+                ->extraAttributes(['class' => 'mi-boton-sticky'])
+        ];
+    }
     
     public function form(Form $form): Form
     {
