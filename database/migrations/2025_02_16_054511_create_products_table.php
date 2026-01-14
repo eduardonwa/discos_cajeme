@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->text('description');
+            $table->string('cover_img_alt')->nullable();
             $table->unsignedInteger('price');
             $table->unsignedInteger('compare_at_price')->nullable();
             $table->string('promo_label')->nullable();

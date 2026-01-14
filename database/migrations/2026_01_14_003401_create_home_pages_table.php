@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('hero_img_link')->nullable();
             
             // 2) TAB COLLECTIONS
-            $table->json('tab_collection_ids')->nullable();
+            $table->json('tab_collections')->nullable();
             $table->string('tab_collection_header')->nullable();
             $table->unsignedTinyInteger('tab_products_limit')->default(6);
 

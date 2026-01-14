@@ -138,6 +138,9 @@ class ProductResource extends Resource
                             ->tabs([
                                 Tab::make('Información')
                                     ->schema([
+                                        TextInput::make('cover_img_alt')
+                                            ->label('Cover alt')
+                                            ->maxLength(255),
                                         TextInput::make('name')
                                             ->label('Nombre'),
                                         Textarea::make('description')

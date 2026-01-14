@@ -1,5 +1,6 @@
 @import '../../../../vendor/filament/filament/resources/css/theme.css';
 @source '../../../../vendor/awcodes/filament-quick-create/resources/**/*.blade.php';
 @source '../../../../vendor/awcodes/overlook/resources/**/*.blade.php';
+@source '../../../../vendor/awcodes/matinee/resources/**/*.blade.php';
 
 @config 'tailwind.config.js';

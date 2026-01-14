@@ -3,11 +3,15 @@
 namespace App\Filament\Pages;
 
 use App\Models\Product;
+use Filament\Forms\Get;
+use Filament\Forms\Set;
 use App\Models\HomePage;
 use Filament\Forms\Form;
 use Filament\Pages\Page;
 use App\Models\Collection;
+use Awcodes\Matinee\Matinee;
 use Filament\Actions\Action;
+use Illuminate\Support\HtmlString;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\Select;
@@ -39,11 +43,7 @@ class HomePageEditor extends Page implements HasForms
 
         $data = $this->record->toArray();
         // tabs: [1,2,3] -> [['id'=>1],['id'=>2],...]
-        $data['tab_collection_ids'] = collect($this->record->tab_collection_ids ?? [])
-            ->map(fn ($id) => ['id' => (int) $id])
-            ->values()
-            ->all();
-
+        $data['tab_collections'] = $this->record->tab_collections ?? [];
         // rail: [1,2,3] -> [['id'=>1],['id'=>2],...]
         $data['rail_collection_ids'] = collect($this->record->rail_collection_ids ?? [])
             ->map(fn ($id) => ['id' => (int) $id])
@@ -59,10 +59,19 @@ class HomePageEditor extends Page implements HasForms
         $state = $this->form->getState();
 
         // repeater -> array plano
-        $state['tab_collection_ids'] = collect($state['tab_collection_ids'] ?? [])
-            ->pluck('id')
-            ->filter()
-            ->map(fn ($v) => (int) $v)
+        $state['tab_collections'] = collect($state['tab_collections'] ?? [])
+            ->map(function ($item) {
+                return [
+                    'collection_id' => isset($item['collection_id']) ? (int) $item['collection_id'] : null,
+                    'product_ids' => collect($item['product_ids'] ?? [])
+                        ->filter()
+                        ->map(fn ($id) => (int) $id)
+                        ->unique()
+                        ->values()
+                        ->all()
+                ];
+            })
+            ->filter(fn ($item) => filled($item['collection_id']))
             ->values()
             ->all();
 
@@ -117,7 +126,6 @@ class HomePageEditor extends Page implements HasForms
                             'default' => 12,
                             'lg' => 6,
                         ]),
-
                     Grid::make(1)
                         ->columnSpan([
                             'default' => 12,
@@ -167,25 +175,86 @@ class HomePageEditor extends Page implements HasForms
                                 ->required()
                                 ->columnSpan(1),
                         ]),
-                        Repeater::make('tab_collection_ids')
+                        Repeater::make('tab_collections')
                             ->label('Colecciones')
                             ->defaultItems(0)
                             ->maxItems(4)
                             ->grid([
                                 'default' => 1,
                                 'md' => 2,
-                                'lg' => 4,
+                                'lg' => 4
                             ])
                             ->columnSpan(12)
                             ->schema([
-                                Select::make('id')
-                                    ->label('Colección')
+                                Select::make('collection_id')
+                                    ->label('Colección seleccionada')
                                     ->options(fn () => Collection::query()
                                         ->where('is_active', true)
-                                        ->pluck('name', 'id'))
+                                        ->pluck('name', 'id')
+                                        ->toArray())
                                     ->searchable()
-                                    ->distinct()
-                                    ->required(),
+                                    ->required()
+                                    ->live()
+                                    ->afterStateUpdated(fn ($state, Set $set) => $set('product_ids', []))
+                                    ->rules([
+                                        fn (Get $get) => function ($attribute, $value, $fail) use ($get) {
+                                            $ids = collect($get('../../tab_collections') ?? [])
+                                                ->pluck('collection_id')
+                                                ->filter()
+                                                ->map(fn ($v) => (int) $v);
+
+                                            if ($ids->count() !== $ids->unique()->count()) {
+                                                $fail('No repitas colecciones.');
+                                            }
+                                        },
+                                    ]),
+                                Select::make('product_ids')
+                                    ->label('Selección de productos')
+                                    ->multiple()
+                                    ->searchable()
+                                    ->disabled(fn (Get $get) => blank($get('collection_id')))
+                                    ->helperText(function (Get $get) {
+                                        $limit = (int) ($get('../../../tab_products_limit') ?? 18);
+                                        $count = count($get('product_ids') ?? []);
+                                        return "Máximo: {$limit} — seleccionados: {$count}";
+                                    })
+                                    // llena el dropdown al abrir (sin teclear)
+                                    ->options(function (Get $get) {
+                                        $collectionId = $get('collection_id');
+                                        if (! $collectionId) return [];
+
+                                        return Product::query()
+                                            ->whereHas('collections', fn ($q) => $q->whereKey($collectionId))
+                                            ->orderByDesc('id')
+                                            ->limit(25)
+                                            ->pluck('name', 'id')
+                                            ->toArray();
+                                    })
+                                    // búsqueda global (cuando escribes)
+                                    ->getSearchResultsUsing(function (string $search, Get $get) {
+                                        $collectionId = $get('collection_id');
+                                        if (! $collectionId) return [];
+                                        return Product::query()
+                                            ->whereHas('collections', fn ($q) => $q->whereKey($collectionId))
+                                            ->where('name', 'like', "%{$search}%")
+                                            ->orderBy('name')
+                                            ->limit(50)
+                                            ->pluck('name', 'id')
+                                            ->toArray();
+                                    })
+                                    // para que los ids ya elegidos siempre muestren su label
+                                    ->getOptionLabelUsing(fn ($value) => Product::query()->whereKey($value)->value('name'))
+                                    ->rules([
+                                        fn (Get $get) => function (string $attribute, $value, \Closure $fail) use ($get) {
+                                            $limit = (int) ($get('../../../tab_products_limit') ?? 18);
+                                            $count = is_array($value) ? count($value) : 0;
+
+                                            if ($count > $limit) {
+                                                $fail("Máximo {$limit} productos por pestaña.");
+                                            }
+                                        },
+                                    ])
+
                             ])
                 ])
                 ->extraAttributes([
@@ -296,8 +365,48 @@ class HomePageEditor extends Page implements HasForms
                                         ->schema([
                                             Select::make('spotlight_product_id')
                                                 ->label('Producto')
-                                                ->options(Product::query()->pluck('name', 'id'))
-                                                ->searchable(),
+                                                ->options(
+                                                    Product::query()
+                                                        ->latest()
+                                                        ->limit(21)
+                                                        ->pluck('name', 'id')
+                                                        ->toArray()
+                                                    )
+                                                ->searchable()
+                                                ->live()
+                                                ->getSearchResultsUsing(function (string $search) {
+                                                    return Product::query()
+                                                        ->where('name', 'like', "%{$search}%")
+                                                        ->orderByDesc('id')
+                                                        ->limit(55)
+                                                        ->pluck('name', 'id')
+                                                        ->toArray();
+                                                })
+                                                ->getOptionLabelUsing(fn ($value) => Product::query()->whereKey($value)->value('name'))
+                                                ->columnSpan(8),
+                                            Placeholder::make('spotlight_product_preview')
+                                                ->label('Preview')
+                                                ->content(function (Get $get) {
+                                                    $id = $get('spotlight_product_id');
+                                                    if (! $id) return 'Sin producto seleccionado.';
+
+                                                    $product = Product::find($id);
+                                                    $url = $product?->getFirstMediaUrl('featured');
+                                                    
+                                                    if (! $product) return 'Producto no encontrado.';
+                                                    if (! $url) return "“{$product->name}” no tiene featured.";
+                                                    
+                                                    return new HtmlString("
+                                                        <div style='display:flex;gap:10px;align-items:center;'>
+                                                            <img src='{$url}' style='width:89px;height:89px;object-fit:cover;border-radius:10px;' />
+                                                            <div style='display:flex;flex-direction:column;'>
+                                                                <p style='font-weight:600;'>Alt:</p>
+                                                                <div style='font-size:15px;opacity:.7;'>{$product->cover_img_alt}</div>
+                                                            </div>
+                                                        </div>
+                                                    ");
+                                                })
+                                                ->columnSpan(4)
                                         ]),
                                     Tab::make('Copy')
                                         ->schema([
