@@ -6,8 +6,9 @@ use App\Models\Product;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Spatie\MediaLibrary\HasMedia;
 
-class HomePage extends Model
+class HomePage extends Model implements HasMedia
 {
     use InteractsWithMedia;
 

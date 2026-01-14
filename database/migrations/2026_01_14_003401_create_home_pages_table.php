@@ -21,6 +21,7 @@ return new class extends Migration
             
             // 2) TAB COLLECTIONS
             $table->json('tab_collection_ids')->nullable();
+            $table->string('tab_collection_header')->nullable();
             $table->unsignedTinyInteger('tab_products_limit')->default(6);
 
             // 3) CTA
