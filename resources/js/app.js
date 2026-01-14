@@ -21,6 +21,6 @@ document.addEventListener('alpine:init', () => {
             };
             set(mql);
             (mql.addEventListener ? mql.addEventListener('change', set) : mql.addListener(set));
-            }
+        }
     }));
 });

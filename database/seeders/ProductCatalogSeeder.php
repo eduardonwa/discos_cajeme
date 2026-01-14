@@ -6,7 +6,6 @@ use App\Models\Product;
 use App\Models\Collection;
 use Illuminate\Support\Arr;
 use Illuminate\Database\Seeder;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
 class ProductCatalogSeeder extends Seeder
 {
