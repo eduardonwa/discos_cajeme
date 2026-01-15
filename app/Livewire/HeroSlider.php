@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use Illuminate\Support\Facades\Storage;
 use Livewire\Component;
 
 class HeroSlider extends Component
@@ -13,6 +14,14 @@ class HeroSlider extends Component
     {
         $this->slides = collect($slides)
             ->filter(fn ($s) => !empty($s['media_type']))
+            ->map(function ($s) {
+                if (($s['media_type'] ?? null) === 'image') {
+                    $s['image_url'] = !empty($s['image_path'])
+                        ? Storage::disk('public')->url($s['image_path'])
+                        : null;
+                }
+                return $s;
+            })
             ->values()
             ->all();
     }
