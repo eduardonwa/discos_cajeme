@@ -9,20 +9,20 @@ use App\Models\HomePage;
 use Filament\Forms\Form;
 use Filament\Pages\Page;
 use App\Models\Collection;
-use Awcodes\Matinee\Matinee;
 use Filament\Actions\Action;
-use Filament\Forms\Components\FileUpload;
 use Illuminate\Support\HtmlString;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Section;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
@@ -128,6 +128,61 @@ class HomePageEditor extends Page implements HasForms
             ->send();
     }
 
+    private function heroSlideSchema(int $i): array
+    {
+        return [
+            Radio::make("hero_slides.$i.media_type")
+                ->label('Media')
+                ->inline()
+                ->options(['image' => 'Imagen', 'video' => 'Video'])
+                ->default('image')
+                ->live()
+                ->afterStateHydrated(function (Set $set, $state) use ($i) {
+                    if (blank($state)) {
+                        $set("hero_slides.$i.media_type", 'image');
+                    }
+                })
+                ->afterStateUpdated(function (Set $set, ?string $state) use ($i) {
+                    if ($state === 'video') {
+                        $set("hero_slides.$i.image_path", null);
+                        $set("hero_slides.$i.image_alt", null);
+                    } elseif ($state === 'image') {
+                        $set("hero_slides.$i.video_url", null);
+                    }
+                }),
+
+            // ENLACE
+            TextInput::make("hero_slides.$i.link")
+                ->label('Enlace')
+                ->url()
+                ->maxLength(255),
+
+            // VIDEO
+            TextInput::make("hero_slides.$i.video_url")
+                ->label('URL (Youtube)')
+                ->url()
+                ->maxLength(255)
+                ->hidden(fn (Get $get) => $get("hero_slides.$i.media_type") !== 'video')
+                ->required(fn (Get $get) => $get("hero_slides.$i.media_type") === 'video'),
+
+            // IMAGEN
+            FileUpload::make("hero_slides.$i.image_path")
+                ->label('Imagen')
+                ->disk('public')
+                ->directory('hero')
+                ->visibility('public')
+                ->image()
+                ->hidden(fn (Get $get) => $get("hero_slides.$i.media_type") !== 'image')
+                ->required(fn (Get $get) => $get("hero_slides.$i.media_type") === 'image'),
+            
+            // ALT
+            TextInput::make("hero_slides.$i.image_alt")
+                ->label('Alt')
+                ->maxLength(255)
+                ->hidden(fn (Get $get) => $get("hero_slides.$i.media_type") !== 'image'),
+        ];
+    }
+
     protected function getHeaderActions(): array
     {
         return [
@@ -153,82 +208,24 @@ class HomePageEditor extends Page implements HasForms
                             'class' => 'font-bold',
                             'style' => 'font-size: 2.2rem;'
                         ]),
-                    Grid::make(1)
+                    Grid::make([
+                        'default' => 1,
+                        'md' => 2
+                    ])
+                    ->columnSpan(12)
                         ->schema([
-                            Repeater::make('hero_slides')
-                                ->label('Hero slides')
-                                ->minItems(4)
-                                ->maxItems(4)
-                                ->defaultItems(4)
-                                ->addable(false)
-                                ->deletable(false)
-                                ->reorderable(false)
-                                ->grid([
-                                    'default' => 1,
-                                    'md' => 2
-                                ])
-                                ->schema([
-                                    Grid::make(12)->schema([
-                                        Placeholder::make('slide_title')
-                                            ->label(false)
-                                            ->content(fn (Get $get) => 'Slide')
-                                            ->columnSpan(12),
-
-                                        Radio::make('media_type')
-                                            ->label('Media')
-                                            ->inline()
-                                            ->options(['image' => 'Imagen', 'video' => 'Video'])
-                                            ->default('image')
-                                            ->live()
-                                            ->columnSpan(6)
-                                            ->afterStateHydrated(function (Set $set, $state) {
-                                                if (blank($state)) {
-                                                    $set('media_type', 'image');
-                                                }
-                                            })
-                                            ->afterStateUpdated(function (Set $set, ?string $state) {
-                                                if ($state === 'video') {
-                                                    $set('image_path', null);
-                                                    $set('image_alt', null);
-                                                } elseif ($state === 'image') {
-                                                    $set('video_url', null);
-                                                }
-                                            }),
-                                        TextInput::make('link')
-                                            ->label('Enlace de slide')
-                                            ->url()
-                                            ->maxLength(255)
-                                            ->columnSpan(12),
-
-                                        // IMAGEN
-                                        Grid::make(2)
-                                            ->schema([
-                                                FileUpload::make('image_path')
-                                                    ->label('Imagen')
-                                                    ->disk('public')
-                                                    ->directory('hero')
-                                                    ->visibility('public')
-                                                    ->image()
-                                                    ->hidden(fn (Get $get) => $get('media_type') !== 'image')
-                                                    ->required(fn (Get $get) => $get('media_type') === 'image')
-                                                    ->columnSpan(['default' => 12, 'lg' => 6]),
-        
-                                                TextInput::make('image_alt')
-                                                    ->label('Alt')
-                                                    ->maxLength(255)
-                                                    ->hidden(fn (Get $get) => $get('media_type') !== 'image')
-                                                    ->columnSpan(['default' => 12, 'lg' => 6]),
-                                            ]),
-                                        // VIDEO
-                                        TextInput::make('video_url')
-                                            ->label('URL (Youtube)')
-                                            ->url()
-                                            ->maxLength(255)
-                                            ->hidden(fn (Get $get) => $get('media_type') !== 'video')
-                                            ->required(fn (Get $get) => $get('media_type') === 'video')
-                                            ->columnSpan(12)
-                                    ])
-                                ])
+                            Section::make('Slide 1')
+                                ->columnSpan(1)
+                                ->schema($this->heroSlideSchema(0)),
+                            Section::make('Slide 2')
+                                ->columnSpan(1)
+                                ->schema($this->heroSlideSchema(1)),
+                            Section::make('Slide 3')
+                                ->columnSpan(1)
+                                ->schema($this->heroSlideSchema(2)),
+                            Section::make('Slide 4')
+                                ->columnSpan(1)
+                                ->schema($this->heroSlideSchema(3))
                         ])
                 ])
                 ->extraAttributes([
