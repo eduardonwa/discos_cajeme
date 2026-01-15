@@ -36,6 +36,8 @@
                 <p>{{ $this->searchQuery }}</p>
         @endif
     @endif
+    
+    <livewire:hero-slider :slides="$heroSlider" />
 
     <div class="container" data-type="wide">
         <x-collections-carousel :collection="$verano" type="rebajas" :showMore="true" />

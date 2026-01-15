@@ -27,7 +27,6 @@ class HomePage extends Model implements HasMedia
 
     public function registerMediaCollections(): void
     {
-        $this->addMediaCollection('home_hero_img')->singleFile();
         $this->addMediaCollection('home_cta_img')->singleFile();
         $this->addMediaCollection('home_spotlight_override')->singleFile();
     }

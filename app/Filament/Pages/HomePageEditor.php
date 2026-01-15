@@ -116,6 +116,8 @@ class HomePageEditor extends Page implements HasForms
             ->map(fn ($v) => (int) $v)
             ->values()
             ->all();
+        
+        // dd($state);
 
         $this->record->update($state);
 

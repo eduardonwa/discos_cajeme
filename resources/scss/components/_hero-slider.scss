@@ -1,0 +1,18 @@
+@use "../abstracts" as *;
+
+.hero_background,
+.hero_video,
+.video-iframe,
+.overlay {
+  pointer-events: none;
+}
+
+.hero__controls {
+  position: relative; /* o absolute si los posicionas */
+  z-index: 10;
+  pointer-events: auto;
+}
+
+.hero-dot {
+  pointer-events: auto;
+}

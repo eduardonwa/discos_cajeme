@@ -4,6 +4,7 @@ namespace App\Livewire;
 
 use App\Models\Product;
 use App\Models\Collection;
+use App\Models\HomePage;
 use Livewire\Component;
 use Livewire\Attributes\Url;
 use Livewire\WithPagination;
@@ -15,6 +16,15 @@ class StoreFront extends Component
 
     #[Url]
     public $searchQuery = '';
+
+    public array $heroSlider = [];
+
+    public function mount()
+    {
+        $home = HomePage::first();
+
+        $this->heroSlider = $home?->hero_slides ?? [];
+    }
 
     #[Computed]
     public function productsQuery()
