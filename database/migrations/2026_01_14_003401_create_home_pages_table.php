@@ -18,6 +18,7 @@ return new class extends Migration
             // 1) HERO
             $table->string('hero_image_alt')->nullable();
             $table->string('hero_img_link')->nullable();
+            $table->json('hero_video')->nullable();
             
             // 2) TAB COLLECTIONS
             $table->json('tab_collections')->nullable();

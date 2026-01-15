@@ -13,6 +13,7 @@ use Filament\Pages\Auth\EditProfile;
 use Illuminate\Support\Facades\Vite;
 use App\Http\Middleware\CheckAdminRole;
 use Awcodes\FilamentQuickCreate\QuickCreatePlugin;
+use Awcodes\Matinee\Matinee;
 use Awcodes\Overlook\OverlookPlugin;
 use Awcodes\Overlook\Widgets\OverlookWidget;
 use Filament\Navigation\NavigationGroup;
