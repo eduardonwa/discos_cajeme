@@ -11,9 +11,11 @@ use Filament\Pages\Page;
 use App\Models\Collection;
 use Awcodes\Matinee\Matinee;
 use Filament\Actions\Action;
+use Filament\Forms\Components\FileUpload;
 use Illuminate\Support\HtmlString;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Tabs;
+use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Components\Repeater;
@@ -42,16 +44,49 @@ class HomePageEditor extends Page implements HasForms
         $this->record = HomePage::firstOrCreate([]);
 
         $data = $this->record->toArray();
-        // tabs: [1,2,3] -> [['id'=>1],['id'=>2],...]
         $data['tab_collections'] = $this->record->tab_collections ?? [];
-        // rail: [1,2,3] -> [['id'=>1],['id'=>2],...]
         $data['rail_collection_ids'] = collect($this->record->rail_collection_ids ?? [])
             ->map(fn ($id) => ['id' => (int) $id])
             ->values()
             ->all();
-
+        
+        // hero_slides
+        $data['hero_slides'] = $this->normalizeHeroSlides($this->record->hero_slides);
+        
         // IMPORTANTE: ligar el form al record para Spatie uploads
         $this->form->model($this->record)->fill($data);
+    }
+
+    private function normalizeHeroSlides(?array $slides): array
+    {
+        $slides = is_array($slides) ? $slides : [];
+
+        $slides = collect($slides)
+            ->take(4)
+            ->map(function ($s) {
+                $s = is_array($s) ? $s : [];
+                $mediaType = $s['media_type'] ?? 'image';
+
+                return [
+                    'media_type'  => in_array($mediaType, ['image', 'video'], true) ? $mediaType : 'image',
+                    'image_path'  => $s['image_path'] ?? null,
+                    'image_alt'   => $s['image_alt'] ?? null,
+                    'video_url'   => $s['video_url'] ?? null,
+                    'link'        => $s['link'] ?? null,
+                ];
+            })
+            ->values()
+            ->all();
+        while (count($slides) < 4) {
+            $slides[] = [
+                'media_type' => 'image',
+                'image_path' => null,
+                'image_alt'  => null,
+                'video_url'  => null,
+                'link'       => null,
+            ];
+        }
+        return $slides;
     }
 
     public function save(): void
@@ -111,35 +146,89 @@ class HomePageEditor extends Page implements HasForms
                 // 1) HERO
                 Grid::make(12)->schema([
                     Placeholder::make('hero_heading')
-                        ->content('Hero')
+                        ->content('Hero slides')
                         ->label(false)
                         ->columnSpan(12)
                         ->extraAttributes([
                             'class' => 'font-bold',
                             'style' => 'font-size: 2.2rem;'
                         ]),
-                    SpatieMediaLibraryFileUpload::make('hero_media')
-                        ->label('Imagen Hero')
-                        ->collection('home_hero_img')
-                        ->image()
-                        ->columnSpan([
-                            'default' => 12,
-                            'lg' => 6,
-                        ]),
                     Grid::make(1)
-                        ->columnSpan([
-                            'default' => 12,
-                            'lg' => 6,
-                        ])
                         ->schema([
-                            TextInput::make('hero_image_alt')
-                                ->label('Alt')
-                                ->maxLength(255),
+                            Repeater::make('hero_slides')
+                                ->label('Hero slides')
+                                ->minItems(4)
+                                ->maxItems(4)
+                                ->defaultItems(4)
+                                ->addable(false)
+                                ->deletable(false)
+                                ->reorderable(false)
+                                ->grid([
+                                    'default' => 1,
+                                    'md' => 2
+                                ])
+                                ->schema([
+                                    Grid::make(12)->schema([
+                                        Placeholder::make('slide_title')
+                                            ->label(false)
+                                            ->content(fn (Get $get) => 'Slide')
+                                            ->columnSpan(12),
 
-                            TextInput::make('hero_img_link')
-                                ->label('Link')
-                                ->url()
-                                ->maxLength(255),
+                                        Radio::make('media_type')
+                                            ->label('Media')
+                                            ->inline()
+                                            ->options(['image' => 'Imagen', 'video' => 'Video'])
+                                            ->default('image')
+                                            ->live()
+                                            ->columnSpan(6)
+                                            ->afterStateHydrated(function (Set $set, $state) {
+                                                if (blank($state)) {
+                                                    $set('media_type', 'image');
+                                                }
+                                            })
+                                            ->afterStateUpdated(function (Set $set, ?string $state) {
+                                                if ($state === 'video') {
+                                                    $set('image_path', null);
+                                                    $set('image_alt', null);
+                                                } elseif ($state === 'image') {
+                                                    $set('video_url', null);
+                                                }
+                                            }),
+                                        TextInput::make('link')
+                                            ->label('Enlace de slide')
+                                            ->url()
+                                            ->maxLength(255)
+                                            ->columnSpan(12),
+
+                                        // IMAGEN
+                                        Grid::make(2)
+                                            ->schema([
+                                                FileUpload::make('image_path')
+                                                    ->label('Imagen')
+                                                    ->disk('public')
+                                                    ->directory('hero')
+                                                    ->visibility('public')
+                                                    ->image()
+                                                    ->hidden(fn (Get $get) => $get('media_type') !== 'image')
+                                                    ->required(fn (Get $get) => $get('media_type') === 'image')
+                                                    ->columnSpan(['default' => 12, 'lg' => 6]),
+        
+                                                TextInput::make('image_alt')
+                                                    ->label('Alt')
+                                                    ->maxLength(255)
+                                                    ->hidden(fn (Get $get) => $get('media_type') !== 'image')
+                                                    ->columnSpan(['default' => 12, 'lg' => 6]),
+                                            ]),
+                                        // VIDEO
+                                        TextInput::make('video_url')
+                                            ->label('URL (Youtube)')
+                                            ->url()
+                                            ->maxLength(255)
+                                            ->hidden(fn (Get $get) => $get('media_type') !== 'video')
+                                            ->required(fn (Get $get) => $get('media_type') === 'video')
+                                            ->columnSpan(12)
+                                    ])
+                                ])
                         ])
                 ])
                 ->extraAttributes([

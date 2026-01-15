@@ -16,7 +16,8 @@ class HomePage extends Model implements HasMedia
 
     protected $casts = [
         'tab_collections' => 'array',
-        'rail_collection_ids' => 'array'
+        'rail_collection_ids' => 'array',
+        'hero_slides' => 'array'
     ];
 
     public function spotlightProduct(): BelongsTo
