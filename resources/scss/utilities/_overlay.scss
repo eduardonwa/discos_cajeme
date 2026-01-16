@@ -1,0 +1,19 @@
+@use "../abstracts/" as *;
+
+// Overlay base (puede usarse global o local)
+.overlay {
+  background: var(--overlay-bg, rgba(0,0,0,.4));
+  opacity: 1;
+  transition: background-color .25s ease, opacity .25s ease;
+
+  // estados de visibilidad
+  &.is-hidden {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  // variantes de tono
+  &--light {
+    background-color: rgba(255, 255, 255, 0.3);
+  }
+}

@@ -16,7 +16,10 @@ return new class extends Migration
             $table->id();
 
             // 1) HERO
-            $table->json('hero_slides')->nullable();
+            $table->string('hero_1_link')->nullable();
+            $table->string('hero_2_link')->nullable();
+            $table->string('hero_3_link')->nullable();
+            $table->string('hero_4_link')->nullable();
             
             // 2) TAB COLLECTIONS
             $table->json('tab_collections')->nullable();

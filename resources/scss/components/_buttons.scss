@@ -117,4 +117,9 @@
     padding: $size-2 $size-6;
     color: $color-primary-100;
   }
+
+  &[data-type="hero-dots"] {
+    width: 89px;
+    height: 21px;
+  }
 }

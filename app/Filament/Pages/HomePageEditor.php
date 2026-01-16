@@ -15,7 +15,6 @@ use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Section;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Tabs\Tab;
@@ -44,49 +43,16 @@ class HomePageEditor extends Page implements HasForms
         $this->record = HomePage::firstOrCreate([]);
 
         $data = $this->record->toArray();
+
         $data['tab_collections'] = $this->record->tab_collections ?? [];
+
         $data['rail_collection_ids'] = collect($this->record->rail_collection_ids ?? [])
             ->map(fn ($id) => ['id' => (int) $id])
             ->values()
             ->all();
         
-        // hero_slides
-        $data['hero_slides'] = $this->normalizeHeroSlides($this->record->hero_slides);
-        
         // IMPORTANTE: ligar el form al record para Spatie uploads
         $this->form->model($this->record)->fill($data);
-    }
-
-    private function normalizeHeroSlides(?array $slides): array
-    {
-        $slides = is_array($slides) ? $slides : [];
-
-        $slides = collect($slides)
-            ->take(4)
-            ->map(function ($s) {
-                $s = is_array($s) ? $s : [];
-                $mediaType = $s['media_type'] ?? 'image';
-
-                return [
-                    'media_type'  => in_array($mediaType, ['image', 'video'], true) ? $mediaType : 'image',
-                    'image_path'  => $s['image_path'] ?? null,
-                    'image_alt'   => $s['image_alt'] ?? null,
-                    'video_url'   => $s['video_url'] ?? null,
-                    'link'        => $s['link'] ?? null,
-                ];
-            })
-            ->values()
-            ->all();
-        while (count($slides) < 4) {
-            $slides[] = [
-                'media_type' => 'image',
-                'image_path' => null,
-                'image_alt'  => null,
-                'video_url'  => null,
-                'link'       => null,
-            ];
-        }
-        return $slides;
     }
 
     public function save(): void
@@ -130,61 +96,6 @@ class HomePageEditor extends Page implements HasForms
             ->send();
     }
 
-    private function heroSlideSchema(int $i): array
-    {
-        return [
-            Radio::make("hero_slides.$i.media_type")
-                ->label('Media')
-                ->inline()
-                ->options(['image' => 'Imagen', 'video' => 'Video'])
-                ->default('image')
-                ->live()
-                ->afterStateHydrated(function (Set $set, $state) use ($i) {
-                    if (blank($state)) {
-                        $set("hero_slides.$i.media_type", 'image');
-                    }
-                })
-                ->afterStateUpdated(function (Set $set, ?string $state) use ($i) {
-                    if ($state === 'video') {
-                        $set("hero_slides.$i.image_path", null);
-                        $set("hero_slides.$i.image_alt", null);
-                    } elseif ($state === 'image') {
-                        $set("hero_slides.$i.video_url", null);
-                    }
-                }),
-
-            // ENLACE
-            TextInput::make("hero_slides.$i.link")
-                ->label('Enlace')
-                ->url()
-                ->maxLength(255),
-
-            // VIDEO
-            TextInput::make("hero_slides.$i.video_url")
-                ->label('URL (Youtube)')
-                ->url()
-                ->maxLength(255)
-                ->hidden(fn (Get $get) => $get("hero_slides.$i.media_type") !== 'video')
-                ->required(fn (Get $get) => $get("hero_slides.$i.media_type") === 'video'),
-
-            // IMAGEN
-            FileUpload::make("hero_slides.$i.image_path")
-                ->label('Imagen')
-                ->disk('public')
-                ->directory('hero')
-                ->visibility('public')
-                ->image()
-                ->hidden(fn (Get $get) => $get("hero_slides.$i.media_type") !== 'image')
-                ->required(fn (Get $get) => $get("hero_slides.$i.media_type") === 'image'),
-            
-            // ALT
-            TextInput::make("hero_slides.$i.image_alt")
-                ->label('Alt')
-                ->maxLength(255)
-                ->hidden(fn (Get $get) => $get("hero_slides.$i.media_type") !== 'image'),
-        ];
-    }
-
     protected function getHeaderActions(): array
     {
         return [
@@ -215,27 +126,40 @@ class HomePageEditor extends Page implements HasForms
                         'md' => 2
                     ])
                     ->columnSpan(12)
-                        ->schema([
-                            Section::make('Slide 1')
-                                ->columnSpan(1)
-                                ->schema($this->heroSlideSchema(0)),
-                            Section::make('Slide 2')
-                                ->columnSpan(1)
-                                ->schema($this->heroSlideSchema(1)),
-                            Section::make('Slide 3')
-                                ->columnSpan(1)
-                                ->schema($this->heroSlideSchema(2)),
-                            Section::make('Slide 4')
-                                ->columnSpan(1)
-                                ->schema($this->heroSlideSchema(3))
-                        ])
-                ])
-                ->extraAttributes([
-                    'style' => '
-                        margin: 2rem 0 4rem 0;
-                        padding-bottom: 4rem;
-                        border-bottom: 1px solid #ececec71;
-                    '
+                    ->schema([
+                        SpatieMediaLibraryFileUpload::make('hero_1_image')
+                            ->collection('hero_1')
+                            ->image()
+                            ->imageEditor()
+                            ->maxSize(4096),
+                        TextInput::make('hero_1_link')
+                            ->label('Enlace slide - 1')
+                            ->nullable(),
+                        SpatieMediaLibraryFileUpload::make('hero_2_image')
+                            ->collection('hero_2')
+                            ->image()
+                            ->imageEditor()
+                            ->maxSize(4096),
+                        TextInput::make('hero_1_link')
+                            ->label('Enlace slide - 2')
+                            ->nullable(),
+                        SpatieMediaLibraryFileUpload::make('hero_3_image')
+                            ->collection('hero_3')
+                            ->image()
+                            ->imageEditor()
+                            ->maxSize(4096),
+                        TextInput::make('hero_3_link')
+                            ->label('Enlace slide - 3')
+                            ->nullable(),
+                        SpatieMediaLibraryFileUpload::make('hero_4_image')
+                            ->collection('hero_4')
+                            ->image()
+                            ->imageEditor()
+                            ->maxSize(4096),
+                        TextInput::make('hero_4_link')
+                            ->label('Enlace slide - 4')
+                            ->nullable(),
+                    ])
                 ]),
 
                 // COLECCIONES TAB

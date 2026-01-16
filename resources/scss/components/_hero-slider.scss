@@ -1,18 +1,75 @@
 @use "../abstracts" as *;
 
-.hero_background,
-.hero_video,
-.video-iframe,
-.overlay {
-  pointer-events: none;
-}
+.hero {
+  position: relative;
 
-.hero__controls {
-  position: relative; /* o absolute si los posicionas */
-  z-index: 10;
-  pointer-events: auto;
-}
+  &__background {
+    position: relative;
+    height: 70vh;
+    width: 100%;
+    overflow: hidden;
+    aspect-ratio: 9 / 16;
+    z-index: 1;
 
-.hero-dot {
-  pointer-events: auto;
+    @include mq(medium) {
+      aspect-ratio: 16 / 9;
+    }
+    
+    // MEDIA
+    .image-shell,
+    .video-shell {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+    }
+
+    .image,
+    .video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .video-shell iframe {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      border: 0;
+      width: 177.77%;
+      height: 100%;
+    }
+
+    @media (max-aspect-ratio: 16/9) {
+      .video-shell iframe {
+        width: 100%;
+        height: 177.77%;
+      }
+    }
+
+    /* Cuando la pantalla es más “horizontal” que 16:9 */
+    @media (min-aspect-ratio: 16/9) {
+      .video-shell iframe {
+        width: 177.77%;
+        height: 100%;
+      }
+    }
+  }
+
+  &__controls {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    margin-bottom: $size-4;
+    z-index: 2;
+
+    .dots {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: $size-2;
+    }
+  }
 }

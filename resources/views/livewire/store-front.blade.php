@@ -1,4 +1,4 @@
-<div class="section">
+<div>
     <div>
         <x-input wire:model.live.debounce="searchQuery" type="text" placeholder="Escribe algo"/>
         <div wire:loading.delay.shorter wire:target="searchQuery">Buscando...</div>
@@ -37,7 +37,7 @@
         @endif
     @endif
     
-    <livewire:hero-slider :slides="$heroSlider" />
+    <livewire:hero-slider :slides="$heroSlider" wire:key="hero-slider" />
 
     <div class="container" data-type="wide">
         <x-collections-carousel :collection="$verano" type="rebajas" :showMore="true" />
