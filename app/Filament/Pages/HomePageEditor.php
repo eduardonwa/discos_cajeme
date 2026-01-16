@@ -15,6 +15,7 @@ use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Section;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Tabs\Tab;
@@ -127,38 +128,62 @@ class HomePageEditor extends Page implements HasForms
                     ])
                     ->columnSpan(12)
                     ->schema([
-                        SpatieMediaLibraryFileUpload::make('hero_1_image')
-                            ->collection('hero_1')
-                            ->image()
-                            ->imageEditor()
-                            ->maxSize(4096),
-                        TextInput::make('hero_1_link')
-                            ->label('Enlace slide - 1')
-                            ->nullable(),
-                        SpatieMediaLibraryFileUpload::make('hero_2_image')
-                            ->collection('hero_2')
-                            ->image()
-                            ->imageEditor()
-                            ->maxSize(4096),
-                        TextInput::make('hero_1_link')
-                            ->label('Enlace slide - 2')
-                            ->nullable(),
-                        SpatieMediaLibraryFileUpload::make('hero_3_image')
-                            ->collection('hero_3')
-                            ->image()
-                            ->imageEditor()
-                            ->maxSize(4096),
-                        TextInput::make('hero_3_link')
-                            ->label('Enlace slide - 3')
-                            ->nullable(),
-                        SpatieMediaLibraryFileUpload::make('hero_4_image')
-                            ->collection('hero_4')
-                            ->image()
-                            ->imageEditor()
-                            ->maxSize(4096),
-                        TextInput::make('hero_4_link')
-                            ->label('Enlace slide - 4')
-                            ->nullable(),
+                        Section::make('Slide 1')
+                            ->columnSpan(1)
+                            ->schema([
+                                SpatieMediaLibraryFileUpload::make('hero_1_image')
+                                    ->label(false)
+                                    ->collection('hero_1')
+                                    ->image()
+                                    ->imageEditor()
+                                    ->maxSize(4096),
+
+                                TextInput::make('hero_1_link')
+                                    ->label('Enlace')
+                                    ->nullable(),
+                            ]),
+                        Section::make('Slide 2')
+                            ->columnSpan(1)
+                            ->schema([
+                                SpatieMediaLibraryFileUpload::make('hero_2_image')
+                                    ->label(false)
+                                    ->collection('hero_2')
+                                    ->image()
+                                    ->imageEditor()
+                                    ->maxSize(4096),
+
+                                TextInput::make('hero_2_link')
+                                    ->label('Enlace')
+                                    ->nullable(),
+                            ]),
+                        Section::make('Slide 3')
+                            ->columnSpan(1)
+                            ->schema([
+                                SpatieMediaLibraryFileUpload::make('hero_3_image')
+                                    ->label(false)
+                                    ->collection('hero_3')
+                                    ->image()
+                                    ->imageEditor()
+                                    ->maxSize(4096),
+
+                                TextInput::make('hero_3_link')
+                                    ->label('Enlace')
+                                    ->nullable(),
+                            ]),
+                        Section::make('Slide 4')
+                            ->columnSpan(1)
+                            ->schema([
+                                SpatieMediaLibraryFileUpload::make('hero_4_image')
+                                    ->label(false)
+                                    ->collection('hero_4')
+                                    ->image()
+                                    ->imageEditor()
+                                    ->maxSize(4096),
+
+                                TextInput::make('hero_4_link')
+                                    ->label('Enlace')
+                                    ->nullable(),
+                            ]),
                     ])
                 ]),
 

@@ -155,7 +155,7 @@
 
         {{-- cupones --}}
         @unless($this->product->total_product_stock < 0)
-            <livewire:coupon-form context="product" :targetId="$productId"/>
+            <livewire:coupon-form context="product" :targetId="$this->product->id"/>
         @endunless
     </aside>
 

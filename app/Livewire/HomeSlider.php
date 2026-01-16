@@ -12,7 +12,7 @@ class HomeSlider extends Component
     public function mount(array $slides = [])
     {
         $this->slides = collect($slides)
-            ->filter(fn ($s) => !empty($s['media_type']))
+            ->filter(fn ($s) => !empty($s['src']))
             ->values()
             ->all();
     }

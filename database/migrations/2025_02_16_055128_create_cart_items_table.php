@@ -18,7 +18,8 @@ return new class extends Migration
             $table->id();
             $table->foreignIdFor(Cart::class)->constrained()->onDelete('cascade');
             $table->foreignIdFor(Product::class)->nullable()->constrained()->onDelete('cascade');
-            $table->foreignIdFor(ProductVariant::class)->nullable()->constrained()->onDelete('cascade');
+            $table->foreignIdFor(ProductVariant::class)->constrained()->onDelete('cascade');
+            $table->unique(['cart_id', 'product_variant_id']);
             $table->string('coupon_code', 32)->nullable();
             $table->unsignedInteger('quantity');
             $table->timestamps();

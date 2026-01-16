@@ -9,18 +9,25 @@ use Illuminate\Support\Facades\Auth;
 
 class AddProductToCart
 {
-    public function add($productId, $variantId = null, $quantity = 1, $cart = null, $couponCode = null)
+    public function add(int $productId, ?int $variantId = null, int $quantity = 1, $cart = null, ?string $couponCode = null)
     {
-        $product = Product::findOrFail($productId);
-        $variant = $variantId ? ProductVariant::find($variantId) : null;
+        $product = Product::with('variants')->findOrFail($productId);
+
+        $variant = $variantId
+            ? ProductVariant::where('product_id', $product->id)->findOrFail($variantId)
+            : $product->variants()
+                ->where('is_active', true)
+                ->orderByDesc('total_variant_stock')
+                ->first();
+            
+            throw_if(!$variant, new \RuntimeException('Producto sin variante vendible.'));
         
         $this->validateStock($product, $variant, $quantity, $cart);
-    
-        // Usar el carrito proporcionado o crear uno nuevo
+
         $cart = $cart ?: $this->getOrCreateCart();
-        
-        $this->addOrUpdateCartItem($cart, $product, $variant, $quantity);
-    
+
+        $this->addOrUpdateCartItem($cart, $variant, $quantity);
+
         if ($couponCode) {
             $cart->update(['coupon_code' => $couponCode]);
         }
@@ -65,21 +72,19 @@ class AddProductToCart
         }
     }
 
-    protected function addOrUpdateCartItem(Cart $cart, Product $product, ?ProductVariant $variant, int $quantity): void
+    protected function addOrUpdateCartItem(Cart $cart, ?ProductVariant $variant, int $quantity): void
     {
-        $existingItem = $cart->items()
-            ->where('product_id', $product->id)
-            ->when($variant, fn($q) => $q->where('product_variant_id', $variant->id))
-            ->first();
+        $item = $cart->items()->where('product_variant_id', $variant->id)->first();
 
-        if ($existingItem) {
-            $existingItem->increment('quantity', $quantity);
-        } else {
-            $cart->items()->create([
-                'product_id' => $product->id,
-                'product_variant_id' => $variant?->id,
-                'quantity' => $quantity,
-            ]);
+        if ($item) {
+            $item->increment('quantity', $quantity);
+            return;
         }
+
+        $cart->items()->create([
+            'product_id' => $variant->product_id,
+            'product_variant_id' => $variant->id,
+            'quantity' => $quantity
+        ]);
     }
 }

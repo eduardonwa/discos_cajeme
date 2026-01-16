@@ -2,14 +2,15 @@
 
 namespace App\Livewire;
 
-use App\Actions\Webshop\AddProductToCart;
+use Money\Money;
 use App\Models\Cart;
 use App\Models\Coupon;
-use Illuminate\Support\Facades\Auth;
-use Laravel\Jetstream\InteractsWithBanner;
-use Livewire\Attributes\Computed;
 use Livewire\Component;
-use Money\Money;
+use Livewire\Attributes\Computed;
+use Illuminate\Support\Facades\Auth;
+use App\Models\Product as ProductModel;
+use App\Actions\Webshop\AddProductToCart;
+use Laravel\Jetstream\InteractsWithBanner;
 
 class Product extends Component
 {
@@ -18,7 +19,7 @@ class Product extends Component
     // ─────────────────────────────────────────────────────────────
     // Estado público
     // ─────────────────────────────────────────────────────────────
-    public $productId;
+    public ProductModel $product;
     public $variant;
     public ?string $couponCode = null;
     public bool $discountApplied = false;
@@ -43,22 +44,15 @@ class Product extends Component
         ];
     }
 
-    public function mount()
+    public function mount(ProductModel $product)
     {
-        // Selecciona la primera variante disponible del producto
-        $this->variant = $this->product->variants()->value('id');
-    }
-
-    // ─────────────────────────────────────────────────────────────
-    // Producto (cargado con relaciones).
-    // ─────────────────────────────────────────────────────────────
-    #[Computed]
-    public function product()
-    {
-        return \App\Models\Product::with([
+        $this->product = $product->load([
             'variants.attributes',
-            'variants.media',
-        ])->findOrFail($this->productId);
+            'variants.media'
+        ]);
+
+        // Selecciona la primera variante disponible del producto
+        $this->variant = $this->product->variants->first()?->id;
     }
 
     // ─────────────────────────────────────────────────────────────
@@ -108,7 +102,7 @@ class Product extends Component
         if (!$this->couponCode) return null;
 
         $coupon = Coupon::where('code', $this->couponCode)
-            ->whereHas('products', fn ($q) => $q->where('products.id', $this->productId))
+            ->whereHas('products', fn ($q) => $q->where('products.id', $this->product->id))
             ->valid()
             ->first();
 
@@ -157,7 +151,7 @@ class Product extends Component
             if (! $variant) return 0;
 
             $inCart = $cart?->items()
-                ->where('product_id', $this->productId)
+                ->where('product_id', $this->product->id)
                 ->where('product_variant_id', $this->variant)
                 ->sum('quantity') ?? 0;
 
@@ -165,7 +159,7 @@ class Product extends Component
         }
 
         $inCart = $cart?->items()
-            ->where('product_id', $this->productId)
+            ->where('product_id', $this->product->id)
             ->whereNull('product_variant_id')
             ->sum('quantity') ?? 0;
 
@@ -225,7 +219,7 @@ class Product extends Component
         try {
             $cart->add(
                 quantity:   $this->quantity,
-                productId:  $this->productId,
+                productId:  $this->product->id,
                 variantId:  $this->variant,
                 couponCode: $this->discountApplied ? $this->couponCode : null
             );

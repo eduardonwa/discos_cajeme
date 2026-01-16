@@ -142,7 +142,14 @@ class ProductResource extends Resource
                                             ->label('Cover alt')
                                             ->maxLength(255),
                                         TextInput::make('name')
-                                            ->label('Nombre'),
+                                            ->label('Nombre')
+                                            ->required()
+                                            ->live(onBlur: true)
+                                            ->afterStateUpdated(fn ($state, $set) => $set('slug', \Illuminate\Support\Str::slug($state))),
+                                        TextInput::make('slug')
+                                            ->label('Slug')
+                                            ->required()
+                                            ->unique(ignoreRecord: true),
                                         Textarea::make('description')
                                             ->label('Descripción')
                                             ->rows(4),
@@ -298,87 +305,87 @@ class ProductResource extends Resource
             ])->columns(12);
     }
 
-            public static function table(Table $table): Table
-            {
-                return $table
-                    ->columns([
-                        SpatieMediaLibraryImageColumn::make('Imagen')
-                            ->collection('featured')
-                            ->size(50)
-                            ->extraImgAttributes([
-                                'style' => 'border-radius: 0.5rem;'
-                            ]),
-                        TextColumn::make('name')
-                            ->label('Nombre')
-                            ->sortable()
-                            ->searchable(),
-                        TextColumn::make('price')
-                            ->label('Precio')
-                            ->searchable()
-                            ->sortable(),
-                        TextColumn::make('total_product_stock')
-                            ->label('Inventario')
-                            ->searchable()
-                            ->sortable()
-                            ->formatStateUsing(function ($state, $record) {
-                                // Si el producto tiene variantes, suma el stock desde la tabla pivote
-                                if ($record->variants()->exists()) {
-                                    return $record->variants()->sum('product_variants.total_variant_stock');
-                                }
-                                // Si no tiene variantes, muestra el valor manual
-                                return $state ?? 0;
-                            }),
-                        TextColumn::make('variants_count')
-                            ->label('Variaciones')
-                            ->counts('variants')
-                            ->sortable(),
-                        TextColumn::make('published')
-                            ->label('Estado')
-                            ->badge()
-                            ->sortable()
-                            ->formatStateUsing(fn (bool $state): string => $state ? 'Activo' : 'Inactivo')
-                            ->color(fn (bool $state): string => $state ? 'success' : 'danger'),
-                    ])
-                    ->filters([
-                        //
-                    ])
-                    ->actions([
-                        Tables\Actions\EditAction::make(),
-                    ])
-                    ->bulkActions([
-                        Tables\Actions\BulkActionGroup::make([
-                            Tables\Actions\DeleteBulkAction::make(),
-                        ]),
-                    ]);
-            }
+    public static function table(Table $table): Table
+    {
+        return $table
+            ->columns([
+                SpatieMediaLibraryImageColumn::make('Imagen')
+                    ->collection('featured')
+                    ->size(50)
+                    ->extraImgAttributes([
+                        'style' => 'border-radius: 0.5rem;'
+                    ]),
+                TextColumn::make('name')
+                    ->label('Nombre')
+                    ->sortable()
+                    ->searchable(),
+                TextColumn::make('price')
+                    ->label('Precio')
+                    ->searchable()
+                    ->sortable(),
+                TextColumn::make('total_product_stock')
+                    ->label('Inventario')
+                    ->searchable()
+                    ->sortable()
+                    ->formatStateUsing(function ($state, $record) {
+                        // Si el producto tiene variantes, suma el stock desde la tabla pivote
+                        if ($record->variants()->exists()) {
+                            return $record->variants()->sum('product_variants.total_variant_stock');
+                        }
+                        // Si no tiene variantes, muestra el valor manual
+                        return $state ?? 0;
+                    }),
+                TextColumn::make('variants_count')
+                    ->label('Variaciones')
+                    ->counts('variants')
+                    ->sortable(),
+                TextColumn::make('published')
+                    ->label('Estado')
+                    ->badge()
+                    ->sortable()
+                    ->formatStateUsing(fn (bool $state): string => $state ? 'Activo' : 'Inactivo')
+                    ->color(fn (bool $state): string => $state ? 'success' : 'danger'),
+            ])
+            ->filters([
+                //
+            ])
+            ->actions([
+                Tables\Actions\EditAction::make(),
+            ])
+            ->bulkActions([
+                Tables\Actions\BulkActionGroup::make([
+                    Tables\Actions\DeleteBulkAction::make(),
+                ]),
+            ]);
+    }
 
-            public static function getRelations(): array
-            {
-                return [
-                    VariantsRelationManager::class,
-                ];
-            }
+    public static function getRelations(): array
+    {
+        return [
+            VariantsRelationManager::class,
+        ];
+    }
 
-            public static function getPages(): array
-            {
-                return [
-                    'index' => Pages\ListProducts::route('/'),
-                    'create' => Pages\CreateProduct::route('/create'),
-                    'edit' => Pages\EditProduct::route('/{record}/edit'),
-                ];
-            }
+    public static function getPages(): array
+    {
+        return [
+            'index' => Pages\ListProducts::route('/'),
+            'create' => Pages\CreateProduct::route('/create'),
+            'edit' => Pages\EditProduct::route('/{record}/edit'),
+        ];
+    }
 
-            protected static function calcularDescuento(Get $get): ?int
-            {
-                $toCents = fn ($v) => (int) round(((float) str_replace(',', '', (string) $v)) * 100);
+    protected static function calcularDescuento(Get $get): ?int
+    {
+        $toCents = fn ($v) => (int) round(((float) str_replace(',', '', (string) $v)) * 100);
 
-                $price   = $toCents($get('price'));
-                $compare = $toCents($get('compare_at_price'));
+        $price   = $toCents($get('price'));
+        $compare = $toCents($get('compare_at_price'));
 
-                if ($price > 0 && $compare > $price) {
-                    return (int) round((1 - ($price / $compare)) * 100);
-                }
-
-                return null;
-            }
+        if ($price > 0 && $compare > $price) {
+            return (int) round((1 - ($price / $compare)) * 100);
         }
+
+        return null;
+    }
+}

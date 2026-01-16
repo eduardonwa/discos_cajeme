@@ -82,6 +82,11 @@ class Product extends Model implements HasMedia
      | Inventory (helpers/attrs)
      ───────────────────────────────────────── */
 
+    public function getRouteKeyName(): string
+    {
+        return 'slug';
+    }
+
     // ¿Tiene variantes?
     public function getHasVariantsAttribute(): bool
     {
@@ -151,6 +156,12 @@ class Product extends Model implements HasMedia
             $fresh->decrement('total_product_stock', $quantity);
             $fresh->refreshStockStatus();
         });
+    }
+    
+    public function updateStockFromVariants(): void
+    {
+        $this->syncTotalStockFromVariants();
+        $this->refreshStockStatus();
     }
 
     /* ─────────────────────────────────────────

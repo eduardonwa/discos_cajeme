@@ -8,7 +8,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 
 class CartItem extends Model
 {
@@ -20,7 +19,7 @@ class CartItem extends Model
     {
         return Attribute::make(
             get: function() {
-                return $this->product->price->multiply($this->quantity);
+                return $this->variant->product->price->multiply($this->quantity);
             }
         );
     }
@@ -43,9 +42,7 @@ class CartItem extends Model
     // Accesor para obtener el producto resolviendo la relación
     public function getResolvedProductAttribute()
     {
-        return $this->product_variant_id 
-            ? $this->variant->product 
-            : $this->product;
+        return $this->variant?->product;
     }
 
     // Accesor para la descripción

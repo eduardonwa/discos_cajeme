@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\Product;
 use App\Models\Collection;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 use Illuminate\Database\Seeder;
 
 class ProductCatalogSeeder extends Seeder
@@ -38,6 +39,8 @@ class ProductCatalogSeeder extends Seeder
                     'cached_quantity_sold' => 0,
                 ], $p);
 
+            $p['slug'] = $p['slug'] ?? Str::slug($p['name']);
+
             // Calcular stock_status si falta
             if (empty($p['stock_status'])) {
                 $qty = (int) ($p['total_product_stock'] ?? 0);
@@ -48,9 +51,9 @@ class ProductCatalogSeeder extends Seeder
             // Crea/actualiza producto
             /** @var Product $product */
             $product = Product::updateOrCreate(
-                ['name' => $p['name']],
+                ['slug' => $p['slug']],
                     Arr::only($p, [
-                        'name','description','price','published',
+                        'name','slug','description','price','published',
                         'total_product_stock','stock_status',
                         'low_stock_threshold','cached_quantity_sold',
                     ])

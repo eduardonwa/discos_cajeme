@@ -34,8 +34,7 @@ class Cart extends Component
     {
         return CartFactory::make()->loadMissing([
             'items',
-            'items.product',
-            'items.variant',
+            'items.variant.product',
             'items.variant.attributes.attribute',
         ]);
     }
@@ -138,15 +137,14 @@ class Cart extends Component
             $this->dangerBanner('Error', 'Ítem no encontrado');
             return;
         }
-    
-        $maxQuantity = $item->variant
-            ? $item->variant->total_variant_stock
-            : $item->product->total_product_stock;
+
+        // checamos contra inventario
+        $variant = $item->variant;
+        $maxQuantity = $variant->total_variant_stock;
         
         // Calcular cuántas unidades ya están en el carrito (de este mismo item)
         $inCart = $this->cart->items()
-            ->where('product_id', $item->product_id)
-            ->when($item->product_variant_id, fn($q) => $q->where('product_variant_id', $item->product_variant_id))
+            ->where('product_variant_id', $item->product_variant_id)
             ->sum('quantity');
         
         $available = $maxQuantity - $inCart;

@@ -6,6 +6,7 @@ use App\Models\Cart;
 use App\Models\Coupon;
 use App\Models\CartItem;
 use Illuminate\Database\Eloquent\Collection;
+use RuntimeException;
 
 class CreateStripeCheckoutSession
 {
@@ -35,7 +36,7 @@ class CreateStripeCheckoutSession
                         'coupon_code' => $coupon?->code,
                         'discount_type' => $coupon?->discount_type,
                         'discount_value' => $coupon?->discount_value,
-                        'discount_amount' => $totalDiscount ?? 0
+                        // 'discount_amount' => $totalDiscount ?? 0
                     ],
                 ]
         );
@@ -44,10 +45,12 @@ class CreateStripeCheckoutSession
     private function formatCartItems(Collection $items, ?Coupon $coupon)
     {
         $taxRate = 0.16; // IVA del 16%
+
+        $items->loadMissing('variant.product', 'variant.attributes.attribute');
         
         // 1. Calcular subtotal SIN descuento
         $subtotalWithoutDiscount = $items->sum(fn($item) => 
-            $item->product->price->getAmount() * $item->quantity
+            $item->variant->product->price->getAmount() * $item->quantity
         );
         
         // 2. Aplicar descuento GLOBAL si existe cupón válido
@@ -61,22 +64,28 @@ class CreateStripeCheckoutSession
             : 1;
 
         // 3. Preparar items con descuento proporcional
-        $formattedItems = $items->loadMissing('product', 'variant.attributes')->map(function (CartItem $item) use ($discountRatio, $coupon) {
-            $basePrice = $item->product->price->getAmount();
+        $formattedItems = $items->map(function (CartItem $item) use ($discountRatio, $coupon) {
+            $variant = $item->variant;
+            throw_if(!$variant, new RuntimeException('CartItem sin variante'));
+
+            $product = $variant->product;
+            $basePrice = $product->price->getAmount();
             $discountedPrice = (int) round($basePrice * $discountRatio);
             
+            $desc = $variant->attributes->isNotEmpty()
+                ? $variant->attributes->map(fn($av) => "{$av->attribute->key}: {$av->value}")->implode(' / ')
+                : 'Variante estándar';
+
             return [
                 'price_data' => [
                     'currency' => 'MXN',
                     'unit_amount' => $discountedPrice,
                     'product_data' => [
-                        'name' => $item->product->name,
-                        'description' => $item->variant
-                            ? $item->variant->attributes->map(fn($av) => "{$av->attribute->key}: {$av->value}")->implode('/')
-                            : 'Producto estándar',
+                        'name' => $product->name,
+                        'description' => $desc,
                         'metadata' => [
-                            'product_id' => $item->product->id,
-                            'product_variant_id' => $item->product_variant_id,
+                            'product_variant_id' => $variant->id,
+                            'product_id' => $product->id,
                             'original_price' => $basePrice,
                             'discounted_price' => $discountedPrice,
                             'discount_per_unit' => $basePrice - $discountedPrice,

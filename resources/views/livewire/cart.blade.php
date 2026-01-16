@@ -21,27 +21,28 @@
 
                 {{-- body --}}
                 @foreach ($this->items as $item)
+                    @php $product = $item->resolvedProduct; @endphp
                     <article class="item">
                         {{-- Media --}}
                         <figure class="item__media">
                             <img
-                                src="{{ $item->product->getFirstMediaUrl('featured', 'sm_thumb') }}"
-                                alt="{{ $item->product->name }}"
+                                src="{{ $item->product?->getFirstMediaUrl('featured', 'sm_thumb') }}"
+                                alt="{{ $item->product?->name }}"
                                 loading="lazy"
                             >
                         </figure>
 
                         {{-- Info --}}
                         <div class="item__info">
-                            <h2 class="name">{{ $item->product->name }}</h2>
-                            <p class="price">{{ $item->product->price }}</p>
+                            <h2 class="name">{{ $item->product?->name }}</h2>
+                            <p class="price">{{ $item->product?->price }}</p>
 
                             @if($item->variant)
                                 <div class="variant">
                                     @foreach ($item->variant->attributes as $av)
-                                    <span class="chip">
-                                        {{ $av->attribute->key ?? '' }}: {{ $av->value }}
-                                    </span>
+                                        <span class="chip">
+                                            {{ $av->attribute->key ?? '' }}: {{ $av->value }}
+                                        </span>
                                     @endforeach
                                 </div>
                             @endif
@@ -80,7 +81,7 @@
                     {{-- subtotal --}}
                     <div class="subtotal">
                         <h2>Subtotal</h2>
-                        <p> ${{ number_format($this->cart->items->sum(fn($item) => $item->product->price->getAmount() * $item->quantity) / 100, 2) }} </p>
+                        <p>${{ number_format($this->cart->items->sum(fn($item) => $item->subtotal->getAmount()) / 100, 2) }}</p>
                     </div>
 
                     {{-- descuento --}}

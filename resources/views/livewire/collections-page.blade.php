@@ -69,7 +69,9 @@
             @endif
 
             @foreach ($products as $product)
-
+            @php
+                // dd($product, get_class($product), $product?->slug);
+            @endphp
                 <x-ui.product-card
                     :product="$product"
                     :href="route('product', $product)"

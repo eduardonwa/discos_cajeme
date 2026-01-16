@@ -23,7 +23,7 @@ class VariantSeeder extends Seeder
     private array $FORCE_PROFILE_BY_SLUG = [
         // Ejemplos:
         'iron-maiden-powerslave' => 'vinyl_color_and_edition',
-        'metallica-master-of-puppets' => 'vinyl_color',
+        'metallica-master-of-puppets' => 'vinyl_color_only',
         'death-symbolic' => 'vinyl_edition_only'
     ];
 
@@ -31,6 +31,42 @@ class VariantSeeder extends Seeder
     private array $EXCLUDE_BY_SLUG = [
         // 'algún-slug' => true,
     ];
+
+    private function ensureDefaultVariant(Product $product, array $attrs = []): void
+    {
+        // Si ya tiene variates, no hacemos nada
+        if ($product->variants()->exists()) {
+            return;
+        }
+
+        $stock = (int) ($product->total_product_stock ?? 0);
+
+        $variant = ProductVariant::create([
+            'product_id' => $product->id,
+            'total_variant_stock' => $stock,
+            'is_active' => $stock > 0
+        ]);
+
+        foreach ($attrs as $key => $value) {
+            $attr = Attribute::firstOrCreate(['key' => $key]);
+            AttributeVariant::create([
+                'product_variant_id' => $variant->id,
+                'attribute_id' => $attr->id,
+                'value' => $value
+            ]);
+        }
+
+        // actualizar cache del producto
+        $thr = (int) ($product->low_stock_threshold ?? 5);
+        $status = $stock === 0
+            ? 'sold_out'
+            : ($stock <= $thr ? 'low_stock' : 'in_stock');
+        
+        $product->update([
+            'total_product_stock' => $stock,
+            'stock_status' => $status
+        ]);
+    }
 
     public function run(): void
     {
@@ -52,6 +88,9 @@ class VariantSeeder extends Seeder
 
             // CDs: no variantes
             if (!$isVinyl) {
+                $this->ensureDefaultVariant($product, [
+                    'Formato' => 'CD'
+                ]);
                 return;
             }
 
@@ -60,6 +99,11 @@ class VariantSeeder extends Seeder
 
             // Si none: no tocar variantes
             if ($profile === 'none') {
+                $this->ensureDefaultVariant($product, [
+                    'Formato' => 'Vinyl',
+                    'Color de Vinilo' => 'Negro',
+                    'Edición' => 'Standard'
+                ]);
                 return;
             }
 
