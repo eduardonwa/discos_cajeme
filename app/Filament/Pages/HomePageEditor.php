@@ -128,62 +128,60 @@ class HomePageEditor extends Page implements HasForms
                     ])
                     ->columnSpan(12)
                     ->schema([
-                        Section::make('Slide 1')
-                            ->columnSpan(1)
+                        Tabs::make()
                             ->schema([
-                                SpatieMediaLibraryFileUpload::make('hero_1_image')
-                                    ->label(false)
-                                    ->collection('hero_1')
-                                    ->image()
-                                    ->imageEditor()
-                                    ->maxSize(4096),
+                                Tab::make('Slide 1')
+                                    ->schema([
+                                        SpatieMediaLibraryFileUpload::make('hero_1_image')
+                                                    ->label(false)
+                                                    ->collection('hero_1')
+                                                    ->image()
+                                                    ->imageEditor()
+                                                    ->maxSize(4096),
+                                        TextInput::make('hero_1_link')
+                                                    ->label('Enlace')
+                                                    ->nullable(),
+                                    ]),
 
-                                TextInput::make('hero_1_link')
-                                    ->label('Enlace')
-                                    ->nullable(),
-                            ]),
-                        Section::make('Slide 2')
-                            ->columnSpan(1)
-                            ->schema([
-                                SpatieMediaLibraryFileUpload::make('hero_2_image')
-                                    ->label(false)
-                                    ->collection('hero_2')
-                                    ->image()
-                                    ->imageEditor()
-                                    ->maxSize(4096),
+                                Tab::make('Slide 2')
+                                    ->schema([
+                                        SpatieMediaLibraryFileUpload::make('hero_2_image')
+                                                    ->label(false)
+                                                    ->collection('hero_2')
+                                                    ->image()
+                                                    ->imageEditor()
+                                                    ->maxSize(4096),
+                                        TextInput::make('hero_2_link')
+                                                    ->label('Enlace')
+                                                    ->nullable(),
+                                    ]),
 
-                                TextInput::make('hero_2_link')
-                                    ->label('Enlace')
-                                    ->nullable(),
-                            ]),
-                        Section::make('Slide 3')
-                            ->columnSpan(1)
-                            ->schema([
-                                SpatieMediaLibraryFileUpload::make('hero_3_image')
-                                    ->label(false)
-                                    ->collection('hero_3')
-                                    ->image()
-                                    ->imageEditor()
-                                    ->maxSize(4096),
+                                Tab::make('Slide 3')
+                                    ->schema([
+                                        SpatieMediaLibraryFileUpload::make('hero_3_image')
+                                                    ->label(false)
+                                                    ->collection('hero_3')
+                                                    ->image()
+                                                    ->imageEditor()
+                                                    ->maxSize(4096),
+                                        TextInput::make('hero_3_link')
+                                                    ->label('Enlace')
+                                                    ->nullable(),
+                                    ]),
 
-                                TextInput::make('hero_3_link')
-                                    ->label('Enlace')
-                                    ->nullable(),
-                            ]),
-                        Section::make('Slide 4')
-                            ->columnSpan(1)
-                            ->schema([
-                                SpatieMediaLibraryFileUpload::make('hero_4_image')
-                                    ->label(false)
-                                    ->collection('hero_4')
-                                    ->image()
-                                    ->imageEditor()
-                                    ->maxSize(4096),
-
-                                TextInput::make('hero_4_link')
-                                    ->label('Enlace')
-                                    ->nullable(),
-                            ]),
+                                Tab::make('Slide 4')
+                                    ->schema([
+                                        SpatieMediaLibraryFileUpload::make('hero_4_image')
+                                                    ->label(false)
+                                                    ->collection('hero_4')
+                                                    ->image()
+                                                    ->imageEditor()
+                                                    ->maxSize(4096),
+                                        TextInput::make('hero_4_link')
+                                                    ->label('Enlace')
+                                                    ->nullable(),
+                                    ]),
+                            ])->columnSpan(12)
                     ])
                 ]),
 
