@@ -118,7 +118,7 @@ class ProductResource extends Resource
                             ->required()
                             ->columnSpanFull(),
                         SpatieMediaLibraryFileUpload::make('images')
-                            ->label('Imagenes')
+                            ->label('Galería')
                             ->maxSize(1500)
                             ->collection('images')
                             ->multiple()
@@ -146,10 +146,7 @@ class ProductResource extends Resource
                                             ->required()
                                             ->live(onBlur: true)
                                             ->afterStateUpdated(fn ($state, $set) => $set('slug', \Illuminate\Support\Str::slug($state))),
-                                        TextInput::make('slug')
-                                            ->label('Slug')
-                                            ->required()
-                                            ->unique(ignoreRecord: true),
+
                                         Textarea::make('description')
                                             ->label('Descripción')
                                             ->rows(4),
@@ -163,7 +160,11 @@ class ProductResource extends Resource
                                                     ->label('Publicar en tienda')
                                                     ->inline(true)
                                                     //->disabled(fn ($get) => $get('stock_status') === 'sold_out'),
-                                            ])
+                                            ]),
+                                        TextInput::make('slug')
+                                            ->label('Slug')
+                                            ->required()
+                                            ->unique(ignoreRecord: true),
                                     ]),
                                 Tab::make('Inventario')
                                     ->schema([
@@ -293,7 +294,7 @@ class ProductResource extends Resource
                                                     // price esta en PESOS (string) en el estado de form
                                                     $set('compare_at_price', $toPesosStr($get('price')));
                                                 })
-                                            ]),
+                                        ]),
                                     ])
                             ]),
                 ])->columnSpan([

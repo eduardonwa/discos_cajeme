@@ -118,8 +118,13 @@
     color: $color-primary-100;
   }
 
-  &[data-type="hero-dots"] {
+  &[data-type="hero-dot"] {
     width: 89px;
-    height: 21px;
+    height: 13px;
+    padding: 0;
+
+    &:focus {
+      outline: 0;
+    }
   }
 }

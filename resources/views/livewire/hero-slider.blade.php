@@ -1,9 +1,9 @@
 @php $slide = $slides[$active] ?? null; @endphp
 
-<div class="hero">
+<div class="hero-slider">
     @if($slide)
-        <section class="hero__background" aria-label="Hero principal">
-            <div class="hero_background" aria-hidden="true">
+        <section class="hero-slider__background" aria-label="Hero principal">
+            <div class="img-shell" aria-hidden="true">
                 <img
                     class="image"
                     src="{{ $slide['src'] }}"
@@ -15,7 +15,7 @@
             </div>
 
             @if(count($slides) > 1)
-                <nav class="hero__controls" aria-label="Controles de hero">
+                <nav class="hero-slider__controls" aria-label="Controles de hero">
                     <div class="dots" role="tablist" aria-label="Slides">
                         @foreach ($slides as $i => $s)
                             <button

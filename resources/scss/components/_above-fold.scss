@@ -1,0 +1,16 @@
+@use "../abstracts/" as *;
+
+.above-fold {
+  position: relative;
+  
+  /* caundo hay busqueda afecta al "hero-slider" */
+  &.is-searching .hero-slider__background {
+    .image {
+      filter: blur(6px);
+    }
+
+    &::before {
+      opacity: 1;
+    }
+  }
+}
