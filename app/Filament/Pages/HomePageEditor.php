@@ -139,8 +139,9 @@ class HomePageEditor extends Page implements HasForms
                                                     ->imageEditor()
                                                     ->maxSize(4096),
                                         TextInput::make('hero_1_link')
-                                                    ->label('Enlace')
-                                                    ->nullable(),
+                                            ->label('Enlace')
+                                            ->url()
+                                            ->nullable(),
                                     ]),
 
                                 Tab::make('Slide 2')
@@ -152,8 +153,9 @@ class HomePageEditor extends Page implements HasForms
                                                     ->imageEditor()
                                                     ->maxSize(4096),
                                         TextInput::make('hero_2_link')
-                                                    ->label('Enlace')
-                                                    ->nullable(),
+                                            ->label('Enlace')
+                                            ->url()
+                                            ->nullable(),
                                     ]),
 
                                 Tab::make('Slide 3')
@@ -165,8 +167,9 @@ class HomePageEditor extends Page implements HasForms
                                                     ->imageEditor()
                                                     ->maxSize(4096),
                                         TextInput::make('hero_3_link')
-                                                    ->label('Enlace')
-                                                    ->nullable(),
+                                            ->label('Enlace')
+                                            ->url()
+                                            ->nullable(),
                                     ]),
 
                                 Tab::make('Slide 4')
@@ -178,8 +181,9 @@ class HomePageEditor extends Page implements HasForms
                                                     ->imageEditor()
                                                     ->maxSize(4096),
                                         TextInput::make('hero_4_link')
-                                                    ->label('Enlace')
-                                                    ->nullable(),
+                                            ->label('Enlace')
+                                            ->url()
+                                            ->nullable(),
                                     ]),
                             ])->columnSpan(12)
                     ])

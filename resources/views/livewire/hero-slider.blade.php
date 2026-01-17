@@ -3,7 +3,7 @@
 <div class="hero-slider">
     @if($slide)
         <section class="hero-slider__background" aria-label="Hero principal">
-            <div class="img-shell" aria-hidden="true">
+            <a href="{{ $slide['link'] }}" class="img-shell" aria-hidden="true">
                 <img
                     class="image"
                     src="{{ $slide['src'] }}"
@@ -12,7 +12,7 @@
                     alt="{{ $slide['image_alt'] ?? '' }}"
                     loading="eager"
                 />
-            </div>
+            </a>
 
             @if(count($slides) > 1)
                 <nav class="hero-slider__controls" aria-label="Controles de hero">

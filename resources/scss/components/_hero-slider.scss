@@ -3,6 +3,7 @@
 .hero-slider {
   position: relative;
   z-index: 1;
+  pointer-events: auto;
 
   &__background {
     position: relative;
@@ -12,15 +13,15 @@
     aspect-ratio: 9 / 16;
     z-index: 1;
 
-    /* overlay de busqueda */
+    /* OVERLAY INACTIVO */
     &::before {
       content: "";
       position: absolute;
       inset: 0;
       background: rgba(0, 0, 0, 0.70);
       opacity: 0;
-      transition: opacity 200ms ease;
       pointer-events: none;
+      transition: opacity 200ms ease;
       z-index: 2;
     }
 
@@ -46,26 +47,17 @@
 
   &__controls {
     position: absolute;
+    left: 0;
+    right: 0;
     bottom: 0;
     width: 100%;
     margin-bottom: $size-4;
-    z-index: 2;
 
     .dots {
       display: flex;
       align-items: center;
       justify-content: center;
       gap: $size-2;
-    }
-  }
-
-  &.is-dimmed {
-    filter: blur(6px);
-    opacity: .35;
-    transition: opacity 250ms ease, filter 250ms ease;
-
-    &::before {
-      opacity: 1;
     }
   }
 }

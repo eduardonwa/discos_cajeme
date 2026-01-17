@@ -10,10 +10,9 @@
     </div>
 
     <div class="hero-search {{ filled($this->searchQuery) ? 'is-active' : '' }}">
+        <div class="hero-search__scrim" aria-hidden="true"></div>
+        
         @if (filled($this->searchQuery))
-
-            {{-- <div class="overlay"></div> --}}
-
             @if($this->productsQuery->count())
                 <div>
                     {{-- tarjeta de producto --}}
@@ -47,7 +46,8 @@
         @endif
     </div>
 
-    <div>
+    <div class="hero-input-search">
+        <h2 class="heading-2">Encuentra lo que necesitas</h2>
         <x-input wire:model.live.debounce="searchQuery" type="text" placeholder="Escribe algo"/>
         <div wire:loading.delay.shorter wire:target="searchQuery">Buscando...</div>
     </div>

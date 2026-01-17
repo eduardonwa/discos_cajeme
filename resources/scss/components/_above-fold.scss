@@ -3,14 +3,28 @@
 .above-fold {
   position: relative;
   
-  /* caundo hay busqueda afecta al "hero-slider" */
-  &.is-searching .hero-slider__background {
-    .image {
-      filter: blur(6px);
+  &.is-searching {
+    /* HERO OVERLAY ACTIVO */
+    .hero-slider {
+      pointer-events: none;
+      
+      &__background {
+        .image {
+          filter: blur(6px);
+        }
+
+        &::before {
+          opacity: 1;
+          pointer-events: none;
+        }
+      }
     }
 
-    &::before {
+    /* SEARCH ACTIVO */
+    .hero-search {
+      pointer-events: auto;
       opacity: 1;
+      visibility: visible;
     }
   }
 }
