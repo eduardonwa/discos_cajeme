@@ -1,4 +1,7 @@
-<div class="above-fold {{ filled($this->searchQuery) ? 'is-searching' : '' }}"">
+<div class="above-fold
+    {{ filled($this->searchQuery) ? 'is-searching' : '' }}
+    {{ $searchModal ? 'is-search-modal-open' : '' }}"
+>
     
     <livewire:hero-slider :slides="$heroSlider" wire:key="hero-slider" />
 
@@ -9,46 +12,68 @@
         <x-collections-carousel :collection="$comodidad" type="full-price" />
     </div>
 
-    <div class="hero-search {{ filled($this->searchQuery) ? 'is-active' : '' }}">
-        <div class="hero-search__scrim" aria-hidden="true"></div>
-        
-        @if (filled($this->searchQuery))
-            @if($this->productsQuery->count())
-                <div>
-                    {{-- tarjeta de producto --}}
-                    @foreach ($this->productsQuery as $product)
-                        <article>
-                            <a
-                                wire:navigate
-                                href="{{ route('product', $product) }}"
-                            >
-                                <img
-                                    src="{{ $product->getFirstMediaUrl('images') }}"
-                                    alt="{{ $product->name }}"
-                                    loading="lazy"
-                                >
-                                <h2>{{ $product->name }}</h2>
-                                <p>{{ $product->price }}</p>
-                            </a>
-                        </article> 
-                    @endforeach
-                </div>
-    
-                {{-- paginacion --}}
-                @if ($this->productsQuery->hasPages())
-                    <div>{{ $this->productsQuery->links() }}</div>
-                @endif
-    
-                {{-- resultados --}}
-                @else
-                    <p>{{ $this->searchQuery }}</p>
-            @endif
-        @endif
-    </div>
+    <div class="hero-search">
+        {{-- DESKTOP CONTEXT --}}
+        @if (!$searchModal)
+            <section class="hero-search__desktop" aria-label="Búsqueda (Desktop)">
+                {{-- Input visible en desktop --}}
+                <header class="desktop-input">
+                    <h2 class="heading-2">Encuentra lo que necesitas</h2>
+                    @include('components.hero.hero-search-input')
+                </header>
 
-    <div class="hero-input-search">
-        <h2 class="heading-2">Encuentra lo que necesitas</h2>
-        <x-input wire:model.live.debounce="searchQuery" type="text" placeholder="Escribe algo"/>
-        <div wire:loading.delay.shorter wire:target="searchQuery">Buscando...</div>
+                {{-- Resultados overlay en desktop --}}
+                <div class="desktop-results" aria-live="polite">
+                    @include('components.hero.hero-search-results')
+                </div>
+            </section>
+        @endif
+
+        {{-- MOBILE CONTEXT --}}
+        <section class="hero-search__mobile" aria-label="Búsqueda (Mobile)">
+            {{-- Trigger (solo mobile) --}}
+            <header class="hero-search__mobile-header">
+                <h2 class="heading-2">Encuentra lo que necesitas</h2>
+                <button
+                    class="hero-search__mobile-trigger"
+                    type="button"
+                    wire:click="$set('searchModal', true)"
+                    aria-haspopup="dialog"
+                    aria-controls="heroSearchModal"
+                >
+                    Buscar
+                </button>
+            </header>
+            
+            {{-- Modal (solo mobile) --}}
+            @if($searchModal)
+                <div
+                    class="hero-search__mobile-modal"
+                    id="heroSearchModal"
+                    role="dialog"
+                    aria-modal="true"
+                    aria-label="Buscar productos"
+                >
+                    <div class="hero-search__mobile-backdrop" wire:click="$set('searchModal', false)" aria-hidden="true"></div>
+                        <div class="hero-search__mobile-panel" role="document">
+                            <button
+                                class="hero-search__mobile-close"
+                                type="button"
+                                aria-label="Cerrar"
+                                wire:click="$set('searchModal', false)"
+                            >
+                                ✕
+                            </button>
+                            <div class="hero-search__mobile-input">
+                                @include('components.hero.hero-search-input')
+                            </div>
+
+                            <div class="hero-search__mobile-results" aria-live="polite">
+                                @include('components.hero.hero-search-results')
+                            </div>
+                        </div>
+                </div>
+            @endif
+        </section>
     </div>
 </div>

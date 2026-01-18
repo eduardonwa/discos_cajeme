@@ -16,7 +16,8 @@ class StoreFront extends Component
 
     #[Url]
     public $searchQuery = '';
-
+    public bool $searchModal = false;
+    public string $searchQueryMobile = '';
     public array $heroSlider = [];
 
     public function mount()

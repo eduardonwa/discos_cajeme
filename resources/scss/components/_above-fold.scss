@@ -21,10 +21,31 @@
     }
 
     /* SEARCH ACTIVO */
-    .hero-search {
-      pointer-events: auto;
-      opacity: 1;
-      visibility: visible;
+    .hero-search__desktop {
+      .desktop-results {
+        pointer-events: auto;
+        opacity: 1;
+        visibility: visible;
+      }
     }
   }
+
+  /* BUSQUEDA POR MODAL: DESACTIVA EFECTO */
+  &.is-searching.is-search-modal-open {
+    .hero-slider {
+
+      &__background {
+        .image {
+          filter: none;
+        }
+
+        &::before {
+          opacity: 0;
+          visibility: hidden;
+          pointer-events: none;
+        }
+      }
+    }
+  }
+
 }

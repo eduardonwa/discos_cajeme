@@ -1,38 +1,39 @@
 @use "../abstracts" as *;
 
 .hero-search {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 93%;
-    z-index: 5;
-    opacity: 0;
-    visibility: hidden;
-    pointer-events: none;
-
-    > div:not(.overlay) {
-        position: relative;
-        z-index: 3;
-    }
-}
-
-.hero-input-search {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: space-around;
-    padding: $size-6;
-
-    .heading-2 {
-        text-transform: none;
-        font-family: $font-family-semibold;
-    }
-
-    input {
+    &__desktop {
         display: none;
 
         @include mq(large) {
             display: block;
+        }
+        
+        .desktop-input {
+            position: relative;
+            z-index: 6;
+        }
+
+        .desktop-results {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 93%;
+            z-index: 5;
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+
+            > div:not(.overlay) {
+                position: relative;
+                z-index: 3;
+            }
+        }
+    }
+
+    &__mobile {
+
+        .mobile-trigger {
+            outline: 1px solid;   
         }
     }
 }
