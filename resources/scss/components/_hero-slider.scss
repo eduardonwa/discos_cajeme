@@ -3,31 +3,15 @@
 .hero-slider {
   position: relative;
   z-index: 1;
-  pointer-events: auto;
 
-  &__background {
+  &__frame {
     position: relative;
+    overflow: hidden;
     height: 70vh;
     width: 100%;
-    overflow: hidden;
     aspect-ratio: 9 / 16;
     z-index: 1;
-
-    /* OVERLAY INACTIVO */
-    &::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.70);
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 200ms ease;
-      z-index: 2;
-    }
-
-    @include mq(medium) {
-      aspect-ratio: 16 / 9;
-    }
+    @include mq(medium) { aspect-ratio: 16 / 9; }
     
     // MEDIA
     .img-shell {
@@ -46,6 +30,7 @@
   }
 
   &__controls {
+    z-index: 2;
     position: absolute;
     left: 0;
     right: 0;

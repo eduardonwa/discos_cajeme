@@ -20,7 +20,16 @@
             {{-- action links --}}
             <div class="action-links">
                 <div class="action-links__icons">
-                    <x-icon :size="24" decorative fill="#344D55">
+                    <x-icon
+                        @click="$dispatch('open-search')"
+                        x-data
+                        :size="24"
+                        orientation="left"
+                        decorative
+                        fill="#344D55"
+                        aria-haspop="dialog"
+                        aria-controls="heroSearchModal"
+                    >
                         <x-ui.icons.search />
                     </x-icon>
                     

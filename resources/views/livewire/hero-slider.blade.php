@@ -2,7 +2,7 @@
 
 <div class="hero-slider">
     @if($slide)
-        <section class="hero-slider__background" aria-label="Hero principal">
+        <section class="hero-slider__frame" aria-label="Hero principal">
             <a href="{{ $slide['link'] }}" class="img-shell" aria-hidden="true">
                 <img
                     class="image"

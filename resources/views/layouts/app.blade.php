@@ -25,6 +25,7 @@
 
         <div>
             @livewire('navigation-menu')
+            @livewire('search-modal')
 
             <!-- Page Heading -->
             @if (isset($header))

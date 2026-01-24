@@ -2,22 +2,17 @@
 
 namespace App\Livewire;
 
-use App\Models\Product;
 use App\Models\Collection;
 use App\Models\HomePage;
 use Livewire\Component;
 use Livewire\Attributes\Url;
 use Livewire\WithPagination;
-use Livewire\Attributes\Computed;
 
 class StoreFront extends Component
 {
     use WithPagination;
 
     #[Url]
-    public $searchQuery = '';
-    public bool $searchModal = false;
-    public string $searchQueryMobile = '';
     public array $heroSlider = [];
 
     public function mount()
@@ -56,25 +51,6 @@ class StoreFront extends Component
                 'image_alt' => '',
             ];
         })->filter()->values()->all();
-    }
-
-
-    #[Computed]
-    public function productsQuery()
-    {
-        return Product::query()
-            ->published()
-            ->when($this->searchQuery, fn($query) =>
-                $query->where('name', 'like', "%{$this->searchQuery}%")
-            )
-            ->with('media')
-            ->orderByDesc('created_at')
-            ->paginate(12);
-    }
-
-    public function updatedSearchQuery()
-    {
-        $this->resetPage();
     }
 
     private function getCollectionWithProducts(string $slug, int $limit)
