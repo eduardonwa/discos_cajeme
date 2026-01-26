@@ -6,6 +6,7 @@ use App\Models\Product;
 use Livewire\Component;
 use Livewire\Attributes\Url;
 use Livewire\WithPagination;
+use Livewire\Attributes\Computed;
 
 class SearchPage extends Component
 {
@@ -13,6 +14,21 @@ class SearchPage extends Component
 
     #[Url(history:true)]
     public string $q = '';
+    public string $searchQuery = '';
+
+    #[Computed]
+    public function productsQuery()
+    {
+        return Product::query()
+            ->published()
+            ->when($this->searchQuery, fn($query) =>
+                $query->where('name', 'like', "%{$this->searchQuery}%")
+            )
+            ->with('media')
+            ->orderByDesc('created_at')
+            ->limit(13)
+            ->get();
+    }
 
     public function updateQ()
     {

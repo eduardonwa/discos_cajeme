@@ -8,7 +8,7 @@ Route::get('/', \App\Livewire\StoreFront::class)->name('home');
 Route::get('/product/{product}', \App\Livewire\Product::class)->name('product');
 Route::get('/cart', \App\Livewire\Cart::class)->name('cart');
 Route::get('/collections/{collection}', \App\Livewire\Collections::class)->name('collection');
-Route::get('/search', SearchPage::class);
+Route::get('/search', SearchPage::class)->name('search');
 
 Route::get('/preview', function() {
     $order = \App\Models\Order::with('items.variant.attributes')->first();
