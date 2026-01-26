@@ -1,0 +1,86 @@
+@use "../abstracts" as *;
+
+.checkout-status {    
+    header {
+        display: flex;
+        flex-direction: column;
+        gap: $size-4;
+
+        .heading-3 {
+            text-transform: none;
+            text-align: center;
+        }
+
+        p {
+            text-align: center;
+        }
+
+        .button {
+            align-self: center;
+            border: 1px solid $color-neutral-900;
+            background: $color-neutral-000;
+        }
+    }
+
+    &__ticket {
+        margin-block: $size-8;
+
+        .fs-600 {
+            padding-block: $size-4;
+            
+            @include mq(large) {
+                text-align: start;
+            }
+        }
+
+        .items-wrapper {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .items {
+            background: $color-neutral-000;
+            border: 1px solid $color-neutral-200;
+
+            .item {
+                display: grid;
+                grid-template-columns: 1fr auto;
+
+                dt, dd {
+                    padding: $size-2;
+                    border-bottom: 1px solid $color-neutral-200;
+                }
+
+                dt {
+                    font-family: $font-family-semibold;
+                    border-right: 1px solid $color-neutral-200;
+                }
+
+                dd {
+                    text-align: right;
+                    margin: 0;
+                }
+    
+                dt:last-of-type,
+                dd:last-of-type {
+                    border-bottom: none;
+                }
+            }
+        }
+    }
+
+    &__order {
+        border: 1px solid $color-neutral-500;
+        margin-block-end: $size-8;
+
+        .guest, .auth {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: $size-4;
+            gap: $size-4;
+        }
+
+        .guest .button { padding: $size-2 $size-11; }
+    }
+}

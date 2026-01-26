@@ -1,5 +1,5 @@
 @php $isCollection = request()->routeIs('collection'); @endphp
-<nav x-data class="nav">
+<nav x-data class="nav no-print">
     <div class="site-header">
         <article class="site-header__inner">
             <button @click="$store.ui.navOpen = !$store.ui.navOpen" class="burger-icon ui-icon-btn" aria-expanded="$store.ui.navOpen">

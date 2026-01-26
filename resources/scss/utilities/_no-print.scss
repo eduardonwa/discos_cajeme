@@ -1,0 +1,7 @@
+@use "../abstracts/" as *;
+
+@media print {
+    .no-print {
+        display: none !important;
+    }
+}

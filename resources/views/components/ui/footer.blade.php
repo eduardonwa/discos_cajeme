@@ -1,4 +1,4 @@
-<footer class="site-footer" role="contentinfo">
+<footer class="site-footer no-print" role="contentinfo">
     <div class="site-footer__top">
         <nav class="footer-links" aria-label="Enlaces del sitio">
             <section class="footer-links__group">
