@@ -16,6 +16,8 @@ Route::get('/preview', function() {
     return new OrderConfirmation($order);
 });
 
+Route::get('/guest/checkout-status', \App\Livewire\CheckoutStatus::class)->name('guest.checkout-status');
+
 Route::middleware([
     'auth:sanctum',
     config('jetstream.auth_session'),

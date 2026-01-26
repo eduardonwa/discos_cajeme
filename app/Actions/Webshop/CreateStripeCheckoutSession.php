@@ -2,20 +2,53 @@
 
 namespace App\Actions\Webshop;
 
+use Stripe\Stripe;
 use App\Models\Cart;
+use RuntimeException;
 use App\Models\Coupon;
 use App\Models\CartItem;
 use Illuminate\Database\Eloquent\Collection;
-use RuntimeException;
+use Stripe\Checkout\Session as StripeCheckoutSession;
 
 class CreateStripeCheckoutSession
 {
     public function createFromCart(Cart $cart)
     {
-        $coupon = $cart->coupon_code 
+        $coupon = $cart->coupon_code
             ? Coupon::where('code', $cart->coupon_code)->first()
             : null;
+        
+        $lineItems = $this->formatCartItems($cart->items, $coupon);
 
+        // GUEST FLOW
+        if (! $cart->user) {
+            Stripe::setApiKey(config('services.stripe.secret'));
+            
+            // session_id de Laravel
+            $guestSessionId = session()->getId();
+
+            $session = StripeCheckoutSession::create([
+                'mode' => 'payment',
+                'line_items' => $lineItems,
+                'automatic_tax' => ['enabled' => false],
+                'shipping_address_collection' => [
+                    'allowed_countries' => ['US', 'MX'],
+                ],
+                'success_url' => route('guest.checkout-status') . '?session_id={CHECKOUT_SESSION_ID}',
+                'cancel_url' => route('cart'),
+                'metadata' => [
+                    'cart_id' => $cart->id,
+                    'guest_session_id' => $guestSessionId,
+                    'coupon_code' => $coupon?->code,
+                    'discount_type' => $coupon?->discount_type,
+                    'discount_value' => $coupon?->discount_value,
+                ],
+            ]);
+
+            return redirect()->away($session->url);
+        }
+
+        // AUTH USER FLOW
         return $cart->user
             ->allowPromotionCodes()
             ->checkout(

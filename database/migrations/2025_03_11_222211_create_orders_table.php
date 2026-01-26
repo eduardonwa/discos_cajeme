@@ -16,6 +16,8 @@ return new class extends Migration
             $table->id();
             $table->foreignIdFor(User::class)->nullable()->constrained()->onDelete('cascade');
             $table->string('stripe_checkout_session_id');
+            $table->string('guest_email')->nullable();
+            $table->string('guest_session_id')->nullable();
             $table->integer('amount_shipping')->default(0);
             $table->integer('amount_discount')->default(0);
             $table->integer('amount_tax')->default(0);

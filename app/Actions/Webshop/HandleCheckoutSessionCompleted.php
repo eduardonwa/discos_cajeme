@@ -9,6 +9,7 @@ use App\Models\OrderItem;
 use Laravel\Cashier\Cashier;
 use App\Models\ProductVariant;
 use App\Mail\OrderConfirmation;
+use App\Models\Order;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use App\Notifications\NewOrderNotification;
@@ -56,6 +57,9 @@ class HandleCheckoutSessionCompleted
                 $userId = $session->metadata->user_id ?? null;
                 $cartId = $session->metadata->cart_id ?? null;
 
+                $guestSessionId = $session->metadata->guest_session_id ?? null;
+                $guestEmail = $session->customer_details->email ?? null;
+
                 \Log::info("$trace META IDS", [
                     'user_id' => $userId,
                     'cart_id' => $cartId,
@@ -64,9 +68,13 @@ class HandleCheckoutSessionCompleted
 
                 $user = $userId ? User::find($userId) : null;
                 $cart = $cartId ? Cart::find($cartId) : null;
+ 
+                if ($userId) {
+                    throw_if(!$user, new \RuntimeException('User no encontrado desde metadata'));
+                }
 
-                throw_if(!$user, new \RuntimeException('User no encontrado desde metadata'));
                 throw_if(!$cart, new \RuntimeException('Cart no encontrado desde metadata'));
+                throw_if(!$guestEmail && !$user, new \RuntimeException('Guest sin email en Stripe'));
 
                 // 3) Descontar stock por SKU (ProductVariant) usando metadata de Stripe Product
                 foreach ($session->line_items->data as $lineItem) {
@@ -123,10 +131,10 @@ class HandleCheckoutSessionCompleted
                 ]);
 
                 // 4) Crear orden (direcciones + totales)
-                $order = $user->orders()->create([
+                $orderData = [
                     'stripe_checkout_session_id' => $session->id,
-                    'amount_shipping'            => $session->total_details->amount_shipping,
-                    'amount_discount'            => $session->total_details->amount_discount,
+                    'amount_shipping'            => $session->total_details->amount_shipping ?? 0,
+                    'amount_discount'            => $session->total_details->amount_discount ?? 0,
                     'amount_tax'                 => $totalTax,
                     'amount_subtotal'            => $subtotal,
                     'amount_total'               => $subtotal + $totalTax,
@@ -150,7 +158,20 @@ class HandleCheckoutSessionCompleted
                         'postal_code'  => $session->shipping_details->address->postal_code ?? null,
                         'state'        => $session->shipping_details->address->state ?? null,
                     ],
-                ]);
+                ];
+
+                // USER AUTH FLOW
+                if ($user) {
+                    $order = $user->orders()->create($orderData);
+                }
+                // GUEST FLOW 
+                else {
+                    $order = \App\Models\Order::create($orderData + [
+                        'user_id' => null,
+                        'guest_email' => $guestEmail,
+                        'guest_session_id' => $guestSessionId,
+                    ]);
+                }
 
                 \Log::info("$trace ORDER CREATED", [
                     'order_id' => $order->id ?? null,
@@ -233,8 +254,14 @@ class HandleCheckoutSessionCompleted
                 $cart->items()->delete();
                 $cart->delete();
 
-                Mail::to($user)->send(new OrderConfirmation($order));
-                $user->notify(new NewOrderNotification($order));
+                if ($user) {
+                    Mail::to($user)->send(new OrderConfirmation($order));
+                    $user->notify(new NewOrderNotification($order));
+                } else {
+                    $guestEmail = $order->guest_email ?? null;
+                    throw_if(! $guestEmail, new \RuntimeException('Order guest sin email para confirmación.'));
+                    Mail::to($guestEmail)->send(new OrderConfirmation($order));
+                }
 
                 \Log::info("$trace DONE", [
                     'order_id' => $order->id ?? null,

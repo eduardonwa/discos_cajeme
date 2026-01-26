@@ -1,5 +1,5 @@
 @component('mail::message')
-Hey {{ $order->user->name }}
+Hey {{ $order->user?->name ?? ($order->billing_address['name'] ?? 'Invitado') }}
 
 Gracias por tu orden. Puedes consultar los detalles a continuación.
 

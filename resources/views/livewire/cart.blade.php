@@ -215,13 +215,8 @@
                             <p class="discount ff-semibold">Descuento: {{ $this->discountDetails['formatted'] }}</p>
                         </div>
                     @endif
-    
-                    @guest
-                        <p class="auth-login">Porfavor <a href="{{ route('register') }}" class="underline">regístrate</a> o <a href="{{ route('login') }}" class="underline">inicia sesión</a> para continuar</p>
-                    @endguest
-                    @auth
-                        <button class="button" data-type="mobile-full" wire:click="checkout">Confirmar pedido</button>
-                    @endauth
+
+                    <button class="button" data-type="mobile-full" wire:click="checkout">Confirmar pedido</button>
                 </div>
             </x-order-panel>
         @endif

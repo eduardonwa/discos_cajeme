@@ -190,7 +190,7 @@ class Cart extends Component
     public function checkout(CreateStripeCheckoutSession $checkoutSession)
     {
         try {
-            if ($this->cart->total->getAmount() < 1000) { // 10 pesos
+            if ($this->cart->total->getAmount() < 1000) {
                 throw new MinimumPurchaseAmountException();
             }
     
@@ -200,13 +200,11 @@ class Cart extends Component
             // Concatenar el mensaje de la excepción con el enlace HTML
             $message = $e->getMessage() . ' <a href="/ofertas" class="underline">¡Revisa nuestras ofertas!</a>';
     
-            // Pasar el mensaje completo al toaster
             Toaster::info($message, [
                 'showError' => true,
                 'minimumAmount' => $message, // Pasamos el mensaje completo
             ]);
         } catch (\Exception $e) {
-            // Otros errores
             Toaster::error('Ocurrió un error al procesar tu solicitud.');
             Log::error('Mensaje de error al procesar la solicitud: ' . $e->getMessage());
         }
