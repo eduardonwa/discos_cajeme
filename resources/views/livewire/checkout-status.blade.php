@@ -13,26 +13,40 @@
 
             <div class="items-wrapper">
                 <dl class="items">
-                    @foreach ($this->order->items as $item)                       
-                        <div class="item">
-                            <dt>Artículo</dt>
-                            <dd>{{ $item->name }}</dd>
+                    @foreach ($this->order->items as $item)
+                        <h2 class="heading-3">{{ $item->name }}</h2>
 
+                        <div class="item">
                             <dt>Cantidad</dt>
-                            <dd>{{ $item->amount_subtotal }}</dd>
+                            <dd>{{ $item->quantity }}</dd>
 
                             <dt>Subtotal</dt>
                             <dd>{{ $item->amount_subtotal }}</dd>
 
                             <dt>Impuestos</dt>
                             <dd>{{ $item->amount_tax }}</dd>
-                            
+
                             <dt>Total</dt>
                             <dd>{{ $item->amount_total }}</dd>
                         </div>
                     @endforeach
                 </dl>
             </div>
+
+            <dl class="totals">
+                <div class="row">
+                    <dt>Subtotal</dt>
+                    <dd>{{ $this->order->amount_subtotal }}</dd>
+                </div>
+                <div class="row">
+                    <dt>Impuestos</dt>
+                    <dd>{{ $this->order->amount_tax }} (16%)</dd>
+                </div>
+                <div class="row">
+                    <dt>Total</dt>
+                    <dd>{{ $this->order->amount_total }}</dd>
+                </div>
+            </dl>
         </main>
 
         <section class="checkout-status__order">

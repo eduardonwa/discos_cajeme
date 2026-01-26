@@ -36,33 +36,74 @@
         .items-wrapper {
             overflow-x: auto;
             -webkit-overflow-scrolling: touch;
+            margin-block-end: $size-4;
+
+            .items {
+                background: $color-neutral-000;
+
+                .heading-3 {
+                    text-transform: none;
+                    padding: $size-2;
+                }
+    
+                .item {
+                    display: grid;
+                    grid-template-columns: 1fr 1fr;
+                    border: 1px solid $color-neutral-200;
+
+                    dt, dd {
+                        padding: $size-2;
+                        border-bottom: 1px solid $color-neutral-200;
+                    }
+    
+                    dt {
+                        font-family: $font-family-semibold;
+                        border-right: 1px solid $color-neutral-200;
+                    }
+    
+                    dd {
+                        text-align: right;
+                        margin: 0;
+                    }
+        
+                    dt:last-of-type,
+                    dd:last-of-type {
+                        border-bottom: none;
+                    }
+
+                    &:not(:last-child) {
+                        border-bottom: 8px solid $color-neutral-100;
+                    }
+                }
+            }
         }
 
-        .items {
+        .totals {
             background: $color-neutral-000;
             border: 1px solid $color-neutral-200;
-
-            .item {
+    
+            .row {
                 display: grid;
-                grid-template-columns: 1fr auto;
-
+                grid-template-columns: 1fr 1fr;
+                
                 dt, dd {
                     padding: $size-2;
                     border-bottom: 1px solid $color-neutral-200;
                 }
 
                 dt {
-                    font-family: $font-family-semibold;
                     border-right: 1px solid $color-neutral-200;
+                    font-family: $font-family-semibold;
                 }
-
+                
                 dd {
+                    font-size: $font-size-500;
                     text-align: right;
                     margin: 0;
                 }
-    
-                dt:last-of-type,
-                dd:last-of-type {
+
+                .row:last-child dt,
+                .row:last-child dd {
                     border-bottom: none;
                 }
             }
@@ -72,6 +113,10 @@
     &__order {
         border: 1px solid $color-neutral-500;
         margin-block-end: $size-8;
+
+        @include mq(large) {
+            border: 1px solid transparent;
+        }
 
         .guest, .auth {
             display: flex;
