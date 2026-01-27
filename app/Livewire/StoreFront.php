@@ -15,8 +15,9 @@ class StoreFront extends Component
 
     #[Url]
     public array $heroSlider = [];
-    public $collections;
-
+    public $collections = [];
+    public string $activeTab = '';
+    
     public function mount()
     {
         $home = HomePage::first();
@@ -35,7 +36,9 @@ class StoreFront extends Component
             ->values()
             ->all();
 
-        // dd($this->collections);
+        if ($this->activeTab === '' && ! empty($this->collections)) {
+            $this->activeTab = $this->collections[0]->slug;
+        }
 
         $this->heroSlider = [];
 
@@ -101,6 +104,11 @@ class StoreFront extends Component
         $collection->setRelation('products', $products);
 
         return $collection;
+    }
+
+    public function setActiveTab(string $slug)
+    {
+        $this->activeTab = $slug;
     }
 
     public function render()
