@@ -30,13 +30,29 @@
   }
 
   &__controls {
-    z-index: 2;
     position: absolute;
     left: 0;
     right: 0;
     bottom: 0;
-    width: 100%;
-    margin-bottom: $size-4;
+    height: 89px;
+    display: flex;
+    align-items: center;
+    justify-content: center; 
+    z-index: 2;
+    pointer-events: auto;
+
+    &::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        to top,
+        rgba(0, 0, 0, .7),
+        rgba(0, 0, 0, 0),
+      );
+      z-index: -1;
+      pointer-events: none;
+    }
 
     .dots {
       display: flex;

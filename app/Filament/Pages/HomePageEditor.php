@@ -293,7 +293,6 @@ class HomePageEditor extends Page implements HasForms
                                             }
                                         },
                                     ])
-
                             ])
                 ])
                 ->extraAttributes([

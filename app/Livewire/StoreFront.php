@@ -2,9 +2,10 @@
 
 namespace App\Livewire;
 
-use App\Models\Collection;
-use App\Models\HomePage;
+use App\Models\Product;
 use Livewire\Component;
+use App\Models\HomePage;
+use App\Models\Collection;
 use Livewire\Attributes\Url;
 use Livewire\WithPagination;
 
@@ -14,10 +15,27 @@ class StoreFront extends Component
 
     #[Url]
     public array $heroSlider = [];
+    public $collections;
 
     public function mount()
     {
         $home = HomePage::first();
+
+        $collectionLimit = (int) ($home->tab_products_limit ?? 10);
+
+        $this->collections = collect($home->tab_collections ?? [])
+            ->map(function ($block) use ($collectionLimit) {
+                return $this->getCollectionTab(
+                    (int) $block['collection_id'],
+                    $block['product_ids'] ?? [],
+                    $collectionLimit    
+                );
+            })
+            ->filter()
+            ->values()
+            ->all();
+
+        // dd($this->collections);
 
         $this->heroSlider = [];
 
@@ -53,28 +71,40 @@ class StoreFront extends Component
         })->filter()->values()->all();
     }
 
-    private function getCollectionWithProducts(string $slug, int $limit)
+    private function getCollectionTab(int $collectionId, array $productIds, int $collectionLimit)
     {
-        return Collection::query()
+        $collection = Collection::query()
             ->active()
-            ->where('slug', $slug)
-            ->with(['products' => function ($q) use ($limit) {
-                $q->where('published', true)
-                  ->with(['media','collections'])
-                  ->orderByDesc('products.created_at')
-                  ->limit($limit);
-            }])
-            ->first();
+            ->find($collectionId);
+
+        if (! $collection) return null;
+
+        // si filament seleccionó productos específicos
+        if (! empty($productIds)) {
+            $products = Product::query()
+                ->whereIn('id', $productIds)
+                ->where('published', true)
+                ->with(['media', 'collections'])
+                ->get()
+                ->sortBy(fn ($p) => array_search($p->id, $productIds))
+                ->values();
+        } else {
+            $products = Product::query()
+                ->whereHas('collections', fn ($q) => $q->whereKey($collectionId))
+                ->where('published', true)
+                ->with(['media', 'collections'])
+                ->orderByDesc('products.created_at')
+                ->limit($collectionLimit)
+                ->get();
+        }
+
+        $collection->setRelation('products', $products);
+
+        return $collection;
     }
 
     public function render()
     {
-        // Cada colección por separado (sueltas)
-        $verano     = $this->getCollectionWithProducts('verano-libre-40', 4);
-        $onSale     = $this->getCollectionWithProducts('on-sale', 4);
-        $atemporal  = $this->getCollectionWithProducts('atemporal', 6);
-        $comodidad  = $this->getCollectionWithProducts('comodidad-moderna', 6);
-
-        return view('livewire.store-front', compact('verano','onSale','atemporal','comodidad'));
+        return view('livewire.store-front');
     }
 }
