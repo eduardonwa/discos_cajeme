@@ -8,10 +8,13 @@ use App\Models\HomePage;
 use App\Models\Collection;
 use Livewire\Attributes\Url;
 use Livewire\WithPagination;
+use Masmerise\Toaster\Toaster;
+use Masmerise\Toaster\Toastable;
+use App\Actions\Webshop\AddProductToCart;
 
 class StoreFront extends Component
 {
-    use WithPagination;
+    use Toastable, WithPagination;
 
     #[Url]
     public array $heroSlider = [];
@@ -74,36 +77,57 @@ class StoreFront extends Component
         })->filter()->values()->all();
     }
 
+    public function addToCart(int $productId, ?int $variantId = null)
+    {
+        $action = app(AddProductToCart::class);
+        
+        $action->add(
+            productId: $productId,
+            variantId: $variantId,
+            quantity: 1,
+            couponCode: null
+        );
+
+        $this->dispatch('cart-updated');
+        Toaster::success('Producto agregado al carrito');
+    }
+
     private function getCollectionTab(int $collectionId, array $productIds, int $collectionLimit)
     {
-        $collection = Collection::query()
-            ->active()
-            ->find($collectionId);
-
+        $collection = Collection::query()->select(['id', 'name', 'slug'])->find($collectionId);
         if (! $collection) return null;
 
-        // si filament seleccionó productos específicos
-        if (! empty($productIds)) {
-            $products = Product::query()
-                ->whereIn('id', $productIds)
-                ->where('published', true)
-                ->with(['media', 'collections'])
-                ->get()
-                ->sortBy(fn ($p) => array_search($p->id, $productIds))
-                ->values();
-        } else {
-            $products = Product::query()
-                ->whereHas('collections', fn ($q) => $q->whereKey($collectionId))
-                ->where('published', true)
-                ->with(['media', 'collections'])
-                ->orderByDesc('products.created_at')
-                ->limit($collectionLimit)
-                ->get();
+        // Limpia ids, conserva orden, quita duplicados, aplica límite
+        $orderedIds = collect($productIds)
+            ->map(fn ($id) => (int) $id)
+            ->filter()
+            ->unique()
+            ->values()
+            ->take($collectionLimit)
+            ->all();
+
+        if (empty($orderedIds)) {
+            return (object) [
+                'id' => $collection->id,
+                'name' => $collection->name,
+                'slug' => $collection->slug,
+                'products' => collect(),
+            ];
         }
 
-        $collection->setRelation('products', $products);
+        $idsCsv = implode(',', $orderedIds);
 
-        return $collection;
+        $products = Product::query()
+            ->whereIn('id', $orderedIds)
+            ->orderByRaw("FIELD(id, {$idsCsv})")
+            ->get();
+
+        return (object) [
+            'id' => $collection->id,
+            'name' => $collection->name,
+            'slug' => $collection->slug,
+            'products' => $products,
+        ];
     }
 
     public function setActiveTab(string $slug)

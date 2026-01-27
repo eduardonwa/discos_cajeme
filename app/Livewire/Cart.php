@@ -157,6 +157,7 @@ class Cart extends Component
         }
     
         $item->increment('quantity');
+        
         $this->dispatch('cartUpdated');
         $this->banner('Cantidad incrementada');
     }
