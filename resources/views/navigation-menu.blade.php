@@ -1,4 +1,5 @@
 @php $isCollection = request()->routeIs('collection'); @endphp
+
 <nav x-data class="nav no-print">
     <div class="site-header">
         <article class="site-header__inner">

@@ -59,18 +59,18 @@ class AppServiceProvider extends ServiceProvider
         });
 
         // Establece el locale para la aplicación
-        app()->setLocale('es_MX');
+        app()->setLocale('es');
 
         // Establece el locale para Carbon (manejo de fechas)
-        Carbon::setLocale('es_MX');
+        Carbon::setLocale('es');
 
         // Configura el locale para PHP (necesario para formatos de fecha)
-        setlocale(LC_TIME, 'es_MX.utf8'); // Usa el locale instalado en el sistema
+        setlocale(LC_TIME, 'es.utf8'); // Usa el locale instalado en el sistema
 
         // Configura el formateador de dinero
         Blade::stringable(function (Money $money) {
             $currencies = new ISOCurrencies();
-            $numberFormatter = new NumberFormatter('es_MX', \NumberFormatter::CURRENCY);
+            $numberFormatter = new NumberFormatter('es', \NumberFormatter::CURRENCY);
             $moneyFormatter = new IntlMoneyFormatter($numberFormatter, $currencies);
             
             // obtener el valor formateado

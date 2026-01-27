@@ -18,6 +18,8 @@ return [
     'throttle' => 'Too many login attempts. Please try again in :seconds seconds.',
     'whoops' => 'Whoops! Something went wrong.',
     'terms' => 'I agree to the :terms_of_service and :privacy_policy',
+    'terms_of_service' => 'Terms of Service',
+    'privacy_policy' => 'Privacy Policy',
     'name' => 'Name',
     'password' => 'Password',
     'confirm' => 'Confirm password',
