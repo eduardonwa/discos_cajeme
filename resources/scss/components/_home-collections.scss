@@ -4,6 +4,11 @@
     margin: $size-5;
     position: relative;
 
+    .heading-2 {
+        text-transform: none;
+        padding: $size-4 0;
+    }
+
     &__tabs {
         display: flex;
         gap: $size-2;
@@ -32,11 +37,7 @@
         .content {
             flex: 0 0 233px;
             margin: $size-1;
-            padding: $size-4;
-
-            @include mq(large) {
-                padding-inline: 0;
-            }
+            padding-block: $size-4;
 
             .image-wrapper {
                 height: auto;

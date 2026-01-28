@@ -1,4 +1,6 @@
 <div class="home-collections | container" data-type="wide">
+    <h2 class="heading-2">{{ $this->collectionHeader }}</h2>
+
     <div class="home-collections__tabs">
         @foreach ($collections as $tab)
             <button

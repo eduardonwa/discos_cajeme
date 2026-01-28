@@ -19,10 +19,15 @@ class StoreFront extends Component
     public array $heroSlider = [];
     public $collections = [];
     public string $activeTab = '';
-    
+    public string $collectionHeader;
+
     public function mount()
     {
         $home = HomePage::first();
+
+        $collectionHeader = $home->tab_collection_header;
+        
+        $this->collectionHeader = $collectionHeader;
 
         $collectionLimit = (int) ($home->tab_products_limit ?? 10);
 
