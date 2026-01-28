@@ -2,7 +2,70 @@
 
 .home-collections {
     margin: $size-5;
+    position: relative;
+
+    &__tabs {
+        display: flex;
+        gap: $size-2;
+        overflow-x: auto;
+        white-space: nowrap;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+
+        &::-webkit-scrollbar { display: none; }
+
+        .active-tab { background: $color-neutral-000; }
+    }
 
     &__results {
+        min-height: 240px;
+        display: flex;
+        gap: $size-3;
+        overflow-x: auto;
+        overflow-y: visible;
+        scroll-snap-type: x mandatory;
+        scroll-behavior: smooth;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+        transition: opacity 900ms ease;
+
+        .content {
+            flex: 0 0 233px;
+            margin: $size-1;
+            padding: $size-4;
+
+            @include mq(large) {
+                padding-inline: 0;
+            }
+
+            .image-wrapper {
+                height: auto;
+                width: 100%;
+                aspect-ratio: 1;
+                overflow: hidden;
+
+                .image {
+                    object-fit: cover;
+                    width: 100%;
+                    height: 100%;
+                }
+            }
+
+            .info {
+                padding-block: $size-2;
+                color: $color-primary-900;
+                
+                .name {
+                    font-family: $font-family-semibold;
+                    font-size: $font-size-500;
+                }
+            }
+
+            .actions {
+                display: flex;
+                flex-direction: column;
+                gap: $size-3;
+            }
+        }
     }
 }

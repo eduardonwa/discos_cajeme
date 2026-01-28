@@ -86,8 +86,18 @@
     background: transparent;
   }
 
+  &[data-type="add-to-cart"] {
+    text-transform: none;
+    color: $color-primary-900;
+    background: transparent;
+    border: 1px solid $color-primary-600;
+    padding: $size-2;
+  }
+
   &[data-type="buy-now"] {
     text-transform: none;
+    background: $color-secondary-700;
+    color: $color-neutral-000;
   }
 
   &[data-type="catalogue"] {

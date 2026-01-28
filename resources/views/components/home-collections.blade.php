@@ -1,11 +1,12 @@
-<div>
-    <div class="flex flex-wrap gap-2">
+<div class="home-collections | container" data-type="wide">
+    <div class="home-collections__tabs">
         @foreach ($collections as $tab)
             <button
                 type="button"
                 wire:click="setActiveTab('{{ $tab->slug }}')"
                 wire:key="tab-btn-{{ $tab->slug }}"
-                class="{{ $activeTab === $tab->slug ? 'fw-600' : '' }}"
+                class="badge {{ $activeTab === $tab->slug ? 'active-tab' : '' }}"
+                data-type="h-collection"
             >
                 {{ $tab->name }}
             </button>
@@ -17,11 +18,11 @@
     @endphp
 
     @if ($active)
-        <div class="mt-6 grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div class="home-collections__results">
             @foreach ($active->products as $product)
-                <div
+                <a class="content | no-decor"
+                    href="{{ route('product', $product->slug) }}"
                     wire:key="prod-{{ $active->slug }}-{{ $product->id }}"
-                    class=""
                 >
                     <div class="image-wrapper">
                         <img
@@ -30,9 +31,9 @@
                             alt="{{ $product->name }}">
                     </div>
                  
-                    <div class="">
-                        <p>{{ $product->name }}</p>
-                        <p>{{ $product->price }}</p>
+                    <div class="info">
+                        <p class="name">{{ $product->name }}</p>
+                        <p class="price">{{ $product->price }}</p>
                     </div>
 
                     <div class="actions">
@@ -41,15 +42,16 @@
                             wire:click="addToCart({{ $product->id }})"
                             wire:key="add-{{ $active->slug }}-{{ $product->id }}"
                             class="button"
+                            data-type="add-to-cart"
                         >
                             Agregar al carrito
                         </button>
 
-                        <button class="button">
+                        <button class="button" data-type="buy-now">
                             Comprar ahora
                         </button>
                     </div>
-                </div>
+                </a>
             @endforeach
         </div>
     @endif

@@ -10,11 +10,18 @@
     font-weight: $badge-font-weight;
     white-space: nowrap;
     width: $badge-width;
+    transition: all 250ms ease;
 
     svg, img { width: 1em; height: 1em; }
 
     &[data-type="product-page"] {
         background: $color-accent-700;
         color: $color-neutral-100;
+    }
+
+    &[data-type="h-collection"] {
+        border: 0;
+        border: 1px solid $color-neutral-300;
+        cursor: pointer;
     }
 }

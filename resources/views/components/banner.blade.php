@@ -25,7 +25,7 @@
     @banner-message.window="
         style   = $event.detail.style   ?? style;
         message = $event.detail.message ?? message;
-        showFor($event.detail.duration ?? 3000);
+        showFor($event.detail.duration  ?? 3000);
     "
 >
     <div class="banner__container">
@@ -51,7 +51,7 @@
             </div>
 
             <div class="banner__actions">
-                <x-icon x-on:click="show = false" aria-label="Dismiss">
+                <x-icon x-on:click="show = false" aria-label="Dismiss" color="#fff">
                     <x-ui.icons.close />
                 </x-icon>
             </div>

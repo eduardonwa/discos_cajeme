@@ -8,13 +8,12 @@ use App\Models\HomePage;
 use App\Models\Collection;
 use Livewire\Attributes\Url;
 use Livewire\WithPagination;
-use Masmerise\Toaster\Toaster;
-use Masmerise\Toaster\Toastable;
 use App\Actions\Webshop\AddProductToCart;
+use Laravel\Jetstream\InteractsWithBanner;
 
 class StoreFront extends Component
 {
-    use Toastable, WithPagination;
+    use InteractsWithBanner, WithPagination;
 
     #[Url]
     public array $heroSlider = [];
@@ -79,6 +78,8 @@ class StoreFront extends Component
 
     public function addToCart(int $productId, ?int $variantId = null)
     {
+        $product = Product::select('id', 'name')->find($productId);    
+        
         $action = app(AddProductToCart::class);
         
         $action->add(
@@ -89,7 +90,7 @@ class StoreFront extends Component
         );
 
         $this->dispatch('cart-updated');
-        Toaster::success('Producto agregado al carrito');
+        $this->banner("'{$product->name}' agregado al carrito");
     }
 
     private function getCollectionTab(int $collectionId, array $productIds, int $collectionLimit)
