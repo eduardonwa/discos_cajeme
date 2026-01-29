@@ -3,20 +3,20 @@
   'label' => null,
   'decorative' => false,
   'href' => null,
-  'orientation' => 'right',
+  'orientation' => null,
   'fill' => null,
   'color' => null,
 ])
 
 @php
   $sizeValue = is_numeric($size) ? $size.'px' : $size;
-  $dir = $orientation === 'left' ? 'left' : 'right';
+  $dir = $orientation === 'left' ? 'left' : ($orientation === 'right' ? 'right' : null);
   $colorValue = $color ?? $fill;
   $styleInline = "--icon-size: {$sizeValue};" . ($colorValue ? " color: {$colorValue};" : "");
 @endphp
 
 @if($href)
-  <a {{ $attributes->class('ui-icon-btn') }} aria-label="{{ $label }}" target="_blank" style="{{ $styleInline }}">
+  <a href="{{ $href }}" {{ $attributes->class('ui-icon-btn') }} aria-label="{{ $label }}" target="_blank" style="{{ $styleInline }}">
     <svg
       class="ui-icon {{ $dir }}"
       role="img"

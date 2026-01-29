@@ -24,10 +24,12 @@
 
     &__results {
         min-height: 240px;
-        display: flex;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        grid-auto-flow: row;
         gap: $size-3;
         overflow-x: auto;
-        overflow-y: visible;
+        overflow-y: hidden;
         scroll-snap-type: x mandatory;
         scroll-behavior: smooth;
         scrollbar-width: none;
@@ -35,9 +37,20 @@
         transition: opacity 900ms ease;
 
         .content {
-            flex: 0 0 233px;
+            height: 100%;
             margin: $size-1;
             padding-block: $size-4;
+            display: grid;
+            grid-template-rows: 1fr auto;
+
+            @include mq(medium) {
+                max-width: 260px;
+                margin-inline: auto;
+            }
+
+            @include mq(large) {
+                margin-inline: unset;
+            }
 
             .image-wrapper {
                 height: auto;
@@ -64,8 +77,18 @@
 
             .actions {
                 display: flex;
-                flex-direction: column;
+                justify-content: space-between;
                 gap: $size-3;
+
+                .ui-icon-btn {
+                    border: 1px solid $color-neutral-500;
+                }
+
+                .button[data-type="buy-now"] {
+                    padding: $size-2;
+                    display: flex;
+                    align-items: center;
+                }
             }
         }
     }

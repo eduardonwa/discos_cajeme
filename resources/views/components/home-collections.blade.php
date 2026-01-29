@@ -22,38 +22,37 @@
     @if ($active)
         <div class="home-collections__results">
             @foreach ($active->products as $product)
-                <a class="content | no-decor"
-                    href="{{ route('product', $product->slug) }}"
+                <div class="content"
                     wire:key="prod-{{ $active->slug }}-{{ $product->id }}"
                 >
-                    <div class="image-wrapper">
-                        <img
-                            class="image"
-                            src="{{ $product->getFirstMediaUrl('featured', 'md_thumb') }}"
-                            alt="{{ $product->name }}">
-                    </div>
-                 
-                    <div class="info">
-                        <p class="name">{{ $product->name }}</p>
-                        <p class="price">{{ $product->price }}</p>
-                    </div>
+                    <a class="no-decor" href="{{ route('product', $product->slug) }}">
+                        <div class="image-wrapper">
+                            <img
+                                class="image"
+                                src="{{ $product->getFirstMediaUrl('featured', 'md_thumb') }}"
+                                alt="{{ $product->name }}">
+                        </div>
+                     
+                        <div class="info">
+                            <p class="name">{{ $product->name }}</p>
+                            <p class="price">{{ $product->price }}</p>
+                        </div>
+                    </a>
 
                     <div class="actions">
-                        <button
-                            type="button"
+                        <x-icon
                             wire:click="addToCart({{ $product->id }})"
                             wire:key="add-{{ $active->slug }}-{{ $product->id }}"
-                            class="button"
                             data-type="add-to-cart"
                         >
-                            Agregar al carrito
-                        </button>
+                            <x-ui.icons.cart />
+                        </x-icon>
 
                         <button class="button" data-type="buy-now">
                             Comprar ahora
                         </button>
                     </div>
-                </a>
+                </div>
             @endforeach
         </div>
     @endif

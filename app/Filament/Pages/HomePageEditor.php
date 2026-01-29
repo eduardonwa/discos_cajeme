@@ -209,8 +209,8 @@ class HomePageEditor extends Page implements HasForms
                             TextInput::make('tab_products_limit')
                                 ->label('Límite de productos por tab')
                                 ->numeric()
-                                ->minValue(1)
-                                ->maxValue(18)
+                                ->minValue(3)
+                                ->maxValue(8)
                                 ->required()
                                 ->columnSpan(1),
                         ]),
@@ -253,7 +253,7 @@ class HomePageEditor extends Page implements HasForms
                                     ->searchable()
                                     ->disabled(fn (Get $get) => blank($get('collection_id')))
                                     ->helperText(function (Get $get) {
-                                        $limit = (int) ($get('../../../tab_products_limit') ?? 18);
+                                        $limit = (int) ($get('../../../tab_products_limit') ?? 8);
                                         $count = count($get('product_ids') ?? []);
                                         return "Máximo: {$limit} — seleccionados: {$count}";
                                     })
@@ -285,7 +285,7 @@ class HomePageEditor extends Page implements HasForms
                                     ->getOptionLabelUsing(fn ($value) => Product::query()->whereKey($value)->value('name'))
                                     ->rules([
                                         fn (Get $get) => function (string $attribute, $value, \Closure $fail) use ($get) {
-                                            $limit = (int) ($get('../../../tab_products_limit') ?? 18);
+                                            $limit = (int) ($get('../../../tab_products_limit') ?? 8);
                                             $count = is_array($value) ? count($value) : 0;
 
                                             if ($count > $limit) {
