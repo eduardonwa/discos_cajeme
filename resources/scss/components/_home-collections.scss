@@ -36,6 +36,8 @@
         -ms-overflow-style: none;
         transition: opacity 900ms ease;
 
+        @include mq(large) { grid-template-columns: repeat(4, 1fr); }
+
         .content {
             height: 100%;
             margin: $size-1;
