@@ -59,6 +59,11 @@
       align-items: center;
       justify-content: center;
       gap: $size-2;
+
+      .button.is-active {
+        background: $color-primary-500;
+        border: 1px solid $color-primary-100;
+      }
     }
   }
 }

@@ -11,15 +11,28 @@
 
     &__tabs {
         display: flex;
+        flex-direction: column;
+        align-items: center;
         gap: $size-2;
         overflow-x: auto;
         white-space: nowrap;
         scrollbar-width: none;
         -ms-overflow-style: none;
 
-        &::-webkit-scrollbar { display: none; }
+        @include mq(large) {
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
+        }
 
+        &::-webkit-scrollbar { display: none; }
         .active-tab { background: $color-neutral-000; }
+
+        .buttons {
+            display: flex;
+            align-items: center;
+            gap: $size-4;
+        }
     }
 
     &__results {

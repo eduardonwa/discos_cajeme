@@ -70,7 +70,6 @@
         >
             <hr line-type="inner" data-device="d">
 
-            {{-- tab headers --}}
             <div class="tabs">
                 <button
                     @click="tab = 'details'"
@@ -96,7 +95,7 @@
                     :aria-expanded="tab === 'description'"
                 >Descripción</button>
             </div>
-            {{-- tab content --}}
+
             <div class="content">
                 <div class="content__section"
                         x-bind:hidden="isTabs && tab !== 'details'">
@@ -116,7 +115,6 @@
                     <p class="padding-block-start-1">{!! nl2br(e($this->product->description)) !!}</p>
                 </div>
             </div>
-
         </div>
 
         <hr line-type="inner" data-device="m">

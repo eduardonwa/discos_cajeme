@@ -1,18 +1,22 @@
 <div class="home-collections | container" data-type="wide">
-    <h2 class="heading-2">{{ $this->collectionHeader }}</h2>
-
+    
     <div class="home-collections__tabs">
-        @foreach ($collections as $tab)
-            <button
-                type="button"
-                wire:click="setActiveTab('{{ $tab->slug }}')"
-                wire:key="tab-btn-{{ $tab->slug }}"
-                class="badge {{ $activeTab === $tab->slug ? 'active-tab' : '' }}"
-                data-type="h-collection"
-            >
-                {{ $tab->name }}
-            </button>
-        @endforeach
+
+        <h2 class="heading-2">{{ $this->collectionHeader }}</h2>
+
+        <div class="buttons">
+            @foreach ($collections as $tab)
+                <button
+                    type="button"
+                    wire:click="setActiveTab('{{ $tab->slug }}')"
+                    wire:key="tab-btn-{{ $tab->slug }}"
+                    class="badge {{ $activeTab === $tab->slug ? 'active-tab' : '' }}"
+                    data-type="h-collection"
+                >
+                    {{ $tab->name }}
+                </button>
+            @endforeach
+        </div>
     </div>
 
     @php
@@ -35,7 +39,7 @@
                      
                         <div class="info">
                             <p class="name">{{ $product->name }}</p>
-                            <p class="price">{{ $product->price }}</p>
+                            <p class="price">$ {{ $product->price }}</p>
                         </div>
                     </a>
 
