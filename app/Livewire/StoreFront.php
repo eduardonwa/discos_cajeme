@@ -17,36 +17,17 @@ class StoreFront extends Component
 
     #[Url]
     public array $heroSlider = [];
-    public $collections = [];
     public string $activeTab = '';
     public string $collectionHeader = '';
+    public $collections = [];
+    public array $spotlight = [];
 
     public function mount()
     {
-        $home = HomePage::firstOrCreate();
+        $home = HomePage::with('spotlightProduct')->firstOrCreate();
        
-        $this->collectionHeader = $home?->tab_collection_header ?: 'Colecciones Destacadas';
-
-        $collectionLimit = (int) ($home->tab_products_limit ?? 10);
-
-        $this->collections = collect($home->tab_collections ?? [])
-            ->map(function ($block) use ($collectionLimit) {
-                return $this->getCollectionTab(
-                    (int) $block['collection_id'],
-                    $block['product_ids'] ?? [],
-                    $collectionLimit    
-                );
-            })
-            ->filter()
-            ->values()
-            ->all();
-
-        if ($this->activeTab === '' && ! empty($this->collections)) {
-            $this->activeTab = $this->collections[0]->slug;
-        }
-
+        /* SLIDER */
         $this->heroSlider = [];
-
         if (!$home) return;
 
         $this->heroSlider = collect([
@@ -77,6 +58,30 @@ class StoreFront extends Component
                 'image_alt' => '',
             ];
         })->filter()->values()->all();
+
+        /* COLLECTIONS */
+        $this->collectionHeader = $home?->tab_collection_header ?: 'Colecciones Destacadas';
+        $collectionLimit = (int) ($home->tab_products_limit ?? 10);
+
+        $this->collections = collect($home->tab_collections ?? [])
+            ->map(function ($block) use ($collectionLimit) {
+                return $this->getCollectionTab(
+                    (int) $block['collection_id'],
+                    $block['product_ids'] ?? [],
+                    $collectionLimit    
+                );
+            })
+            ->filter()
+            ->values()
+            ->all();
+
+        if ($this->activeTab === '' && ! empty($this->collections)) {
+            $this->activeTab = $this->collections[0]->slug;
+        }
+
+        /* SPOTLIGHT */
+        $this->spotlight = $home->spotlight_data;
+        // $this->spotlightProduct = $home->spotlightProduct;
     }
 
     public function addToCart(int $productId, ?int $variantId = null)

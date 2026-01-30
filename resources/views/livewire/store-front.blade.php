@@ -4,6 +4,8 @@
 
     <x-home-collections :collections="$collections" :activeTab="$activeTab" />
 
+    <x-spotlight :spotlight="$spotlight" />
+
     {{-- <div class="container" data-type="wide">
         <x-collections-carousel :collection="$verano" type="rebajas" :showMore="true" />
         <x-collections-carousel :collection="$onSale" type="rebajas" :showMore="true" />

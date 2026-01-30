@@ -26,6 +26,22 @@ class HomePage extends Model implements HasMedia
         return $this->belongsTo(Product::class, 'spotlight_product_id');
     }
 
+    public function getSpotlightDataAttribute()
+    {
+        if (! $this->spotlightProduct) {
+            return null;
+        }
+
+        return [
+            'header' => $this->spotlight_header,
+            'product' => $this->spotlightProduct,
+            'title' => $this->spotlight_override_title
+                ?? $this->spotlightProduct->name,
+            'description' => $this->spotlight_override_description
+                ?? $this->spotlightProduct->description
+        ];
+    }
+
     public function registerMediaCollections(): void
     {
         $this->addMediaCollection('home_cta_img')->singleFile();

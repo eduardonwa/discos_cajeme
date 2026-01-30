@@ -1,0 +1,23 @@
+@use "../abstracts/" as *;
+
+.u-media {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+
+    &__img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    &--fill {
+        position: absolute;
+        inset: 0;
+    }
+
+    &--square { aspect-ratio: 1; }
+    &--landscape { aspect-ratio: 16 / 9; }
+    &--portrait { aspect-ratio: 3 / 4; }
+}
