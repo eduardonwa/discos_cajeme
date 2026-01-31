@@ -3,7 +3,7 @@
         <h2 class="eyebrow">{{ $spotlight['header'] }}</h2>
         
         <div class="spotlight__shell">
-            <div class="info">
+            <div class="info | flow">
                 <p class="title">{{ $spotlight['title'] }}</p>
                 <p class="description">{{ $spotlight['description'] }}</p>
 

@@ -17,7 +17,16 @@
         inset: 0;
     }
 
-    &--icon { width: 32px; height: 32px; }
+    &--icon {
+        width: 40px;
+        height: 40px;
+        padding: $size-1;
+        flex: 0 0 40px;
+        aspect-ratio: 1 / 1;
+        border-radius: 50%;
+        overflow: hidden;
+    }
+
     &--square { aspect-ratio: 1; }
     &--landscape { aspect-ratio: 16 / 9; }
     &--portrait { aspect-ratio: 3 / 4; }

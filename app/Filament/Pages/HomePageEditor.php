@@ -473,10 +473,10 @@ class HomePageEditor extends Page implements HasForms
                                                     TextInput::make('label')
                                                         ->label('Etiqueta')
                                                         ->required()
-                                                        ->maxLength(25),
+                                                        ->maxLength(40),
                                                     TextInput::make('description')
                                                         ->label('Descripción')
-                                                        ->maxLength(40)
+                                                        ->maxLength(80)
                                                 ])
                                                 ->minItems(0)
                                                 ->maxItems(3)

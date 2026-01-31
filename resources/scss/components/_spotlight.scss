@@ -16,25 +16,63 @@
         grid-template-columns: 1fr;
         gap: $size-4;
         align-items: stretch;
-
+        
         @include mq(medium) {
             grid-template-columns: 1fr 1fr;
+            column-gap: $size-6;
         }
 
         .info {
             min-width: 0;
 
+            @include mq(large) {
+                display: flex;
+                flex-direction: column;
+                min-height: 0;
+            }
+
             .title {
-                font-size: $font-size-600;
-                font-family: $font-family-bold;
+                font-size: $font-size-700;
+                font-family: $font-family-semibold;
                 color: $color-neutral-900;
             }
+
+            .description {font-size: $font-size-500; }
             
-            .description { font-size: $font-size-500; }
+            .tags {
+                margin-block: $size-4;
+                
+                @include mq(large) {
+                    margin-top: auto;
+                    margin-block-end: 0;
+                }
+            }
+
+            .tags .tag {
+                display: flex;
+                align-items: center;
+                gap: $size-4;
+                margin-block: $size-3;
+                
+                @include mq(large) {                    
+                    &:last-child { margin-block-end: 0; }
+                }
+
+                .u-media.u-media--icon { background: $color-neutral-100; }
+
+                &__info {
+                    @include mq(large) { font-size: $font-size-500; }
+                    .label { font-family: $font-family-semibold; }
+                    .description { font-size: $font-size-400; } 
+                }
+            }
         }
 
-        .u-media {
-            min-width: 0;
+        /* imagen principal */
+        & > .u-media {
+            width: min(520px, 100%);
+            justify-self: end;
+            margin-inline: 0;
         }
     }
 }
