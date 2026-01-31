@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
+use Str;
 
 class HomePage extends Model implements HasMedia
 {
@@ -18,7 +19,8 @@ class HomePage extends Model implements HasMedia
     protected $casts = [
         'tab_collections' => 'array',
         'rail_collection_ids' => 'array',
-        'hero_slides' => 'array'
+        'hero_slides' => 'array',
+        'spotlight_tags' => 'array'
     ];
 
     public function spotlightProduct(): BelongsTo
@@ -26,20 +28,33 @@ class HomePage extends Model implements HasMedia
         return $this->belongsTo(Product::class, 'spotlight_product_id');
     }
 
-    public function getSpotlightDataAttribute()
+    public function getSpotlightDataAttribute(): array
     {
-        if (! $this->spotlightProduct) {
-            return null;
+        if (! $this->relationLoaded('spotlightProduct') || ! $this->spotlightProduct) {
+            return [];
         }
 
         return [
             'header' => $this->spotlight_header,
             'product' => $this->spotlightProduct,
-            'title' => $this->spotlight_override_title
-                ?? $this->spotlightProduct->name,
-            'description' => $this->spotlight_override_description
-                ?? $this->spotlightProduct->description
+            'title' => $this->spotlight_override_title ?? $this->spotlightProduct->name,
+            'description' => $this->spotlight_override_description ?? $this->spotlightProduct->description,
+            'tags' => $this->spotlight_tags ?? []
         ];
+    }
+
+    public function getSpotlightTagsViewAttribute(): array
+    {
+        return collect($this->spotlight_data ?? [])
+            ->take(3)
+            ->map(fn ($t) => [
+                'icon' => (string) ($t['icon'] ?? ''),
+                'label' => Str::limit((string) ($t['label'] ?? ''), 25, ''),
+                'description' => Str::limit((string) ($t['description'] ?? ''), 40, '')
+            ])
+            ->filter(fn ($t) => $t['label'] !== '' || $t['description'] !== '')
+            ->values()
+            ->all();
     }
 
     public function registerMediaCollections(): void

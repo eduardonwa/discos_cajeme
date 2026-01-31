@@ -38,6 +38,7 @@ return new class extends Migration
             $table->string('spotlight_header')->nullable();
             $table->string('spotlight_override_title')->nullable();
             $table->text('spotlight_override_description')->nullable();
+            $table->json('spotlight_tags')->nullable();
 
             // 5) COLLECTIONS
             $table->json('rail_collection_ids')->nullable();

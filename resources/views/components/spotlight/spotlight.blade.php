@@ -6,6 +6,28 @@
             <div class="info">
                 <p class="title">{{ $spotlight['title'] }}</p>
                 <p class="description">{{ $spotlight['description'] }}</p>
+
+                @if(!empty($spotlight['tags']))
+                    <div class="tags">
+                        @foreach ($spotlight['tags'] as $tag)
+                            <div class="tag">
+                                <div class="u-media u-media--icon">
+                                    <img
+                                        class="u-media__img"
+                                        src="{{ asset('storage/' . $tag['icon']) }}"
+                                        alt="{{ $tag['label'] }}"
+                                        loading="lazy"
+                                    >
+                                </div>
+
+                                <div class="tag__info">
+                                    <p class="label">{{ $tag['label'] }}</p>
+                                    <p class="description">{{ $tag['description'] }}</p>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                @endif
             </div>
     
             <div class="u-media">

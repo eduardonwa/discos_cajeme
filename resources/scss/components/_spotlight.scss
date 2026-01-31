@@ -8,6 +8,7 @@
         font-family: $font-family-semibold;
         font-size: $font-size-600;
         margin-block: $size-3;
+        color: $color-neutral-500;
     }
 
     &__shell {
@@ -23,7 +24,12 @@
         .info {
             min-width: 0;
 
-            .title { font-size: $font-size-600; font-family: $font-family-bold; }
+            .title {
+                font-size: $font-size-600;
+                font-family: $font-family-bold;
+                color: $color-neutral-900;
+            }
+            
             .description { font-size: $font-size-500; }
         }
 

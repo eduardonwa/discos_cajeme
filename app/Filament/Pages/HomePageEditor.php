@@ -460,6 +460,30 @@ class HomePageEditor extends Page implements HasForms
                                                 ->label('Descripción (opcional)')
                                                 ->rows(4),
                                         ]),
+                                    Tab::make('Tags')
+                                        ->schema([
+                                            Repeater::make('spotlight_tags')
+                                                ->label('Etiquetas')
+                                                ->schema([
+                                                    FileUpload::make('icon')
+                                                        ->label('Ícono')
+                                                        ->image()
+                                                        ->directory('spotlight-icons')
+                                                        ->required(),
+                                                    TextInput::make('label')
+                                                        ->label('Etiqueta')
+                                                        ->required()
+                                                        ->maxLength(25),
+                                                    TextInput::make('description')
+                                                        ->label('Descripción')
+                                                        ->maxLength(40)
+                                                ])
+                                                ->minItems(0)
+                                                ->maxItems(3)
+                                                ->collapsible()
+                                                ->reorderable()
+                                                ->columnSpanFull()
+                                        ])
                                 ])->columnSpanFull()
                         ])
                 ])
