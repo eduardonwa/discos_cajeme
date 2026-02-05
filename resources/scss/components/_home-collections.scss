@@ -1,13 +1,14 @@
 @use "../abstracts" as *;
 
 .home-collections {
-    margin: $size-5;
+    margin-block: $size-10;
     position: relative;
 
     .heading-2 {
         text-transform: none;
         text-align: center;
         padding-bottom: $size-4;
+        @include mq(large) { text-align: start; }
     }
 
     &__tabs {
@@ -86,16 +87,7 @@
             }
 
             .actions {
-                display: flex;
-                justify-content: space-between;
-                gap: $size-3;
-
-                .ui-icon-btn {
-                    border: 1px solid $color-neutral-500;
-                }
-
                 .button[data-type="buy-now"] {
-                    padding: $size-2;
                     display: flex;
                     align-items: center;
                 }

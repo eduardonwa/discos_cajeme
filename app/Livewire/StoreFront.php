@@ -33,6 +33,9 @@ class StoreFront extends Component
         'bg_img_alt' => '',
     ];
 
+    private const MAX_RAIL_COLLECTIONS = 8;
+    public array $railCollections = [];
+
     public function mount()
     {
         $home = HomePage::with('spotlightProduct')->firstOrCreate();
@@ -70,7 +73,7 @@ class StoreFront extends Component
             ];
         })->filter()->values()->all();
 
-        /* COLLECTIONS */
+        /* COLLECTIONS TAB */
         $this->collectionHeader = $home?->tab_collection_header ?: 'Colecciones Destacadas';
         $collectionLimit = (int) ($home->tab_products_limit ?? 10);
 
@@ -100,6 +103,9 @@ class StoreFront extends Component
 
         /* SPOTLIGHT */
         $this->spotlight = $home->spotlight_data;
+
+        /* COLLECTIONS */
+        $this->railCollections = $this->buildCollectionBlock($home) ?? [];
     }
 
     public function addToCart(int $productId, ?int $variantId = null)
@@ -154,6 +160,62 @@ class StoreFront extends Component
             'name' => $collection->name,
             'slug' => $collection->slug,
             'products' => $products,
+        ];
+    }
+
+    private function buildCollectionBlock($home): array
+    {
+        $raw = $home->rail_collection_ids ?? [];
+
+        $ids = collect($raw)
+            ->map(function ($item) {
+                // Formato repeater: ['id' => X]
+                if (is_array($item)) {
+                    return $item['id'] ?? null;
+                }
+
+                // Formato plano: X
+                return $item;
+            })
+            ->filter()
+            ->unique()
+            ->take(self::MAX_RAIL_COLLECTIONS)
+            ->values();
+
+        if ($ids->isEmpty()) {
+            return [
+                'header'      => (string) ($home->rail_collection_header ?? ''),
+                'description' => (string) ($home->rail_collection_description ?? ''),
+                'collections' => [],
+            ];
+        }
+
+        $collections = Collection::query()
+            ->whereIn('id', $ids->all())
+            ->where('is_active', true)
+            ->with('media')
+            ->get(['id', 'name', 'slug'])
+            ->keyBy('id');
+
+        $ordered = $ids
+            ->map(fn ($id) => $collections->get($id))
+            ->filter()
+            ->map(fn ($c) => [
+                'id'   => $c->id,
+                'name' => $c->name,
+                'slug' => $c->slug,
+                'thumb' => [
+                    'sm' => $c->getFirstMediaUrl('col_thumbnail', 'sm_thumb'), 
+                    'md' => $c->getFirstMediaUrl('col_thumbnail', 'md_thumb')
+                ]
+            ])
+            ->values()
+            ->all();
+
+        return [
+            'header'      => (string) ($home->rail_collection_header ?? ''),
+            'description' => (string) ($home->rail_collection_description ?? ''),
+            'collections' => $ordered,
         ];
     }
 

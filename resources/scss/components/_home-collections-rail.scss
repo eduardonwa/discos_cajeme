@@ -1,0 +1,82 @@
+@use "../abstracts" as *;
+
+.home-collections-rail {
+    margin-block: $size-10;
+
+    &__info {
+        margin-block: $size-4;
+
+        .controls {
+            display: none;
+        }
+
+        @include mq(medium) {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            .content {
+                flex: 2;
+                min-width: 0;
+            }
+            
+            .controls {
+                flex: 1;
+                display: flex;
+                align-items: center;
+                justify-content: flex-end;
+                gap: $size-2;
+
+                .button {
+                    padding: $size-4;
+                    outline: 1px solid;
+                }
+            }
+        }
+    }
+
+    .heading-2 {
+        text-transform: none;
+    }
+
+    .rail {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: $size-8;
+
+        @include mq(medium) {
+            display: flex;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+
+            &::-webkit-scrollbar { display: none; }
+        }
+
+        &__item {
+            position: relative;
+
+            @include mq(medium) {
+                flex: 0 0 auto;
+                width: 220px;
+            }
+        }
+
+        &__cta {
+            position: absolute;
+            inset-inline: 0;
+            bottom: $size-3;
+            display: flex;
+            justify-content: center;
+            padding-inline: $size-3;
+            pointer-events: none;
+
+            .button {
+                outline: 1px solid;
+                width: 100%;
+                pointer-events: auto;
+                cursor: pointer;
+            }
+        }
+    }
+}

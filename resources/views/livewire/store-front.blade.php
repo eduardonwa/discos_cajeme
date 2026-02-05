@@ -8,6 +8,8 @@
 
     <x-spotlight :spotlight="$spotlight" />
 
+    <x-home-collections-rail :railCollections="$railCollections" />
+    
     {{-- <div class="container" data-type="wide">
         <x-collections-carousel :collection="$verano" type="rebajas" :showMore="true" />
         <x-collections-carousel :collection="$onSale" type="rebajas" :showMore="true" />

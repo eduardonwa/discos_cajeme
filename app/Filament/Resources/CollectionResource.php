@@ -19,6 +19,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use App\Filament\Resources\CollectionResource\Pages;
 use App\Filament\Resources\CollectionResource\RelationManagers\ProductsRelationManager;
+use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 
 use function PHPSTORM_META\map;
 
@@ -46,6 +47,14 @@ class CollectionResource extends Resource
             Grid::make(12)->schema([
                 // IZQUIERDA
                 Grid::make()->columns(1)->schema([
+                    SpatieMediaLibraryFileUpload::make('thumbnail_cover')
+                        ->label('Thumbnail')
+                        ->collection('col_thumbnail')
+                        ->image()
+                        ->maxFiles(1)
+                        ->imageCropAspectRatio('1:1')
+                        ->imageResizeTargetWidth(600)
+                        ->imageResizeTargetHeight(600),
                     TextInput::make('name')
                         ->label('Nombre')
                         ->required()
