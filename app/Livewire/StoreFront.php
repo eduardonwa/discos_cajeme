@@ -17,10 +17,21 @@ class StoreFront extends Component
 
     #[Url]
     public array $heroSlider = [];
+
     public string $activeTab = '';
     public string $collectionHeader = '';
     public $collections = [];
+    
     public array $spotlight = [];
+    
+    public ?string $ctaImage = null;
+    public array $cta = [
+        'header' => '',
+        'description' => '',
+        'button' => '',
+        'button_link' => '',
+        'bg_img_alt' => '',
+    ];
 
     public function mount()
     {
@@ -79,9 +90,16 @@ class StoreFront extends Component
             $this->activeTab = $this->collections[0]->slug;
         }
 
+        /* CTA */
+        $this->cta['header'] = $home->cta_header ?? '';
+        $this->cta['description'] = $home->cta_description ?? '';
+        $this->cta['button'] = $home->cta_button ?? '';
+        $this->cta['button_link'] = $home->cta_button_link ?? '';
+        $this->cta['bg_img_alt'] = $home->cta_bg_img_alt ?? '';
+        $this->ctaImage = $home?->getFirstMediaUrl('home_cta_img');
+
         /* SPOTLIGHT */
         $this->spotlight = $home->spotlight_data;
-        // $this->spotlightProduct = $home->spotlightProduct;
     }
 
     public function addToCart(int $productId, ?int $variantId = null)

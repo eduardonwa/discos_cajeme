@@ -1,9 +1,8 @@
 <div class="home-collections | container" data-type="wide">
     
+    <h2 class="heading-2">{{ $this->collectionHeader }}</h2>
+
     <div class="home-collections__tabs">
-
-        <h2 class="heading-2">{{ $this->collectionHeader }}</h2>
-
         <div class="buttons">
             @foreach ($collections as $tab)
                 <button
@@ -39,25 +38,21 @@
                      
                         <div class="info">
                             <p class="name">{{ $product->name }}</p>
-                            <p class="price">$ {{ $product->price }}</p>
                         </div>
                     </a>
 
                     <div class="actions">
-                        <x-icon
-                            wire:click="addToCart({{ $product->id }})"
-                            wire:key="add-{{ $active->slug }}-{{ $product->id }}"
-                            data-type="add-to-cart"
-                        >
-                            <x-ui.icons.cart />
-                        </x-icon>
-
-                        <button class="button" data-type="buy-now">
-                            Comprar ahora
-                        </button>
+                        <a href="{{ route('product', $product->slug) }}" class="button" data-type="buy-now">
+                            Ver producto
+                        </a>
                     </div>
                 </div>
+                </button>
             @endforeach
+
+            <a href="{{ route('collection', $active->slug) }}" class="button" data-type="lowercase">
+                Ver toda la colección
+            </a>
         </div>
     @endif
 </div>

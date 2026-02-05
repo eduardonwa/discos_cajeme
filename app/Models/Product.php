@@ -7,6 +7,7 @@ use App\Casts\MoneyCast;
 use Spatie\Image\Enums\Fit;
 use Spatie\MediaLibrary\HasMedia;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\App;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -215,6 +216,10 @@ class Product extends Model implements HasMedia
 
     public function registerMediaConversions(?Media $media = null): void
     {
+        if (App::runningInConsole()) {
+            return;
+        }
+        
         $this->addMediaConversion('sm_thumb')->fit(Fit::Contain, 150, 150)->format('webp')->nonQueued();
         $this->addMediaConversion('md_thumb')->fit(Fit::Contain, 300, 300)->format('webp')->nonQueued();
         $this->addMediaConversion('lg_thumb')->fit(Fit::Contain, 1080, 1080)->format('webp')->nonQueued();

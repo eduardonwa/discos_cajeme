@@ -4,6 +4,8 @@
 
     <x-home-collections :collections="$collections" :activeTab="$activeTab" />
 
+    <x-home-cta :cta="$cta" :ctaImage="$ctaImage" />
+
     <x-spotlight :spotlight="$spotlight" />
 
     {{-- <div class="container" data-type="wide">

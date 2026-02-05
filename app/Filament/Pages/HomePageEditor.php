@@ -9,6 +9,7 @@ use App\Models\HomePage;
 use Filament\Forms\Form;
 use Filament\Pages\Page;
 use App\Models\Collection;
+use Closure;
 use Filament\Actions\Action;
 use Illuminate\Support\HtmlString;
 use Filament\Forms\Components\Grid;
@@ -36,6 +37,7 @@ class HomePageEditor extends Page implements HasForms
     protected static ?string $navigationLabel = 'Homepage';
     protected static ?string $title = 'Homepage';
     public ?array $data = [];
+    private const PRODUCTS_PER_TAB = 4;
 
     public HomePage $record;
 
@@ -205,14 +207,7 @@ class HomePageEditor extends Page implements HasForms
                             TextInput::make('tab_collection_header')
                                 ->label('Encabezado')
                                 ->maxLength(255)
-                                ->columnSpan(3),
-                            TextInput::make('tab_products_limit')
-                                ->label('Límite de productos por tab')
-                                ->numeric()
-                                ->minValue(3)
-                                ->maxValue(8)
-                                ->required()
-                                ->columnSpan(1),
+                                ->columnSpanFull()
                         ]),
                         Repeater::make('tab_collections')
                             ->label('Colecciones')
@@ -253,7 +248,7 @@ class HomePageEditor extends Page implements HasForms
                                     ->searchable()
                                     ->disabled(fn (Get $get) => blank($get('collection_id')))
                                     ->helperText(function (Get $get) {
-                                        $limit = (int) ($get('../../../tab_products_limit') ?? 8);
+                                        $limit = self::PRODUCTS_PER_TAB;
                                         $count = count($get('product_ids') ?? []);
                                         return "Máximo: {$limit} — seleccionados: {$count}";
                                     })
@@ -284,13 +279,14 @@ class HomePageEditor extends Page implements HasForms
                                     // para que los ids ya elegidos siempre muestren su label
                                     ->getOptionLabelUsing(fn ($value) => Product::query()->whereKey($value)->value('name'))
                                     ->rules([
-                                        fn (Get $get) => function (string $attribute, $value, \Closure $fail) use ($get) {
-                                            $limit = (int) ($get('../../../tab_products_limit') ?? 8);
-                                            $count = is_array($value) ? count($value) : 0;
+                                        function () {
+                                            return function (string $attribute, $value, \Closure $fail) {
+                                                $limit = self::PRODUCTS_PER_TAB;
 
-                                            if ($count > $limit) {
-                                                $fail("Máximo {$limit} productos por pestaña.");
-                                            }
+                                                if (is_array($value) && count($value) > $limit) {
+                                                    $fail("Máximo {$limit} productos por pestaña");
+                                                }
+                                            };
                                         },
                                     ])
                             ])
@@ -327,7 +323,6 @@ class HomePageEditor extends Page implements HasForms
                                 ->label('Alt')
                                 ->maxLength(255),
                         ]),
-
                     Grid::make(1)
                         ->columnSpan([
                             'default' => 12,
