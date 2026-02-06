@@ -13,6 +13,7 @@
   padding: $button-padding;
   border: $button-border;
   transition: 275ms ease;
+  border-radius: $button-border-radius;
 
   /* estados */
   &:focus {
@@ -25,107 +26,6 @@
     opacity: .6;
     cursor: not-allowed;
     pointer-events: none;
-  }
-
-  &[data-type="accent"] {
-    background-color: $button-accent-background;
-    color: $button-accent-color;
-
-    &:is(:hover, :focus) {
-      background-color: $button-accent-background-hover;
-      color: $button-accent-color-hover;
-    }
-  }
-
-  &[data-type="primary"] {
-    background-color: $button-primary-background;
-    color: $button-primary-color;
-
-    &:is(:hover, :focus) {
-      background-color: $button-primary-background-hover;
-      color: $button-primary-color-hover;
-    }
-  }
-
-  &[data-type="newsletter"] {
-    border-radius: 0;
-    padding: $size-3;
-    text-transform: none;
-  }
-
-  &[data-type="mas"] {
-    border: 2px solid $color-neutral-900;
-    margin-block: auto;
-    width: 100%;
-    font-size: $font-size-700;
-    line-height: 1.4;
-    color: $color-neutral-900;
-    text-align: center;
-
-    @include mq(large) {
-        width: fit-content;
-        margin-inline: auto;
-    }
-  }
-
-  &[data-type="cart"] {
-    background: $color-neutral-900;
-    font-size: $font-size-500;
-    color: $color-neutral-100;
-    text-transform: none;
-  }
-
-  &[data-type="mobile-full"] {
-    width: 100%;
-    border: 2px solid $color-primary-900;
-    background: $color-neutral-100;
-    font-family: $font-family-semibold;
-  }
-
-  &[data-type="ghost"] {
-    background: transparent;
-  }
-
-  &[data-type="add-to-cart"] {
-    text-transform: none;
-    color: $color-primary-900;
-    background: transparent;
-    border: 1px solid $color-primary-600;
-    padding: $size-2;
-  }
-
-  &[data-type="buy-now"] {
-    text-transform: none;
-    background: $color-secondary-700;
-    color: $color-neutral-000;
-  }
-
-  &[data-type="catalogue"] {
-    background: $color-primary-900;
-    color: $color-primary-100;
-    outline-offset: 2px;
-  }
-
-  &[data-type="coupon"] {
-    background: $color-primary-600;
-    color: $color-primary-100;
-  }
-
-  &[data-type="tab"] {
-    text-transform: none;
-    background: transparent;
-    border-radius: $border-radius-1;
-    padding: $size-2;
-    border: 1px solid $color-secondary-900;
-  }
-
-  &[data-type="cart-delete"] {
-    border: 2px solid transparent;
-    text-transform: none;
-    background: $color-primary-900;
-    border-radius: $border-radius-1;
-    padding: $size-2 $size-6;
-    color: $color-primary-100;
   }
 
   &[data-type="hero-dot"] {

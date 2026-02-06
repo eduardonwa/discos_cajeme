@@ -85,8 +85,8 @@
     z-index: 50;
     border-radius: $border-radius-1;
     padding: $size-4;
-    background: $color-primary-900;
-    color: $color-primary-100;
+    background: $color-neutral-900;
+    color: $color-neutral-100;
 
     &.dropdown--left {
       inset-inline-start: 0;
@@ -162,7 +162,7 @@
 
       hr {
         margin-block: $size-1;
-        color: $color-primary-200;
+        color: $color-neutral-200;
       }
     }
   }

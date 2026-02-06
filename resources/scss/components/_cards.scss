@@ -126,12 +126,12 @@
 
   .card__meta {
     position: relative;
-    color: $color-primary-900;
+    color: $color-neutral-900;
     text-shadow: none;
     line-height: 2;
 
     .heading {
-      color: $color-primary-700;
+      color: $color-neutral-700;
     }
 
     .price {
@@ -162,9 +162,6 @@
     color: $color-neutral-900;
     line-height: 2;
 
-    .heading {
-      font-size: $font-size-500;
-      text-transform: none;
-    }
+    .heading { font-size: $font-size-500; }
   }
 }

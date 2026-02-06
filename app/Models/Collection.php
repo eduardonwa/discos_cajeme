@@ -36,6 +36,7 @@ class Collection extends Model implements HasMedia
     public function registerMediaCollections(): void
     {
         $this->addMediaCollection('col_thumbnail');
+        $this->addMediaCollection('col_banner');
     }
 
     public function registerMediaConversions(?Media $media = null): void
@@ -46,5 +47,6 @@ class Collection extends Model implements HasMedia
 
         $this->addMediaConversion('sm_thumb')->fit(Fit::Contain, 150, 150)->format('webp')->performOnCollections('col_thumbnail')->nonQueued();
         $this->addMediaConversion('md_thumb')->fit(Fit::Contain, 300, 300)->format('webp')->performOnCollections('col_thumbnail')->nonQueued();
+        $this->addMediaConversion('lg_banner')->fit(Fit::Crop, 1200, 628)->format('webp')->performOnCollections('col_banner')->nonQueued();
     }
 }

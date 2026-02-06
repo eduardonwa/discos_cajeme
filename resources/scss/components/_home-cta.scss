@@ -33,7 +33,6 @@
         }
 
         .heading-3 {
-            text-transform: none;
             @include mq(medium) { color: $color-neutral-100; }
         }
 

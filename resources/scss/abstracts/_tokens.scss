@@ -7,7 +7,7 @@ $enable-media-query-dark-mode: false;
 
 // Contextual
 $color-text-default: $color-neutral-700;
-$color-background-default: $color-primary-200;
+$color-background-default: $color-neutral-100;
 $color-text-interactive-default: $color-accent-400;
 $color-text-interactive-hover: $color-accent-500;
 
@@ -48,7 +48,7 @@ $heading-color-default: $color-neutral-900;
 $heading-font-weight: $font-weight-bold;
 $heading-letter-spacing: $letter-spacing-loose;
 $heading-line-height: 1.1;
-$heading-text-transform: uppercase;
+$heading-text-transform: none;
 
 $heading-1-font-size: $font-size-900;
 $heading-1-color: $heading-color-default;
@@ -70,9 +70,9 @@ $container-max-width-narrow: 40rem;
 $container-max-width-wide: 75rem;
 
 // site header
-$site-header-background-color: $color-primary-200;
-$site-header-color: $color-neutral-900;
-$site-header-padding: $size-8 0;
+$site-header-background-color: $color-neutral-900;
+$site-header-color: $color-neutral-100;
+$site-header-padding: $size-4 0;
 $site-header-margin: 0;
 $site-header-jusitification-small-screens: flex-start;
 $site-header-jusitification-large-screens: space-between;
@@ -80,7 +80,7 @@ $site-header-alignment: center;
 
 //navigation
 $navigation-color: $site-header-color;
-$navigation-color-hover: $color-primary-600;
+$navigation-color-hover: $color-neutral-600;
 $navigation-font-size: $font-size-400;
 $navigation-gap: $size-9;
 $navigation-link-text-decoration: none;
@@ -88,42 +88,42 @@ $navigation-font-family: $body-font-family;
 $navigation-font-weight: $body-font-weight;
 
 // site footer
-$footer-background-color: $color-primary-800;
-$footer-text-color: $color-primary-900;
+$footer-background-color: $color-neutral-800;
+$footer-text-color: $color-neutral-000;
 $footer-link-color: $color-neutral-100;
-$footer-link-color-hover: $color-primary-200;
+$footer-link-color-hover: $color-neutral-200;
 $footer-link-font-family: $font-family-base;
 $footer-link-text-decoration: none;
 $footer-list-header-font-family: $font-family-bold;
 $footer-list-header-font-size: $font-size-500;
 $footer-list-header-text-transform: uppercase;
-$footer-list-header-color: $color-primary-200;
+$footer-list-header-color: $color-neutral-200;
 
 // buttons
 $button-font-family: $body-font-family;
 $button-font-size: $font-size-400;
 $button-font-weight: $font-weight-bold;
-$button-text-transform: uppercase;
+$button-text-transform: none;
 $button-padding: 0.75em 2em;
 $button-border: 0;
 $button-border-radius: $border-radius-1;
-$button-border-focus: 3px dashed $color-primary-500;
+$button-border-focus: 3px dashed $color-neutral-500;
 
 $button-accent-color: $color-neutral-100;
 $button-accent-background: $color-accent-400;
 $button-accent-color-hover: $color-neutral-100;
 $button-accent-background-hover: $color-accent-500;
 $button-primary-color: $color-neutral-100;
-$button-primary-background: $color-primary-700;
+$button-primary-background: $color-neutral-700;
 $button-primary-color-hover: $color-neutral-100;
-$button-primary-background-hover: $color-primary-800;
+$button-primary-background-hover: $color-neutral-800;
 
 // cards
 $card-flow-spacing: $size-2;
 $card-padding: $size-8;
 $card-shadow: $box-shadow-1;
 $card-border-radius: $border-radius-2;
-$card-background-default: $color-primary-100;
+$card-background-default: $color-neutral-100;
 $card-color-default: $body-text-color;
 $card-font-family: $body-font-family;
 $card-line-height: 1.25;
@@ -141,8 +141,8 @@ $form-input-font-family: $body-font-family;
 $form-input-font-weight: $font-weight-semi-bold;
 $form-input-font-size: $body-font-size;
 $form-input-background-color: $color-neutral-100;
-$form-input-border-default: 3px solid $color-primary-200;
-$form-input-border-focus: 3px dashed $color-primary-500;
+$form-input-border-default: 3px solid $color-neutral-200;
+$form-input-border-focus: 3px dashed $color-neutral-500;
 $form-input-padding: $size-3;
 $form-input-border-radius: 0;
 

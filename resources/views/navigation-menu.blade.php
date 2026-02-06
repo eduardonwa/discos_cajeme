@@ -27,7 +27,6 @@
                         :size="24"
                         orientation="left"
                         decorative
-                        fill="#344D55"
                         aria-haspop="dialog"
                         aria-controls="heroSearchModal"
                     >

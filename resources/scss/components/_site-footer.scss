@@ -53,7 +53,7 @@
 
       .brand {
         &__tagline {
-          color: $color-primary-300;
+          color: $color-neutral-300;
           font-size: $font-size-500;
         }
       }
@@ -66,15 +66,15 @@
 
         input {
           background: transparent;
-          border: 1px solid $color-primary-100;
-          color: $color-primary-100;
+          border: 1px solid $color-neutral-100;
+          color: $color-neutral-100;
           @include mq(large) { width: 400px; }
         }
 
         button {
           background: transparent;
-          color: $color-primary-100;
-          border: 1px solid $color-primary-100;
+          color: $color-neutral-100;
+          border: 1px solid $color-neutral-100;
           width: 200px;
           margin-block: auto;
           @include mq(large) { width: fit-content; }
@@ -85,7 +85,7 @@
 
   hr {
     margin-inline: $size-6;
-    color: $color-primary-400;
+    color: $color-neutral-400;
   }
 
   &__bottom {
@@ -95,7 +95,7 @@
     gap: $size-8;
 
     .legal-copy {
-      color: $color-primary-400;
+      color: $color-neutral-400;
       font-family: $font-family-semibold;
     }
 

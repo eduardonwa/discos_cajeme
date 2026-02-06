@@ -6,14 +6,8 @@
         flex-direction: column;
         gap: $size-4;
 
-        .heading-3 {
-            text-transform: none;
-            text-align: center;
-        }
-
-        p {
-            text-align: center;
-        }
+        .heading-3 { text-align: center; }
+        p { text-align: center; }
 
         .button {
             align-self: center;
@@ -41,10 +35,7 @@
             .items {
                 background: $color-neutral-000;
 
-                .heading-3 {
-                    text-transform: none;
-                    padding: $size-2;
-                }
+                .heading-3 { padding: $size-2; }
     
                 .item {
                     display: grid;

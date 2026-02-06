@@ -10,15 +10,6 @@ $-clr-gray-700: hsl(0 0% 30%);
 $-clr-gray-800: hsl(0 0% 17.5%);
 $-clr-gray-900: hsl(0 0% 7.5%);
 $-clr-gray-950: hsl(0 0% 0%);
-$-clr-yellow-100: hsl(48 75% 95%);
-$-clr-yellow-200: hsl(48 75% 82.5%);
-$-clr-yellow-300: hsl(48 75% 70%);
-$-clr-yellow-400: hsl(48 75% 60%);
-$-clr-yellow-500: hsl(48 75% 50%);
-$-clr-yellow-600: hsl(48 75% 40%);
-$-clr-yellow-700: hsl(48 75% 30%);
-$-clr-yellow-800: hsl(48 75% 17.5%);
-$-clr-yellow-900: hsl(48 75% 7.5%);
 $-clr-lime-100: hsl(144 75% 95%);
 $-clr-lime-200: hsl(144 75% 82.5%);
 $-clr-lime-300: hsl(144 75% 70%);
@@ -28,42 +19,6 @@ $-clr-lime-600: hsl(144 75% 40%);
 $-clr-lime-700: hsl(144 75% 30%);
 $-clr-lime-800: hsl(144 75% 17.5%);
 $-clr-lime-900: hsl(144 75% 7.5%);
-$-clr-red-100: hsl(0 75% 95%);
-$-clr-red-200: hsl(0 75% 82.5%);
-$-clr-red-300: hsl(0 75% 70%);
-$-clr-red-400: hsl(0 75% 60%);
-$-clr-red-500: hsl(0 75% 50%);
-$-clr-red-600: hsl(0 75% 40%);
-$-clr-red-700: hsl(0 75% 30%);
-$-clr-red-800: hsl(0 75% 17.5%);
-$-clr-red-900: hsl(0 75% 7.5%);
-$-clr-turkesa-100: hsl(188.57, 36.84%, 96.27%);
-$-clr-turkesa-200: hsl(187.06, 34.69%, 90.39%);
-$-clr-turkesa-300: hsl(187.74, 33.33%, 81.76%);
-$-clr-turkesa-400: hsl(187.2, 31.65%, 69.02%);
-$-clr-turkesa-500: hsl(187.71, 29.41%, 53.33%);
-$-clr-turkesa-600: hsl(189.17, 33.03%, 42.75%);
-$-clr-turkesa-700: hsl(191.38, 31.18%, 36.47%);
-$-clr-turkesa-800: hsl(193.04, 29.11%, 30.98%);
-$-clr-turkesa-900: hsl(195, 26.32%, 14.9%);
-$-clr-olivo-100: hsl(68.57, 28%, 95.1%);
-$-clr-olivo-200: hsl(68, 27.27%, 89.22%);
-$-clr-olivo-300: hsl(70.71, 26.92%, 79.61%);
-$-clr-olivo-400: hsl(70.91, 26.19%, 67.06%);
-$-clr-olivo-500: hsl(72, 24.23%, 55.49%);
-$-clr-olivo-600: hsl(71.79, 24.78%, 44.31%);
-$-clr-olivo-700: hsl(73.04, 26.14%, 34.51%);
-$-clr-olivo-800: hsl(74.55, 24.09%, 26.86%);
-$-clr-olivo-900: hsl(75.79, 18.45%, 20.2%);
-$-clr-rosa-tenue-100: hsl(334.29, 25.93%, 94.71%);
-$-clr-rosa-tenue-200: hsl(333.75, 30.77%, 89.8%);
-$-clr-rosa-tenue-300: hsl(335.17, 31.18%, 81.76%);
-$-clr-rosa-tenue-400: hsl(336.52, 30.26%, 70.2%);
-$-clr-rosa-tenue-500: hsl(337.24, 28.71%, 60.39%);
-$-clr-rosa-tenue-600: hsl(340.65, 24.6%, 50.59%);
-$-clr-rosa-tenue-700: hsl(342.41, 27.1%, 41.96%);
-$-clr-rosa-tenue-800: hsl(344.35, 25.56%, 35.29%);
-$-clr-rosa-tenue-900: hsl(343.2, 28.74%, 17.06%);
 
 $default: (
   "neutral": (
@@ -79,38 +34,16 @@ $default: (
     "900": $-clr-gray-900,
     "950": $-clr-gray-950,
   ),
-    "primary": (
-    "100": $-clr-turkesa-100,
-    "200": $-clr-turkesa-200,
-    "300": $-clr-turkesa-300,
-    "400": $-clr-turkesa-400,
-    "500": $-clr-turkesa-500,
-    "600": $-clr-turkesa-600,
-    "700": $-clr-turkesa-700,
-    "800": $-clr-turkesa-800,
-    "900": $-clr-turkesa-900,
-  ),
-  "secondary": (
-    "100": $-clr-olivo-100,
-    "200": $-clr-olivo-200,
-    "300": $-clr-olivo-300,
-    "400": $-clr-olivo-400,
-    "500": $-clr-olivo-500,
-    "600": $-clr-olivo-600,
-    "700": $-clr-olivo-700,
-    "800": $-clr-olivo-800,
-    "900": $-clr-olivo-900,
-  ),
   "accent": (
-    "100": $-clr-rosa-tenue-100,
-    "200": $-clr-rosa-tenue-200,
-    "300": $-clr-rosa-tenue-300,
-    "400": $-clr-rosa-tenue-400,
-    "500": $-clr-rosa-tenue-500,
-    "600": $-clr-rosa-tenue-600,
-    "700": $-clr-rosa-tenue-700,
-    "800": $-clr-rosa-tenue-800,
-    "900": $-clr-rosa-tenue-900,
+    "100": $-clr-lime-100,
+    "200": $-clr-lime-200,
+    "300": $-clr-lime-300,
+    "400": $-clr-lime-400,
+    "500": $-clr-lime-500,
+    "600": $-clr-lime-600,
+    "700": $-clr-lime-700,
+    "800": $-clr-lime-800,
+    "900": $-clr-lime-900,
   ),
 );
 

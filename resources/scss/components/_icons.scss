@@ -30,14 +30,14 @@
   padding: 6px;
   border: 0;
   background: transparent;
-  color: $color-primary-900;
+  color: $color-neutral-100;
   cursor: pointer;
   fill: currentColor;
   transition: color .15s ease, background-color .15s ease;
 
   /* estados */
   &:hover {
-    color: $color-primary-700;
+    color: $color-neutral-700;
   }
   
   &:focus {
@@ -74,8 +74,8 @@
   }
 
   &[data-type="arrow"] {
-    background: $color-secondary-400;
-    color: $color-secondary-900;
+    background: $color-neutral-400;
+    color: $color-neutral-900;
     height: 32px;
     width: 32px;
   }

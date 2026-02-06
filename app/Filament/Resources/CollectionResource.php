@@ -9,19 +9,21 @@ use Filament\Forms\Form;
 use App\Models\Collection;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
+use function PHPSTORM_META\map;
 use Filament\Resources\Resource;
 use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\View;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
+use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Components\Textarea;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use App\Filament\Resources\CollectionResource\Pages;
-use App\Filament\Resources\CollectionResource\RelationManagers\ProductsRelationManager;
-use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 
-use function PHPSTORM_META\map;
+use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
+use App\Filament\Resources\CollectionResource\RelationManagers\ProductsRelationManager;
 
 class CollectionResource extends Resource
 {
@@ -47,14 +49,34 @@ class CollectionResource extends Resource
             Grid::make(12)->schema([
                 // IZQUIERDA
                 Grid::make()->columns(1)->schema([
-                    SpatieMediaLibraryFileUpload::make('thumbnail_cover')
-                        ->label('Thumbnail')
-                        ->collection('col_thumbnail')
-                        ->image()
-                        ->maxFiles(1)
-                        ->imageCropAspectRatio('1:1')
-                        ->imageResizeTargetWidth(600)
-                        ->imageResizeTargetHeight(600),
+                    Tabs::make()
+                        ->schema([
+                            Tab::make('Banner')
+                                ->schema([
+                                    SpatieMediaLibraryFileUpload::make('banner_cover')
+                                        ->label('Banner')
+                                        ->collection('col_banner')
+                                        ->image()
+                                        ->maxFiles(1)
+                                ]),
+                            Tab::make('Thumbnail')
+                                ->schema([
+                                    SpatieMediaLibraryFileUpload::make('thumbnail_cover')
+                                        ->label('Thumbnail')
+                                        ->collection('col_thumbnail')
+                                        ->image()
+                                        ->maxFiles(1)
+                                        ->imageCropAspectRatio('1:1')
+                                        ->imageResizeTargetWidth(600)
+                                        ->imageResizeTargetHeight(600),
+                                ]),
+                        ])
+                ])->columnSpan([
+                    'default' => 12,
+                    'md'      => 6,
+                ]),
+                // DERECHA
+                Grid::make()->columns(1)->schema([
                     TextInput::make('name')
                         ->label('Nombre')
                         ->required()
@@ -72,12 +94,6 @@ class CollectionResource extends Resource
                         ->live()
                         ->default(true)
                         ->required(),
-                ])->columnSpan([
-                    'default' => 12,
-                    'md'      => 6,
-                ]),
-                // DERECHA
-                Grid::make()->columns(1)->schema([
                     Select::make('featured_product_id')
                         ->label('Producto destacado')
                         ->relationship(
