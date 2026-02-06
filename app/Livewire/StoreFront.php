@@ -9,6 +9,8 @@ use App\Models\Collection;
 use Livewire\Attributes\Url;
 use Livewire\WithPagination;
 use App\Actions\Webshop\AddProductToCart;
+use App\Models\ProductVariant;
+use Illuminate\Support\Collection as SupportCollection;
 use Laravel\Jetstream\InteractsWithBanner;
 
 class StoreFront extends Component
@@ -23,6 +25,8 @@ class StoreFront extends Component
     public $collections = [];
     
     public array $spotlight = [];
+
+    public SupportCollection $variants;
     
     public ?string $ctaImage = null;
     public array $cta = [
@@ -93,6 +97,9 @@ class StoreFront extends Component
             $this->activeTab = $this->collections[0]->slug;
         }
 
+        /* LATEST PRODUCTS */
+        $this->variants = $this->latestProducts();
+        
         /* CTA */
         $this->cta['header'] = $home->cta_header ?? '';
         $this->cta['description'] = $home->cta_description ?? '';
@@ -106,6 +113,18 @@ class StoreFront extends Component
 
         /* COLLECTIONS */
         $this->railCollections = $this->buildCollectionBlock($home) ?? [];
+    }
+
+    public function latestProducts()
+    {
+        return ProductVariant::query()
+            ->where('is_active', true)
+            ->whereBetween('total_variant_stock', [5, 10])
+            ->whereHas('product', fn ($q) => $q->where('published', true))
+            ->with(['product.media'])
+            ->orderBy('total_variant_stock', 'asc')
+            ->limit(10)
+            ->get();
     }
 
     public function addToCart(int $productId, ?int $variantId = null)

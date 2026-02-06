@@ -1,16 +1,9 @@
 @use "../abstracts/" as *;
 
 .u-media {
-    position: relative;
-    width: 100%;
-    overflow: hidden;
+    @include media-frame;
 
-    &__img {
-        display: block;
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-    }
+    &__img { @include media-img; }
 
     &--fill {
         position: absolute;
@@ -27,6 +20,7 @@
         overflow: hidden;
     }
 
+    &--banner { height: 337px; }
     &--square { aspect-ratio: 1; }
     &--landscape { aspect-ratio: 16 / 9; }
     &--portrait { aspect-ratio: 3 / 4; }

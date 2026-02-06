@@ -1,10 +1,11 @@
 <div class="container" data-type="wide">
     <section class="home-cta">
-        <div class="u-media u-media--landscape">
+        <div class="u-media u-media--banner">
             <img
                 class="u-media__img"
                 src="{{ $ctaImage }}"
                 alt="{{ $cta['bg_img_alt'] }}"
+                style="object-position: top center;"
             >
         </div>
 

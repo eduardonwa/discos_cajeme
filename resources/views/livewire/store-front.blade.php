@@ -4,6 +4,8 @@
 
     <x-home-collections :collections="$collections" :activeTab="$activeTab" />
 
+    <x-latest-products :variants="$variants" />
+
     <x-home-cta :cta="$cta" :ctaImage="$ctaImage" />
 
     <x-spotlight :spotlight="$spotlight" />

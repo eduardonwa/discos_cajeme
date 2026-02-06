@@ -1,0 +1,15 @@
+@use "../abstracts" as *;
+
+.latest-products {
+    margin-block: $size-10;
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: $size-6;
+
+    @include mq(medium) {
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        grid-template-rows: auto 1fr;
+        gap: $size-12;
+    }
+}
