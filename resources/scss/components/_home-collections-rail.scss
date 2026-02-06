@@ -67,8 +67,7 @@
             padding-inline: $size-3;
             pointer-events: none;
 
-            .button {
-                outline: 1px solid;
+            .button[data-type="secondary"] {
                 width: 100%;
                 pointer-events: auto;
                 cursor: pointer;

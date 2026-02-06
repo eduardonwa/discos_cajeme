@@ -27,12 +27,16 @@
         }
 
         &::-webkit-scrollbar { display: none; }
-        .active-tab { background: $color-neutral-000; }
 
         .buttons {
             display: flex;
             align-items: center;
             gap: $size-4;
+         
+            .active-tab {
+                color: $color-neutral-900;
+                background: $color-accent-500;
+            }
         }
     }
 
@@ -86,19 +90,18 @@
             }
 
             .actions {
-                .button[data-type="buy-now"] {
+                .button[data-type="primary"] {
                     display: flex;
                     align-items: center;
                 }
             }
         }
 
-        .button[data-type="lowercase"] {
+        .button[data-type="outline"] {
             grid-column: 1 / -1;
             width: 100%;
             display: block;
             margin: $size-4 1px;
-            outline: 1px solid;
             text-align: center;
 
             @include mq(large) {

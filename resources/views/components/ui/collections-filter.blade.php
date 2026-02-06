@@ -8,7 +8,7 @@
         <legend class="uppercase">{{ strtoupper($key) }}</legend>
 
         @if (!empty($filters[$bindKey] ?? []))
-            <button type="button" wire:click="clearGroup('{{ $bindKey }}')">
+            <button type="button" data-type="outline" wire:click="clearGroup('{{ $bindKey }}')">
                 Limpiar {{ $key }}
             </button>
         @endif
@@ -23,8 +23,8 @@
             <label wire:key="facet--{{ $collection->id }}-{{ $bindKey }}-{{ md5($val) }}">
                 <input
                     type="checkbox"
-                    @checked(in_array($val, $filters[$bindKey] ?? [], true))
                     wire:click="toggleFilter('{{ $bindKey }}','{{ addslashes($val) }}')"
+                    @checked(in_array($val, $filters[$bindKey] ?? [], true))
                 >
                 <span>{{ $opt['value'] }} ({{ $opt['count'] ?? 0}})</span>
             </label>

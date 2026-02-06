@@ -14,14 +14,9 @@
 
     svg, img { width: 1em; height: 1em; }
 
-    &[data-type="product-page"] {
-        background: $color-accent-700;
-        color: $color-neutral-100;
-    }
-
     &[data-type="h-collection"] {
+        background: transparent;
         border: 0;
-        border: 1px solid $color-neutral-300;
         cursor: pointer;
     }
 }

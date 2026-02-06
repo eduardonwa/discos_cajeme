@@ -32,12 +32,6 @@
             color: $color-neutral-100;
         }
 
-        .heading-3 {
-            @include mq(medium) { color: $color-neutral-100; }
-        }
-
-        .button {
-            outline: 1px solid;
-        }
+        .heading-3 { @include mq(medium) { color: $color-neutral-100; } }
     }
 }

@@ -34,6 +34,6 @@
   @endforeach
 
   <footer class="filters-panel__footer">
-    <button type="button" class="button" data-type="ghost" wire:click="clearAll">Limpiar todo</button>
+    <button type="button" class="button" data-type="outline" wire:click="clearAll">Limpiar todo</button>
   </footer>
 </div>

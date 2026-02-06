@@ -26,7 +26,7 @@
                         </div>
     
                         <div class="rail__cta">
-                            <a class="button" href="{{ route('collection', ['collection' => $col['slug']]) }}">
+                            <a class="button" data-type="secondary" href="{{ route('collection', ['collection' => $col['slug']]) }}">
                                 {{ $col['name'] }}
                             </a>
                         </div>

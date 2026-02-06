@@ -39,7 +39,7 @@
                         <button
                             @click="$store.ui.filtersOpen = true"
                             type="button"
-                            class="button uppercase ff-semibold" data-type="ghost"
+                            class="button uppercase ff-semibold" data-type="filter"
                         >
                             filtros
                         </button>

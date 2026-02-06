@@ -32,8 +32,9 @@
                 <h2 class="ff-semibold">Filtros</h2>
                 <x-icon 
                     x-show="!isDesktop" 
-                    @click="$store.ui.filtersOpen = false" 
                     label="Cerrar filtros"
+                    @click="$store.ui.filtersOpen = false"
+                    fill="#111"
                 >
                     <x-ui.icons.close /> 
                 </x-icon>
@@ -50,7 +51,7 @@
                     @click="$store.ui.filtersOpen=false"
                     type="button"
                     class="button uppercase"
-                    data-type="ghost"
+                    data-type="primary"
                 >
                     Ver resultados
                 </button>

@@ -14,7 +14,7 @@
         <div class="home-cta__content | flow">
             <h2 class="heading-3">{{ $cta['header'] }}</h2>
             <p>{{ $cta['description'] }}</p>
-            <a href="{{ $cta['button_link'] }}" class="button">
+            <a href="{{ $cta['button_link'] }}" class="button" data-type="cta">
                 {{ $cta['button'] }}
             </a>
         </div>

@@ -42,7 +42,7 @@
                     </a>
 
                     <div class="actions">
-                        <a href="{{ route('product', $product->slug) }}" class="button" data-type="buy-now">
+                        <a href="{{ route('product', $product->slug) }}" class="button" data-type="primary">
                             Ver producto
                         </a>
                     </div>
@@ -50,7 +50,7 @@
                 </button>
             @endforeach
 
-            <a href="{{ route('collection', $active->slug) }}" class="button" data-type="lowercase">
+            <a href="{{ route('collection', $active->slug) }}" class="button" data-type="outline">
                 Ver toda la colección
             </a>
         </div>
