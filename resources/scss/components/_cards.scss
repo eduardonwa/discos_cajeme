@@ -17,17 +17,13 @@
   &__media {
     @include media-frame;
 
-    .image {
-      @include media-img;
-    }
+    .image { @include media-img; }
   }
   
   &__meta {
     margin-block-start: $size-4;
 
-    .heading {
-      @include heading($card-heading-font-size);
-    }
+    .heading { @include heading($card-heading-font-size); }
     
     .price {
       font-size: $font-size-600;
@@ -39,12 +35,37 @@
     padding: 0;
     background: transparent;
     box-shadow: none;
-
     display: grid;
     grid-template-rows: auto 1fr;
 
     .card__meta { grid-row: 1; }
-    .card__media { grid-row: 2; }
+    
+    .card__media {
+      grid-row: 2;
+      position: relative;
+
+      @include mq(large) { z-index: 1; }
+
+      .overlay {
+        display: none;
+  
+        @include mq(large) {
+          display: grid;
+          place-items: center;
+          position: absolute;
+          inset: 0;
+          z-index: 2;
+          opacity: 0;
+          transition: opacity .2s ease;
+          
+          .button {
+            outline: 1px solid;
+          }
+        }
+      }
+
+      &:hover .overlay{ opacity: 1; }
+    }
 
     @include mq(medium) {
       @supports (grid-template-rows: subgrid) {
@@ -61,6 +82,20 @@
       .heading {
         grid-row: 2;
       }
+    }
+  }
+
+  &--minimal {
+    background: transparent;
+    box-shadow: none;
+    padding: 0;
+    border-radius: 0;
+
+    .card__meta {
+      color: $color-neutral-900;
+      line-height: 2;
+
+      .heading { font-size: $font-size-500; }
     }
   }
 }

@@ -11,7 +11,6 @@
         "related"
         "reviews";
     gap: $size-2;
-    margin-block-start: $size-4;
 
     &__header {
         grid-area: header;
@@ -441,7 +440,7 @@
     }
 
     @include mq(medium) {
-        margin-block-start: $size-8;
+        margin-block-start: $size-10;
         grid-template-columns: minmax(280px, 377px) minmax(0,1fr);
         grid-template-rows: auto 1fr auto;
         gap: $size-4;
@@ -543,9 +542,7 @@
             }
         }
 
-        hr[data-device="m"] {
-            display: none;
-        }
+        hr[data-device="m"] { display: none; }
     }
 
     @include mq(large) {

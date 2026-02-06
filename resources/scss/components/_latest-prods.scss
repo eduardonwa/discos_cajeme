@@ -10,6 +10,6 @@
     @include mq(medium) {
         grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
         grid-template-rows: auto 1fr;
-        gap: $size-12;
+        gap: $size-10;
     }
 }

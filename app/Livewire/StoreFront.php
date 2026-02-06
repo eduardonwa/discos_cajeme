@@ -27,6 +27,7 @@ class StoreFront extends Component
     public array $spotlight = [];
 
     public SupportCollection $variants;
+    public string $latestProdsHeader = '';
     
     public ?string $ctaImage = null;
     public array $cta = [
@@ -99,7 +100,7 @@ class StoreFront extends Component
 
         /* LATEST PRODUCTS */
         $this->variants = $this->latestProducts();
-        
+        $this->latestProdsHeader = $home?->latest_prods_heading ?: 'Nuestras novedades';        
         /* CTA */
         $this->cta['header'] = $home->cta_header ?? '';
         $this->cta['description'] = $home->cta_description ?? '';
