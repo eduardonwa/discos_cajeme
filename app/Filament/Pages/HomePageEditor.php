@@ -191,7 +191,7 @@ class HomePageEditor extends Page implements HasForms
                     ])
                 ]),
 
-                // COLECCIONES TAB
+                // 2) COLECCIONES TAB
                 Grid::make(12)->schema([
                     Placeholder::make('Colecciones tab')
                         ->content('Colecciones tab')
@@ -364,7 +364,39 @@ class HomePageEditor extends Page implements HasForms
                     '
                 ]),
 
-                // 4) SPOTLIGHT
+                // 4) LATEST PRODUCTS
+                Grid::make(12)->schema([
+                    Placeholder::make('latest_prods_heading')
+                        ->content('Novedades')
+                        ->label(false)
+                        ->columnSpan(12)
+                        ->extraAttributes([
+                            'class' => 'font-bold',
+                            'style' => 'font-size: 2.2rem;'
+                        ]),
+                    Grid::make(12)
+                        ->columnSpan(12)
+                        ->schema([
+                            TextInput::make('latest_prods_heading')
+                                ->label('Encabezado')
+                                ->columnSpan(8),
+                            TextInput::make('latest_prods_limit')
+                                ->numeric()
+                                ->minValue(4)
+                                ->maxValue(15)
+                                ->default(10)
+                                ->columnSpan(4),
+                        ])
+                ])
+                ->extraAttributes([
+                    'style' => '
+                        margin: 2rem 0 4rem 0;
+                        padding-bottom: 4rem;
+                        border-bottom: 1px solid #ececec71;
+                    '
+                ]),
+
+                // 5) SPOTLIGHT
                 Grid::make(12)->schema([
                     Placeholder::make('Spotlight')
                         ->content('Spotlight')
@@ -490,7 +522,7 @@ class HomePageEditor extends Page implements HasForms
                     '
                 ]),
 
-                // 5) COLECCIONES RIEL
+                // 6) COLECCIONES RIEL
                 Grid::make(12)->schema([
                     // Header tipo sección
                     Placeholder::make('rail_collections_heading')

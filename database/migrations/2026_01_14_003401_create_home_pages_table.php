@@ -32,14 +32,18 @@ return new class extends Migration
             $table->string('cta_header')->nullable();
             $table->text('cta_description')->nullable();
 
-            // 4) SPOTLIGHT (featured)
+            // 4) LATEST PRODS
+            $table->string('latest_prods_heading')->nullable();
+            $table->unsignedInteger('latest_prods_limit')->nullable()->default(10);
+
+            // 5) SPOTLIGHT (featured)
             $table->foreignId('spotlight_product_id')->nullable()->constrained('products')->nullOnDelete();
             $table->string('spotlight_header')->nullable();
             $table->string('spotlight_override_title')->nullable();
             $table->text('spotlight_override_description')->nullable();
             $table->json('spotlight_tags')->nullable();
 
-            // 5) COLLECTIONS
+            // 6) COLLECTIONS
             $table->json('rail_collection_ids')->nullable();
             $table->string('rail_collection_header')->nullable();
             $table->string('rail_collection_description')->nullable();
