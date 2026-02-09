@@ -16,10 +16,9 @@
                         alt="{{ $variant->product->title }}"
                     >
                     <div class="overlay">
-                        <a class="button" href="{{ route('product', $variant->product->slug) }}">Ver producto</a>
+                        <a class="button" data-type="secondary" href="{{ route('product', $variant->product->slug) }}">Ver producto</a>
                     </div>
                 </div>
-
             </div>
         @endforeach
     </section>

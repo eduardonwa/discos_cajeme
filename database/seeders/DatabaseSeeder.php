@@ -8,6 +8,7 @@ use Illuminate\Database\Seeder;
 use Database\Seeders\RoleSeeder;
 use Spatie\Permission\Models\Role;
 use Database\Seeders\VariantSeeder;
+use Database\Seeders\CollectionSeeder;
 use Database\Seeders\ProductCatalogSeeder;
 
 class DatabaseSeeder extends Seeder
@@ -19,6 +20,7 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             RoleSeeder::class,
+            CollectionSeeder::class,
             ProductCatalogSeeder::class,
             VariantSeeder::class
         ]);

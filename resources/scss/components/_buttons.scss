@@ -78,12 +78,8 @@
     transition:all 250ms ease;
 
     &:hover {
-      outline: 2px solid $color-neutral-900;
+      outline: 2px solid $color-accent-500;
       outline-offset: 4px;
-    }
-
-    &:focus {
-      outline-color: $color-accent-500;
     }
   }
 

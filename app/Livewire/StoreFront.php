@@ -29,6 +29,7 @@ class StoreFront extends Component
     public SupportCollection $variants;
     public string $latestProdsHeader = '';
     
+    public bool $hasCta = false;
     public ?string $ctaImage = null;
     public array $cta = [
         'header' => '',
@@ -101,6 +102,7 @@ class StoreFront extends Component
         /* LATEST PRODUCTS */
         $this->variants = $this->latestProducts();
         $this->latestProdsHeader = $home?->latest_prods_heading ?: 'Nuestras novedades';        
+        
         /* CTA */
         $this->cta['header'] = $home->cta_header ?? '';
         $this->cta['description'] = $home->cta_description ?? '';
@@ -108,6 +110,12 @@ class StoreFront extends Component
         $this->cta['button_link'] = $home->cta_button_link ?? '';
         $this->cta['bg_img_alt'] = $home->cta_bg_img_alt ?? '';
         $this->ctaImage = $home?->getFirstMediaUrl('home_cta_img');
+
+        $this->hasCta = 
+            filled($this->cta['header']) ||
+            filled($this->cta['description']) ||
+            filled($this->cta['button']) ||
+            filled($this->ctaImage);
 
         /* SPOTLIGHT */
         $this->spotlight = $home->spotlight_data;
@@ -233,7 +241,7 @@ class StoreFront extends Component
             ->all();
 
         return [
-            'header'      => (string) ($home->rail_collection_header ?? ''),
+            'header'      => (string) ($home->rail_collection_header ?? 'Explora nuestras colecciones'),
             'description' => (string) ($home->rail_collection_description ?? ''),
             'collections' => $ordered,
         ];

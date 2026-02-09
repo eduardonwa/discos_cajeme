@@ -6,26 +6,31 @@ return [
             'name' => 'CDs',
             'slug' => 'cds',
             'description' => 'Formato práctico y coleccionable. CDs listos para sonar fuerte en cualquier momento.',
+            'image' => 'collections/cds.webp'
         ],
         [
             'name' => 'Vinyl',
             'slug' => 'vinyl',
             'description' => 'Vinilos para la experiencia completa: arte grande, ritual y presencia en tu estantería.',
+            'image' => 'collections/vinyl.webp'
         ],
         [
             'name' => 'Thrash Metal',
             'slug' => 'thrash-metal',
             'description' => 'Velocidad, riffs cortantes y actitud. Thrash para sacudir el cuello sin piedad.',
+            'image' => 'collections/thrash-metal.webp'
         ],
         [
             'name' => 'Death Metal',
             'slug' => 'death-metal',
             'description' => 'Pesadez, precisión y oscuridad. Death metal para escuchar con respeto y volumen.',
+            'image' => 'collections/death-metal.webp'
         ],
         [
             'name' => 'Tradicional',
             'slug' => 'traditional',
             'description' => 'La raíz del metal: himnos, melodías y legado. Clásicos que nunca envejecen.',
+            'image' => 'collections/traditional.webp'
         ],
     ],
 
