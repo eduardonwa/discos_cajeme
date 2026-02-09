@@ -4,7 +4,7 @@
             @if($showError && $emptyCart)
                 <div class="cart__empty">
                     <h2 class="ff-bold fs-700">{{ $emptyCart }}</h2>
-                    <a href="/" class="button" data-type="catalogue">Ve nuestro catálogo</a>
+                    <a href="/" class="button" data-type="outline">Ve nuestro catálogo</a>
                 </div>
             @endif
         @else

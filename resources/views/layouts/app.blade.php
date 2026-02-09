@@ -20,10 +20,10 @@
         <!-- Styles -->
         @livewireStyles
     </head>
-    <body>
+    <body class="layout">
         <x-banner />
 
-        <div>
+        <div class="layout__wrapper">
             @livewire('navigation-menu')
             @livewire('search-modal')
 
@@ -37,7 +37,7 @@
             @endif
 
             <!-- Page Content -->
-            <main>
+            <main class="layout__main">
                 {{ $slot }}
             </main>
 

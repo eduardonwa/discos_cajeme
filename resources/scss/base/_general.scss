@@ -11,14 +11,17 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-body.menu-open { overflow: hidden; }
-
-a {
-  color: $link-color;
-}
-
-a:is(:hover, :focus) {
-  color: $link-color-hover;
-}
-
 *, *::before, *::after { box-sizing: border-box; }
+body.menu-open { overflow: hidden; }
+a { color: $link-color; }
+a:is(:hover, :focus) { color: $link-color-hover; }
+
+.layout {
+  &__wrapper {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__main { flex: 1; }
+}

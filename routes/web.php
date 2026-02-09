@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CollectionController;
 use App\Livewire\SearchPage;
 use App\Mail\OrderConfirmation;
 use Illuminate\Support\Facades\Route;
@@ -7,6 +8,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', \App\Livewire\StoreFront::class)->name('home');
 Route::get('/product/{product}', \App\Livewire\Product::class)->name('product');
 Route::get('/cart', \App\Livewire\Cart::class)->name('cart');
+Route::get('/collections/all', [CollectionController::class, 'index'])->name('all-collections');
 Route::get('/collections/{collection}', \App\Livewire\Collections::class)->name('collection');
 Route::get('/search', SearchPage::class)->name('search');
 

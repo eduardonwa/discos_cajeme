@@ -215,7 +215,7 @@ class Cart extends Component
     {
         // si el carrito viene vacío mostrar mensaje
         $this->showError = $this->cart->items->isEmpty();
-        $this->emptyCart = $this->showError ? 'Tu carrito está vacío.' : '';
+        $this->emptyCart = $this->showError ? 'Tu carrito está vacío' : '';
 
         return view('livewire.cart');
     }
