@@ -6,12 +6,12 @@ use App\Models\Product;
 use Livewire\Component;
 use App\Models\HomePage;
 use App\Models\Collection;
+use App\Helpers\ResolveLink;
 use Livewire\Attributes\Url;
 use Livewire\WithPagination;
 use App\Actions\Webshop\AddProductToCart;
-use App\Models\ProductVariant;
-use Illuminate\Support\Collection as SupportCollection;
 use Laravel\Jetstream\InteractsWithBanner;
+use Illuminate\Support\Collection as SupportCollection;
 
 class StoreFront extends Component
 {
@@ -26,7 +26,7 @@ class StoreFront extends Component
     
     public array $spotlight = [];
 
-    public SupportCollection $variants;
+    public SupportCollection $products;
     public string $latestProdsHeader = '';
     
     public bool $hasCta = false;
@@ -100,7 +100,8 @@ class StoreFront extends Component
         }
 
         /* LATEST PRODUCTS */
-        $this->variants = $this->latestProducts();
+        $this->products = collect();
+        $this->products = $this->latestProducts();
         $this->latestProdsHeader = $home?->latest_prods_heading ?: 'Nuestras novedades';        
         
         /* CTA */
@@ -108,9 +109,11 @@ class StoreFront extends Component
         $this->cta['description'] = $home->cta_description ?? '';
         $this->cta['button'] = $home->cta_button ?? '';
         $this->cta['button_link'] = $home->cta_button_link ?? '';
+        $this->cta['button_link'] = ResolveLink::href(
+            $home->cta_button_link ?? null
+        );
         $this->cta['bg_img_alt'] = $home->cta_bg_img_alt ?? '';
         $this->ctaImage = $home?->getFirstMediaUrl('home_cta_img');
-
         $this->hasCta = 
             filled($this->cta['header']) ||
             filled($this->cta['description']) ||
@@ -126,12 +129,18 @@ class StoreFront extends Component
 
     public function latestProducts()
     {
-        return ProductVariant::query()
-            ->where('is_active', true)
-            ->whereBetween('total_variant_stock', [5, 10])
-            ->whereHas('product', fn ($q) => $q->where('published', true))
-            ->with(['product.media'])
-            ->orderBy('total_variant_stock', 'asc')
+        return Product::query()
+            ->where('published', true)
+            ->whereHas('variants', function ($q) {
+                $q->where('is_active', true)
+                ->where('total_variant_stock', '>', 0);
+            })
+            ->with('media')
+            ->withMin(['variants as min_variant_stock' => function ($q) {
+                $q->where('is_active', true)
+                ->where('total_variant_stock', '>', 0);
+            }], 'total_variant_stock')
+            ->orderBy('min_variant_stock', 'asc')
             ->limit(10)
             ->get();
     }

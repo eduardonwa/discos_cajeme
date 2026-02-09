@@ -2,6 +2,7 @@
 
 namespace App\Filament\Pages;
 
+use Closure;
 use App\Models\Product;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
@@ -9,14 +10,11 @@ use App\Models\HomePage;
 use Filament\Forms\Form;
 use Filament\Pages\Page;
 use App\Models\Collection;
-use Closure;
 use Filament\Actions\Action;
 use Illuminate\Support\HtmlString;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Tabs;
-use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Section;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Tabs\Tab;
@@ -25,6 +23,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Placeholder;
+use App\Filament\Forms\Components\LinkPicker;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 
@@ -347,11 +346,7 @@ class HomePageEditor extends Page implements HasForms
                                                 ->label('Texto del botón')
                                                 ->required()
                                                 ->maxLength(255),
-                                            TextInput::make('cta_button_link')
-                                                ->label('Link del botón')
-                                                ->url()
-                                                ->required()
-                                                ->maxLength(255),
+                                            ...LinkPicker::schema('cta_button_link')
                                         ])
                                 ])                            
                         ]),

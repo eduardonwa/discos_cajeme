@@ -4,7 +4,7 @@
 
     <x-home-collections :collections="$collections" :activeTab="$activeTab" />
 
-    <x-latest-products :variants="$variants" />
+    <x-latest-products :products="$products" />
 
     <x-home-cta :cta="$cta" :ctaImage="$ctaImage" />
 

@@ -20,7 +20,8 @@ class HomePage extends Model implements HasMedia
         'tab_collections' => 'array',
         'rail_collection_ids' => 'array',
         'hero_slides' => 'array',
-        'spotlight_tags' => 'array'
+        'spotlight_tags' => 'array',
+        'cta_button_link' => 'array'
     ];
 
     public function spotlightProduct(): BelongsTo

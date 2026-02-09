@@ -28,7 +28,7 @@ return new class extends Migration
             // 3) CTA
             $table->string('cta_bg_img_alt')->nullable();
             $table->string('cta_button')->nullable();
-            $table->string('cta_button_link')->nullable();
+            $table->json('cta_button_link')->nullable();
             $table->string('cta_header')->nullable();
             $table->text('cta_description')->nullable();
 

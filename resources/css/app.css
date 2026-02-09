@@ -7,6 +7,17 @@
 /* home-page > boton "guardar" */
 .button-wrapper { display: none; }
 
-.fi-header {
-  /* boton homepage editor guardar*/
+.lp-option{
+  display:flex;
+  align-items:center;
+  gap:.5rem;
+}
+
+.lp-option img{
+  flex:0 0 auto;
+  display:block;
+}
+
+.lp-title{
+  line-height:1.1;
 }
