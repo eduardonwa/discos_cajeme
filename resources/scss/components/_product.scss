@@ -367,24 +367,17 @@
 
         .coupon {
             margin-block-start: $size-6;
-            
+
             &__zone {
                 input {
                     margin-block: $size-3;
                     width: 100%;
                 }
 
-                .button[data-type="coupon"] {
-                    width: 100%;
-
-                    &:hover {
-                        background: $color-neutral-600;
-                        color: $color-neutral-100;
-                    }
-                }
+                .button[data-type="outline"] { width: 100%; }
             }
         }
-        
+
         .button[data-type="primary"] { width: 100%; }
     }
 

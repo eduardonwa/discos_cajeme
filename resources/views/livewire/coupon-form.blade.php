@@ -12,8 +12,8 @@
             >
             <button
                 type="submit"
-                class="button ff-semibold"
-                data-type="coupon"
+                class="button"
+                data-type="outline"
             >
                 Aplicar
             </button>

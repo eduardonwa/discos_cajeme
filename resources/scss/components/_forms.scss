@@ -26,6 +26,7 @@ input:not(.button) {
   &[data-type="coupon"] {
     background: transparent;
     border-radius: $border-radius-1;
+    border: 1px dashed $color-neutral-200;
     
     &:focus {
       outline: 2px dashed $color-accent-500;
