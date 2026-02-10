@@ -83,7 +83,7 @@ class CreateStripeCheckoutSession
         
         // 1. Calcular subtotal SIN descuento
         $subtotalWithoutDiscount = $items->sum(fn($item) => 
-            $item->variant->product->price->getAmount() * $item->quantity
+            $item->variant->price->getAmount() * $item->quantity
         );
         
         // 2. Aplicar descuento GLOBAL si existe cupón válido
@@ -102,7 +102,7 @@ class CreateStripeCheckoutSession
             throw_if(!$variant, new RuntimeException('CartItem sin variante'));
 
             $product = $variant->product;
-            $basePrice = $product->price->getAmount();
+            $basePrice = $variant->price->getAmount();
             $discountedPrice = (int) round($basePrice * $discountRatio);
             
             $desc = $variant->attributes->isNotEmpty()

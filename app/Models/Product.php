@@ -6,7 +6,6 @@ use Money\Money;
 use App\Casts\MoneyCast;
 use Spatie\Image\Enums\Fit;
 use Spatie\MediaLibrary\HasMedia;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\App;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\MediaLibrary\InteractsWithMedia;
@@ -22,8 +21,6 @@ class Product extends Model implements HasMedia
      | Casts & atributos
      ───────────────────────────────────────── */
     protected $casts = [
-        'price'                 => MoneyCast::class,
-        'compare_at_price'      => MoneyCast::class,
         'amount_tax'            => MoneyCast::class,
         'amount_total'          => MoneyCast::class,
         'amount_subtotal'       => MoneyCast::class,
@@ -36,9 +33,8 @@ class Product extends Model implements HasMedia
     protected static function booted()
     {
         static::created(function (Product $product) {
-            if ($product->variants()->exists()) {
-                return;
-            }
+            if (app()->runningInConsole()) { return; }
+            if ($product->variants()->exists()) { return; }
 
             $product->variants()->create([
                 'title' => 'Default title',
@@ -50,7 +46,7 @@ class Product extends Model implements HasMedia
             ]);
 
             // cache/status del producto
-            $product->updateStockFromVariants();
+            $product->recalculateStockCache();
         });
     }
 
@@ -108,21 +104,17 @@ class Product extends Model implements HasMedia
         return 'slug';
     }
 
-    // ¿Tiene variantes?
-    public function getHasVariantsAttribute(): bool
+    public function sumActiveVariantStock(): int
     {
-        return $this->variants()->exists();
+        return (int) $this->variants()
+            ->where('is_active', true)
+            ->sum('total_variant_stock');
     }
 
-    // Stock total “computado” (si hay variantes: suma variantes; si no: campo manual)
+    // suma por variantes activas
     public function getComputedTotalStockAttribute(): int
     {
-        if ($this->getHasVariantsAttribute()) {
-            return (int) $this->variants()
-                ->where('is_active', true)
-                ->sum('total_variant_stock');
-        }
-        return (int) ($this->total_product_stock ?? 0);
+        return $this->sumActiveVariantStock();
     }
 
     // ¿Puede abastecer X unidades? (sin considerar carrito)
@@ -136,92 +128,21 @@ class Product extends Model implements HasMedia
         return $this->computed_total_stock > 0;
     }
 
-    // Sincroniza el campo manual con variantes (si existen)
-    public function syncTotalStockFromVariants(): void
+    public function recalculateStockCache(): void
     {
-        if (! $this->getHasVariantsAttribute()) {
-            return;
-        }
+        $sum = $this->sumActiveVariantStock();
+        $low = $this->low_stock_threshold ?? 5;
 
-        $sum = (int) $this->variants()
-            ->where('is_active', true)
-            ->sum('total_variant_stock');
-
-        if ((int) $this->total_product_stock !== $sum) {
-            $this->total_product_stock = $sum;
-            $this->save();
-        }
-    }
-    
-    // Actualiza estado de stock según umbrales (usa computed)
-    public function refreshStockStatus(): void
-    {
-        $total = $this->computed_total_stock;
-        $low   = $this->low_stock_threshold ?? 5;
-
-        $this->stock_status = $total <= 0
+        $status = $sum <= 0
             ? 'sold_out'
-            : ($total <= $low ? 'low_stock' : 'in_stock');
-
-        $this->save();
-    }
-
-    // Decremento simple para productos SIN variantes (atomic)
-    public function decreaseStock(int $quantity): void
-    {
-        if ($this->getHasVariantsAttribute()) {
-            throw new \LogicException('Use decreaseStock() en la variante.');
-        }
-
-        DB::transaction(function () use ($quantity) {
-            // bloquea la fila para consistencia
-            $fresh = self::whereKey($this->id)->lockForUpdate()->first();
-            
-            if ($fresh->total_product_stock < $quantity) {
-                throw new \RuntimeException('No hay stock suficiente.');
-            }
-
-            $fresh->decrement('total_product_stock', $quantity);
-            $fresh->refreshStockStatus();
-        });
+            : ($sum <= $low ? 'low_stock' : 'in_stock');
+        
+        $this->forceFill([
+            'total_product_stock' => $sum,
+            'stock_status' => $status
+        ])->save();
     }
     
-    public function updateStockFromVariants(): void
-    {
-        $this->syncTotalStockFromVariants();
-        $this->refreshStockStatus();
-    }
-
-    /* ─────────────────────────────────────────
-     | Pricing / Discounts (si quieres helpers aquí)
-     ───────────────────────────────────────── */
-    public function getHasDiscountAttribute(): bool
-    {
-        return $this->compare_at_price !== null
-            && $this->price !== null
-            && $this->compare_at_price->greaterThan($this->price);
-    }
-
-    public function getDiscountPercentAttribute(): ?int
-    {
-        if (! $this->has_discount) return null;
-        $p = $this->price->getAmount();
-        $c = $this->compare_at_price->getAmount();
-        return (int) round((1 - ($p / $c)) * 100);
-    }
-
-    // 👉 NUEVO: precio “antes” (tachado) o null
-    public function getOriginalPriceAttribute(): ?Money
-    {
-        return $this->has_discount ? $this->compare_at_price : null;
-    }
-
-    // 👉 NUEVO: precio final (el que se cobra hoy)
-    public function getFinalPriceAttribute(): Money
-    {
-        return $this->price;
-    }
-
     /* ─────────────────────────────────────────
      | Coupons
      ───────────────────────────────────────── */

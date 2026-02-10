@@ -10,6 +10,7 @@ use Livewire\Attributes\Computed;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Product as ProductModel;
 use App\Actions\Webshop\AddProductToCart;
+use App\Models\ProductVariant;
 use Laravel\Jetstream\InteractsWithBanner;
 
 class Product extends Component
@@ -20,14 +21,14 @@ class Product extends Component
     // Estado público
     // ─────────────────────────────────────────────────────────────
     public ProductModel $product;
-    public $variant;
+    public ?int $variant = null;
     public ?string $couponCode = null;
     public bool $discountApplied = false;
     public int $discountAmount = 0;
     public int $quantity = 1;
 
     public $rules = [
-        'variant'       => ['nullable', 'exists:App\Models\ProductVariant,id'],
+        'variant'       => ['nullable', 'integer', 'exists:App\Models\ProductVariant,id'],
         'couponCode'    => ['nullable', 'string', 'max:32'],
         'quantity'      => ['required', 'integer', 'min:1'],
     ];
@@ -51,8 +52,12 @@ class Product extends Component
             'variants.media'
         ]);
 
-        // Selecciona la primera variante disponible del producto
-        $this->variant = $this->product->variants->first()?->id;
+        $default = $this->product->variants
+            ->where('is_active', true)
+            ->sortByDesc('is_default')
+            ->first();
+
+        $this->variant = $default?->id;
     }
 
     // ─────────────────────────────────────────────────────────────
@@ -61,34 +66,33 @@ class Product extends Component
     #[Computed]
     public function hasDiscount(): bool
     {
-        return $this->product->compare_at_price !== null
-            && $this->product->compare_at_price->greaterThan($this->product->price);
+        return (bool) ($this->selectedVariant()?->has_discount);
     }
 
-    // Precio “original” a mostrar tachado (si hay oferta)
     #[Computed]
     public function originalPrice(): ?Money
     {
-        // Si hay oferta, compare; si no, price (asume 'price' nunca es null)
-        return $this->hasDiscount ? $this->product->compare_at_price : null;
+        return $this->selectedVariant()?->original_price;
     }
 
     // Base sobre la que se aplica el cupón (precio vigente)
     #[Computed]
     public function basePrice(): Money
     {
-        return $this->product->price;
+        return $this->selectedVariant()?->final_price
+            ?? new Money(0, new \Money\Currency('MXN'));
     }
 
     // Precio final mostrado (oferta + cupón si aplica)
     #[Computed]
     public function finalPrice(): \Money\Money
     {
-        $price = $this->product->price; // Money (no null)
+        $price = $this->basePrice(); // Money
 
-        if ($this->discountApplied && $this->couponPercent()) {
-            $off = (int) round($price->getAmount() * ($this->couponPercent() / 100));
-            $price = new \Money\Money($price->getAmount() - $off, $price->getCurrency());
+        $percent = $this->discountApplied ? $this->couponPercent() : null;
+        if ($percent) {
+            $off = (int) round($price->getAmount() * ($percent / 100));
+            return new Money($price->getAmount() - $off, $price->getCurrency());
         }
 
         return $price;
@@ -133,7 +137,7 @@ class Product extends Component
     // Stock / Variantes
     // ─────────────────────────────────────────────────────────────
     #[Computed]
-    public function selectedVariant()
+    public function selectedVariant(): ?ProductVariant
     {
         return $this->variant
             ? $this->product->variants->firstWhere('id', $this->variant)
@@ -143,27 +147,17 @@ class Product extends Component
     #[Computed]
     public function availableStock(): int
     {
+        $variant = $this->selectedVariant();
+        if (! $variant) return 0;
+
         $cart = Auth::user()?->cart
             ?? Cart::where('session_id', session()->getId())->first();
 
-        if ($this->variant) {
-            $variant = $this->selectedVariant();
-            if (! $variant) return 0;
+        $inCart = (int) ($cart?->items()
+            ->where('product_variant_id', $variant->id)
+            ->sum('quantity') ?? 0);
 
-            $inCart = $cart?->items()
-                ->where('product_id', $this->product->id)
-                ->where('product_variant_id', $this->variant)
-                ->sum('quantity') ?? 0;
-
-            return max(0, (int)$variant->total_variant_stock - (int)$inCart);
-        }
-
-        $inCart = $cart?->items()
-            ->where('product_id', $this->product->id)
-            ->whereNull('product_variant_id')
-            ->sum('quantity') ?? 0;
-
-        return max(0, (int)$this->product->computed_total_stock - (int)$inCart);
+        return max(0, (int) $variant->total_variant_stock - $inCart);
     }
 
     #[Computed]
@@ -175,6 +169,11 @@ class Product extends Component
     public function updatedVariant()
     {
         $this->quantity = 1;
+    }
+
+    public function updateStockInfo(): void
+    {
+        $this->dispatch('$refresh');
     }
 
     // ─────────────────────────────────────────────────────────────
@@ -232,9 +231,6 @@ class Product extends Component
         }
     }
 
-    // ─────────────────────────────────────────────────────────────
-    // Render
-    // ─────────────────────────────────────────────────────────────
     public function render()
     {
         return view('livewire.product');

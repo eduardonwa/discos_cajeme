@@ -14,15 +14,15 @@ class AddProductToCart
         $product = Product::with('variants')->findOrFail($productId);
 
         $variant = $variantId
-            ? ProductVariant::where('product_id', $product->id)->findOrFail($variantId)
+            ? ProductVariant::where('product_id', $product->id)->whereKey($variantId)->firstOrFail()
             : $product->variants()
                 ->where('is_active', true)
-                ->orderByDesc('total_variant_stock')
+                ->orderByDesc('is_default')
                 ->first();
-            
-            throw_if(!$variant, new \RuntimeException('Producto sin variante vendible.'));
+
+        throw_if(! $variant, new \RuntimeException('Producto sin variante vendible.'));
         
-        $this->validateStock($product, $variant, $quantity, $cart);
+        $this->validateStock($variant, $quantity, $cart);
 
         $cart = $cart ?: $this->getOrCreateCart();
 
@@ -42,34 +42,22 @@ class AddProductToCart
         return Cart::firstOrCreate(['session_id' => session()->getId()]);
     }
 
-    protected function validateStock(Product $product, ?ProductVariant $variant, int $quantity, ?Cart $cart = null): void
+    protected function validateStock(ProductVariant $variant, int $quantity, ?Cart $cart = null): void
     {
         $cart = $cart ?: $this->getOrCreateCart();
-        
-        if ($variant) {
-            $inCart = $cart->items()
-                ->where('product_variant_id', $variant->id)
-                ->sum('quantity');
-            
-            $available = $variant->total_variant_stock - $inCart;
 
-            throw_unless(
-                $available >= $quantity,
-                new \Exception("No hay suficiente stock. Disponibles: {$available}")
-            );
-        } else {
-            $inCart = $cart->items()
-                ->where('product_id', $product->id)
-                ->whereNull('product_variant_id')
-                ->sum('quantity');
+        $inCart = (int) $cart->items()
+            ->where('product_variant_id', $variant->id)
+            ->sum('quantity');
 
-            $available = $product->total_product_stock - $inCart;
-
-            throw_unless(
-                $available >= $quantity,
-                new \Exception("No hay suficiente stock. Disponibles: {$available}")
-            );
-        }
+        $desired = $inCart + $quantity;
+        throw_unless(
+            $variant->total_variant_stock >= $desired,
+            new \Exception(
+                'No hay suficiente stock. Disponibles: ' .
+                max($variant->total_variant_stock - $inCart, 0)
+            )
+        );
     }
 
     protected function addOrUpdateCartItem(Cart $cart, ?ProductVariant $variant, int $quantity): void

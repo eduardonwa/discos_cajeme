@@ -40,35 +40,56 @@ return [
             'name' => 'Megadeth — Rust in Peace',
             'slug' => 'megadeth-rust-in-peace',
             'description' => 'Thrash técnico y afilado. Un clásico obligatorio en cualquier colección.',
-            // 'price' => 34900,
             'published' => true,
             'total_product_stock' => 12,
             'stock_status' => 'in_stock',
             'low_stock_threshold' => 5,
             'cached_quantity_sold' => 0,
-            // Formato + subgénero
             'collections' => ['cds', 'thrash-metal'],
             'images' => ['catalog/rust-in-peace.webp'],
+            'variants' => [
+                [
+                    'title' => 'CD',
+                    'price' => 34900,
+                    'compare_at_price' => null,
+                    'total_variant_stock' => 12,
+                    'is_default' => true,
+                    'is_active' => true,
+                    'attributes' => [
+                        'Formato' => 'CD',
+                    ],
+                ],
+            ],
         ],
         [
             'name' => 'Metallica — Master of Puppets',
             'slug' => 'metallica-master-of-puppets',
             'description' => 'Riffs gigantes y energía constante. Thrash que define una era.',
-            // 'price' => 32900,
             'published' => true,
             'total_product_stock' => 14,
             'stock_status' => 'in_stock',
             'low_stock_threshold' => 5,
             'cached_quantity_sold' => 0,
-            // Formato + subgénero
             'collections' => ['vinyl', 'thrash-metal'],
             'images' => ['catalog/mop.jpg'],
+            'variants' => [
+                [
+                    'title' => 'Vinyl',
+                    'price' => 32900,
+                    'compare_at_price' => null,
+                    'total_variant_stock' => 14,
+                    'is_default' => true,
+                    'is_active' => true,
+                    'attributes' => [
+                        'Formato' => 'Vinyl',
+                    ],
+                ],
+            ],
         ],
         [
             'name' => 'Testament — The Legacy',
             'slug' => 'testament-the-legacy',
             'description' => 'Thrash crudo y sin concesiones. Velocidad, técnica y actitud de la Bay Area en estado puro.',
-            // 'price' => 28900,
             'published' => true,
             'total_product_stock' => 12,
             'stock_status' => 'in_stock',
@@ -76,12 +97,24 @@ return [
             'cached_quantity_sold' => 0,
             'collections' => ['thrash-metal', 'vinyl'],
             'images' => ['catalog/the-legacy.jpg'],
+            'variants' => [
+                [
+                    'title' => 'Vinyl',
+                    'price' => 28900,
+                    'compare_at_price' => null,
+                    'total_variant_stock' => 12,
+                    'is_default' => true,
+                    'is_active' => true,
+                    'attributes' => [
+                        'Formato' => 'Vinyl',
+                    ],
+                ],
+            ],
         ],
         [
             'name' => 'Overkill — Feel the Fire',
             'slug' => 'overkill-feel-the-fire',
             'description' => 'Debut feroz y sin pulir. Thrash callejero con riffs filosos y energía directa.',
-            // 'price' => 24900,
             'published' => true,
             'total_product_stock' => 15,
             'stock_status' => 'in_stock',
@@ -89,12 +122,24 @@ return [
             'cached_quantity_sold' => 0,
             'collections' => ['thrash-metal', 'cds'],
             'images' => ['catalog/feel-the-fire.jpg'],
+            'variants' => [
+                [
+                    'title' => 'CD',
+                    'price' => 24900,
+                    'compare_at_price' => null,
+                    'total_variant_stock' => 15,
+                    'is_default' => true,
+                    'is_active' => true,
+                    'attributes' => [
+                        'Formato' => 'CD',
+                    ],
+                ],
+            ],
         ],
         [
             'name' => 'Slayer — Show No Mercy',
             'slug' => 'slayer-show-no-mercy',
             'description' => 'Oscuro, agresivo y primitivo. El nacimiento del sonido más extremo del thrash.',
-            // 'price' => 26900,
             'published' => true,
             'total_product_stock' => 10,
             'stock_status' => 'in_stock',
@@ -102,12 +147,24 @@ return [
             'cached_quantity_sold' => 0,
             'collections' => ['thrash-metal', 'cds'],
             'images' => ['catalog/show-no-mercy.jpg'],
+            'variants' => [
+                [
+                    'title' => 'CD',
+                    'price' => 26900,
+                    'compare_at_price' => null,
+                    'total_variant_stock' => 10,
+                    'is_default' => true,
+                    'is_active' => true,
+                    'attributes' => [
+                        'Formato' => 'CD',
+                    ],
+                ],
+            ],
         ],
         [
             'name' => 'Metallica — Ride the Lightning',
             'slug' => 'metallica-ride-the-lightning',
             'description' => 'Evolución total del thrash. Canciones más complejas, épicas y memorables.',
-            // 'price' => 33900,
             'published' => true,
             'total_product_stock' => 14,
             'stock_status' => 'in_stock',
@@ -115,12 +172,24 @@ return [
             'cached_quantity_sold' => 0,
             'collections' => ['vinyl', 'thrash-metal'],
             'images' => ['catalog/ride-the-lightning.jpg'],
+            'variants' => [
+                [
+                    'title' => 'Vinyl',
+                    'price' => 33900,
+                    'compare_at_price' => null,
+                    'total_variant_stock' => 14,
+                    'is_default' => true,
+                    'is_active' => true,
+                    'attributes' => [
+                        'Formato' => 'Vinyl',
+                    ],
+                ],
+            ],
         ],
         [
             'name' => 'Megadeth — The Sick, the Dying… and the Dead!',
             'slug' => 'megadeth-the-sick-the-dying-and-the-dead',
             'description' => 'Thrash moderno con filo clásico. Técnica, velocidad y letras incendiarias.',
-            // 'price' => 35900,
             'published' => true,
             'total_product_stock' => 9,
             'stock_status' => 'in_stock',
@@ -128,12 +197,24 @@ return [
             'cached_quantity_sold' => 0,
             'collections' => ['thrash-metal', 'vinyl'],
             'images' => ['catalog/the-sick-the-dying-and-the-dead.jpg'],
+            'variants' => [
+                [
+                    'title' => 'Vinyl',
+                    'price' => 35900,
+                    'compare_at_price' => null,
+                    'total_variant_stock' => 9,
+                    'is_default' => true,
+                    'is_active' => true,
+                    'attributes' => [
+                        'Formato' => 'Vinyl',
+                    ],
+                ],
+            ],
         ],
         [
             'name' => 'Warbringer — Wrath and Ruin',
             'slug' => 'warbringer-wrath-and-ruin',
             'description' => 'Thrash contemporáneo con espíritu old school. Violento, directo y sin relleno.',
-            // 'price' => 27900,
             'published' => true,
             'total_product_stock' => 8,
             'stock_status' => 'in_stock',
@@ -141,12 +222,24 @@ return [
             'cached_quantity_sold' => 0,
             'collections' => ['thrash-metal'],
             'images' => ['catalog/wrath-and-ruin.jpg'],
+            'variants' => [
+                [
+                    'title' => 'CD',
+                    'price' => 27900,
+                    'compare_at_price' => null,
+                    'total_variant_stock' => 8,
+                    'is_default' => true,
+                    'is_active' => true,
+                    'attributes' => [
+                        'Formato' => 'CD',
+                    ],
+                ],
+            ],
         ],
         [
             'name' => 'Kreator — Pleasure to Kill',
             'slug' => 'kreator-pleasure-to-kill',
             'description' => 'Violencia sonora sin frenos. Un clásico absoluto que empujó el thrash hacia lo extremo.',
-            // 'price' => 32900,
             'published' => true,
             'total_product_stock' => 11,
             'stock_status' => 'in_stock',
@@ -154,12 +247,24 @@ return [
             'cached_quantity_sold' => 0,
             'collections' => ['thrash-metal', 'vinyl'],
             'images' => ['catalog/pleasure-to-kill.jpg'],
+            'variants' => [
+                [
+                    'title' => 'Vinyl',
+                    'price' => 32900,
+                    'compare_at_price' => null,
+                    'total_variant_stock' => 11,
+                    'is_default' => true,
+                    'is_active' => true,
+                    'attributes' => [
+                        'Formato' => 'Vinyl',
+                    ],
+                ],
+            ],
         ],
         [
             'name' => 'Kreator — Krushers of the World',
             'slug' => 'kreator-krushers-of-the-world',
             'description' => 'Thrash directo y contundente. Himnos de mosh con producción sólida.',
-            // 'price' => 23900,
             'published' => true,
             'total_product_stock' => 13,
             'stock_status' => 'in_stock',
@@ -167,6 +272,19 @@ return [
             'cached_quantity_sold' => 0,
             'collections' => ['thrash-metal', 'cds'],
             'images' => ['catalog/krushers-of-the-world.jpg'],
+            'variants' => [
+                [
+                    'title' => 'CD',
+                    'price' => 23900,
+                    'compare_at_price' => null,
+                    'total_variant_stock' => 13,
+                    'is_default' => true,
+                    'is_active' => true,
+                    'attributes' => [
+                        'Formato' => 'CD',
+                    ],
+                ],
+            ],
         ],
 
         // --- DEATH METAL --- //
@@ -174,63 +292,106 @@ return [
             'name' => 'Pestilence — Testimony of the Ancients',
             'slug' => 'pestilence-testimony-of-the-ancients',
             'description' => 'Death metal con capas, oscuridad y carácter. Ideal si te gusta el detalle.',
-            // 'price' => 33900,
             'published' => true,
             'total_product_stock' => 10,
             'stock_status' => 'in_stock',
             'low_stock_threshold' => 5,
             'cached_quantity_sold' => 0,
-            // Formato + subgénero
             'collections' => ['cds', 'death-metal'],
             'images' => ['catalog/testimony-of-the-ancients.jpg'],
+            'variants' => [
+                [
+                    'title' => 'CD',
+                    'price' => 33900,
+                    'compare_at_price' => null,
+                    'total_variant_stock' => 10,
+                    'is_default' => true,
+                    'is_active' => true,
+                    'attributes' => [
+                        'Formato' => 'CD',
+                    ],
+                ],
+            ],
         ],
         [
             'name' => 'Pestilence — Hadeon',
             'slug' => 'pestilence-hadeon',
             'description' => 'Death metal moderno y contundente. Directo al cuello.',
-            // 'price' => 31900,
             'published' => true,
             'total_product_stock' => 9,
             'stock_status' => 'in_stock',
             'low_stock_threshold' => 5,
             'cached_quantity_sold' => 0,
-            // Formato + subgénero
             'collections' => ['vinyl', 'death-metal'],
             'images' => ['catalog/hadeon.jpg'],
+            'variants' => [
+                [
+                    'title' => 'Vinyl',
+                    'price' => 31900,
+                    'compare_at_price' => null,
+                    'total_variant_stock' => 9,
+                    'is_default' => true,
+                    'is_active' => true,
+                    'attributes' => [
+                        'Formato' => 'Vinyl',
+                    ],
+                ],
+            ],
         ],
         [
             'name' => 'Dark Tranquillity — Atoma',
             'slug' => 'dark-tranquillity-atoma',
             'description' => 'Melodeath atmosférico y melancólico. Pesado, pero con melodía que se queda.',
-            // 'price' => 32900,
             'published' => true,
             'total_product_stock' => 11,
             'stock_status' => 'in_stock',
             'low_stock_threshold' => 5,
             'cached_quantity_sold' => 0,
-            // Formato + subgénero
             'collections' => ['cds', 'death-metal'],
             'images' => ['catalog/atoma.jpg'],
+            'variants' => [
+                [
+                    'title' => 'CD',
+                    'price' => 32900,
+                    'compare_at_price' => null,
+                    'total_variant_stock' => 11,
+                    'is_default' => true,
+                    'is_active' => true,
+                    'attributes' => [
+                        'Formato' => 'CD',
+                    ],
+                ],
+            ],
         ],
         [
             'name' => 'Death — Symbolic',
             'slug' => 'death-symbolic',
             'description' => 'Técnico, emotivo y pesado. Un punto altísimo del death metal.',
-            // 'price' => 35900,
             'published' => true,
             'total_product_stock' => 8,
             'stock_status' => 'low_stock',
             'low_stock_threshold' => 5,
             'cached_quantity_sold' => 0,
-            // Formato + subgénero
             'collections' => ['vinyl', 'death-metal'],
             'images' => ['catalog/symbolic.jpg'],
+            'variants' => [
+                [
+                    'title' => 'Vinyl',
+                    'price' => 35900,
+                    'compare_at_price' => null,
+                    'total_variant_stock' => 8,
+                    'is_default' => true,
+                    'is_active' => true,
+                    'attributes' => [
+                        'Formato' => 'Vinyl',
+                    ],
+                ],
+            ],
         ],
         [
             'name' => 'Obituary — Dying of Everything',
             'slug' => 'obituary-dying-of-everything',
             'description' => 'Death metal pesado y aplastante. Groove oscuro con el sello clásico de la banda.',
-            // 'price' => 28900,
             'published' => true,
             'total_product_stock' => 7,
             'stock_status' => 'in_stock',
@@ -238,12 +399,24 @@ return [
             'cached_quantity_sold' => 0,
             'collections' => ['death-metal', 'cds'],
             'images' => ['catalog/dying-of-everything.jpg'],
+            'variants' => [
+                [
+                    'title' => 'CD',
+                    'price' => 28900,
+                    'compare_at_price' => null,
+                    'total_variant_stock' => 7,
+                    'is_default' => true,
+                    'is_active' => true,
+                    'attributes' => [
+                        'Formato' => 'CD',
+                    ],
+                ],
+            ],
         ],
         [
             'name' => 'Obituary — Slowly We Rot',
             'slug' => 'obituary-slowly-we-rot',
             'description' => 'Uno de los pilares del death metal. Crudo, oscuro y absolutamente icónico.',
-            // 'price' => 31900,
             'published' => true,
             'total_product_stock' => 10,
             'stock_status' => 'in_stock',
@@ -251,12 +424,24 @@ return [
             'cached_quantity_sold' => 0,
             'collections' => ['death-metal', 'vinyl'],
             'images' => ['catalog/slowly-we-rot.jpg'],
+            'variants' => [
+                [
+                    'title' => 'Vinyl',
+                    'price' => 31900,
+                    'compare_at_price' => null,
+                    'total_variant_stock' => 10,
+                    'is_default' => true,
+                    'is_active' => true,
+                    'attributes' => [
+                        'Formato' => 'Vinyl',
+                    ],
+                ],
+            ],
         ],
         [
             'name' => 'Death — Leprosy',
             'slug' => 'death-leprosy',
             'description' => 'Death metal definitivo. Brutalidad, técnica y visión que marcaron un género.',
-            // 'price' => 34900,
             'published' => true,
             'total_product_stock' => 8,
             'stock_status' => 'in_stock',
@@ -264,22 +449,46 @@ return [
             'cached_quantity_sold' => 0,
             'collections' => ['death-metal', 'vinyl'],
             'images' => ['catalog/leprosy.jpg'],
+            'variants' => [
+                [
+                    'title' => 'Vinyl',
+                    'price' => 34900,
+                    'compare_at_price' => null,
+                    'total_variant_stock' => 8,
+                    'is_default' => true,
+                    'is_active' => true,
+                    'attributes' => [
+                        'Formato' => 'Vinyl',
+                    ],
+                ],
+            ],
         ],
 
-        // --- POWER METAL (solo formato, no hay colección de power en tu lista) --- //
+        // --- POWER METAL --- //
         [
             'name' => 'Stratovarius — Visions',
             'slug' => 'stratovarius-visions',
             'description' => 'Power metal melódico, veloz y épico. Coros grandes y energía positiva.',
-            // 'price' => 32900,
             'published' => true,
             'total_product_stock' => 10,
             'stock_status' => 'in_stock',
             'low_stock_threshold' => 5,
             'cached_quantity_sold' => 0,
-            // Solo formato
             'collections' => ['cds'],
             'images' => ['catalog/visions.jpg'],
+            'variants' => [
+                [
+                    'title' => 'CD',
+                    'price' => 32900,
+                    'compare_at_price' => null,
+                    'total_variant_stock' => 10,
+                    'is_default' => true,
+                    'is_active' => true,
+                    'attributes' => [
+                        'Formato' => 'CD',
+                    ],
+                ],
+            ],
         ],
 
         // --- TRADICIONAL --- //
@@ -287,15 +496,26 @@ return [
             'name' => 'Iron Maiden — Powerslave',
             'slug' => 'iron-maiden-powerslave',
             'description' => 'Heavy metal clásico en estado puro. De esos discos que se heredan.',
-            // 'price' => 59900,
             'published' => true,
             'total_product_stock' => 6,
             'stock_status' => 'low_stock',
             'low_stock_threshold' => 5,
             'cached_quantity_sold' => 0,
-            // Formato + subgénero
             'collections' => ['vinyl', 'traditional'],
             'images' => ['catalog/powerslave.jpg'],
+            'variants' => [
+                [
+                    'title' => 'Vinyl',
+                    'price' => 59900,
+                    'compare_at_price' => null,
+                    'total_variant_stock' => 6,
+                    'is_default' => true,
+                    'is_active' => true,
+                    'attributes' => [
+                        'Formato' => 'Vinyl',
+                    ],
+                ],
+            ],
         ],
     ],
 ];

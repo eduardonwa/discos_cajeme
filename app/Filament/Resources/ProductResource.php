@@ -52,7 +52,6 @@ class ProductResource extends Resource
                                 ->image()
                                 ->required()
                                 ->columnSpanFull(),
-
                             SpatieMediaLibraryFileUpload::make('images')
                                 ->label('Galería')
                                 ->maxSize(1500)
@@ -113,7 +112,6 @@ class ProductResource extends Resource
                                         ->disabled()
                                         ->dehydrated(false)
                                         ->formatStateUsing(fn ($state, $record) => $record?->computed_total_stock ?? 0),
-
                                     Select::make('stock_status')
                                         ->label('Estado de inventario')
                                         ->options([
@@ -130,15 +128,12 @@ class ProductResource extends Resource
 
                                             return $total <= 0 ? 'sold_out' : ($total <= $low ? 'low_stock' : 'in_stock');
                                         }),
-
                                     TextInput::make('low_stock_threshold')
                                         ->label('Umbral para bajo stock')
                                         ->numeric()
                                         ->minValue(1)
                                         ->default(5),
                                 ]),
-
-                                // ✅ Ofertas: SOLO promo_label (copy)
                                 Tab::make('Ofertas')->schema([
                                     TextInput::make('promo_label')
                                         ->label('Etiqueta promocional (opcional)')
@@ -165,23 +160,18 @@ class ProductResource extends Resource
                 ->collection('featured')
                 ->size(50)
                 ->extraImgAttributes(['style' => 'border-radius: 0.5rem;']),
-
             TextColumn::make('name')
                 ->label('Nombre')
                 ->sortable()
                 ->searchable(),
-
-            // ✅ Inventario del listado: usa accessor (no sumes aquí)
             TextColumn::make('computed_total_stock')
                 ->label('Inventario')
                 ->sortable()
                 ->state(fn ($record) => $record->computed_total_stock),
-
             TextColumn::make('variants_count')
                 ->label('Variaciones')
                 ->counts('variants')
                 ->sortable(),
-
             TextColumn::make('published')
                 ->label('Estado')
                 ->badge()

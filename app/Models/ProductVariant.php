@@ -2,11 +2,12 @@
 
 namespace App\Models;
 
+use Money\Money;
+use App\Casts\MoneyCast;
 use Spatie\Image\Enums\Fit;
 use App\Models\AttributeVariant;
 use Spatie\MediaLibrary\HasMedia;
 use Illuminate\Support\Facades\DB;
-use App\Models\ImageProductVariant;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -16,6 +17,11 @@ class ProductVariant extends Model implements HasMedia
 {
     use HasFactory;
     use InteractsWithMedia;
+
+    protected $casts = [
+        'price'            => MoneyCast::class,
+        'compare_at_price' => MoneyCast::class,
+    ];
 
     public function product()
     {
@@ -48,35 +54,30 @@ class ProductVariant extends Model implements HasMedia
             ->nonQueued(); 
     }
 
-    public function decreaseStock(int $quantity): void
+    public function adjustStock(int $delta): void
     {
-        DB::transaction(function () use ($quantity) {
-            if ($this->total_variant_stock < $quantity) {
+        DB::transaction(function () use ($delta) {
+            // lock row
+            $fresh = self::whereKey($this->id)->lockForUpdate()->first();
+
+            $new = $fresh->total_variant_stock + $delta;
+
+            if ($new < 0) {
                 throw new \RuntimeException('No hay stock suficiente en la variante.');
             }
 
-            $this->update([
-                'total_variant_stock' => max($this->total_variant_stock - $quantity, 0)
-            ]);
-            
-            // sincroniza y recalcula el padre
-            $this->product->updateStockFromVariants();
+            $fresh->total_variant_stock = $new;
+            $fresh->is_active = $new > 0;
+            $fresh->save();
+
+            // recalcula producto
+            $fresh->product->recalculateStockCache();
         });
     }
-
-    public function setIsActiveAttribute($value)
+    
+    public function canFulfill(int $quantity): bool
     {
-        // No permitir activar si no hay stock
-        if ($value && $this->total_variant_stock <= 0) {
-            return;
-        }
-        
-        // No permitir desactivar si hay stock positivo
-        if (!$value && $this->total_variant_stock > 0) {
-            throw new \Exception("No se puede desactivar una variante con stock disponible");
-        }
-        
-        $this->attributes['is_active'] = $value;
+        return $this->is_active && $this->total_variant_stock >= $quantity;
     }
 
     public function canFulfillOrder(int $quantity): bool
@@ -84,30 +85,35 @@ class ProductVariant extends Model implements HasMedia
         return $this->total_variant_stock >= $quantity;
     }
 
-    public function reserveStock(int $quantity): void
-    {
-        throw_if(
-            !$this->canFulfillOrder($quantity),
-            new \RuntimeException('No hay suficiente stock disponible')
-        );
-        
-        $this->decrement('total_variant_stock', $quantity);
-        $this->refresh();
-        
-        if ($this->total_variant_stock <= 0) {
-            $this->update(['is_active' => false]);
-        }
-        
-        $this->product->updateStockFromVariants();
-    }
-
     public function isAvailable()
     {
         return $this->is_active && $this->total_variant_stock > 0;
     }
 
-    public function canFulfill(int $quantity): bool
+    public function getHasDiscountAttribute(): bool
     {
-        return $this->is_active && $this->total_variant_stock >= $quantity;
+        return $this->compare_at_price !== null
+            && $this->price !== null
+            && $this->compare_at_price->greaterThan($this->price);
+    }
+
+    public function getDiscountPercentAttribute(): ?int
+    {
+        if (! $this->has_discount) return null;
+        $p = $this->price->getAmount();
+        $c = $this->compare_at_price->getAmount();
+        return (int) round((1 - ($p / $c)) * 100);
+    }
+
+    // precio “antes” (tachado) o null
+    public function getOriginalPriceAttribute(): ?Money
+    {
+        return $this->has_discount ? $this->compare_at_price : null;
+    }
+
+    // precio final (el que se cobra hoy)
+    public function getFinalPriceAttribute(): Money
+    {
+        return $this->price;
     }
 }

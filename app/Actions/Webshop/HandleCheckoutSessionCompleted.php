@@ -31,6 +31,11 @@ class HandleCheckoutSessionCompleted
     {
         $trace = "checkout_completed:{$sessionId}";
         \Log::info("$trace START");
+ 
+        if (Order::where('stripe_checkout_session_id', $sessionId)->exists()) {
+            \Log::warning("$trace DUPLICATE - skipping");
+            return;
+        }
 
         DB::transaction(function () use ($sessionId, $trace) {
             try {
@@ -38,6 +43,11 @@ class HandleCheckoutSessionCompleted
                 $session = Cashier::stripe()->checkout->sessions->retrieve($sessionId, [
                     'expand' => ['line_items.data.price.product'],
                 ]);
+
+                throw_if(
+                    ($session->payment_status ?? null) !== 'paid',
+                    new \RuntimeException('Checkout session no pagada; no se descuenta stock.')
+                );
 
                 \Log::info("$trace SESSION", [
                     'session_id' => $session->id ?? null,
@@ -96,14 +106,14 @@ class HandleCheckoutSessionCompleted
                         continue;
                     }
 
-                    // IVA (lo metiste como line item con metadata is_tax=true)
+                    // IVA
                     $isTax = $stripeProduct->metadata->is_tax ?? false;
                     if ($isTax) {
                         $totalTax += $lineItem->amount_total;
                         continue;
                     }
 
-                    // Subtotal de productos (ya incluye descuento prorrateado si lo aplicaste en unit_amount)
+                    // Subtotal de productos (ya incluye descuento prorrateado)
                     $subtotal += $lineItem->amount_total;
 
                     $qty = (int) ($lineItem->quantity ?? 1);
@@ -121,7 +131,7 @@ class HandleCheckoutSessionCompleted
                     ]);
 
                     $variant = ProductVariant::findOrFail($variantId);
-                    $variant->decreaseStock($qty);
+                    $variant->adjustStock(-$qty);
                 }
 
                 \Log::info("$trace TOTALS", [

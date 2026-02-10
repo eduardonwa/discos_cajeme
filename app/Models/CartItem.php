@@ -19,7 +19,7 @@ class CartItem extends Model
     {
         return Attribute::make(
             get: function() {
-                return $this->variant->product->price->multiply($this->quantity);
+                return $this->variant->price->multiply($this->quantity);
             }
         );
     }

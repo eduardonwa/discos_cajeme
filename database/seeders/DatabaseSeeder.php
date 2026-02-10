@@ -7,7 +7,6 @@ use App\Models\User;
 use Illuminate\Database\Seeder;
 use Database\Seeders\RoleSeeder;
 use Spatie\Permission\Models\Role;
-use Database\Seeders\VariantSeeder;
 use Database\Seeders\CollectionSeeder;
 use Database\Seeders\ProductCatalogSeeder;
 
@@ -22,7 +21,6 @@ class DatabaseSeeder extends Seeder
             RoleSeeder::class,
             CollectionSeeder::class,
             ProductCatalogSeeder::class,
-            VariantSeeder::class
         ]);
         
         $adminRole = Role::where('name', 'admin')->first();

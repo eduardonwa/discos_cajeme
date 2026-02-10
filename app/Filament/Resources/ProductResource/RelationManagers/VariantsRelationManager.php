@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\ProductResource\RelationManagers;
 
+use Money\Money;
 use Filament\Tables;
 use Filament\Forms\Get;
 use Filament\Forms\Form;
@@ -34,43 +35,39 @@ class VariantsRelationManager extends RelationManager
 
     public function form(Form $form): Form
     {
-        $hydrate = function ($component, $state) {
-            if ($state instanceof \Money\Money) $state = (int) $state->getAmount();
-            $cents = (int) ($state ?? 0);
-            $mxn = $cents / 100;
-
-            $component->state(
-                fmod($mxn, 1) == 0
-                    ? number_format($mxn, 0, '.', ',')
-                    : number_format($mxn, 2, '.', ',')
-            );
-        };
-
         $toCents = fn ($v) => (int) round(
             (float) str_replace([',', '$', ' '], '', (string) $v) * 100
         );
 
-        $toPesosStr = fn ($v) => number_format(
-            (float) str_replace([',', '$', ' '], '', (string) $v),
-            2, '.', ','
-        );
-
-        $dehydrate = fn ($state) => $toCents($state);
-
-        $hydrateCompare = function ($component, $state) use ($hydrate) {
-            $amount = $state instanceof \Money\Money
-                ? (int) $state->getAmount()
-                : (int) str_replace([',', '$', ' '], '', (string) $state);
-
-            if ($state === null || $state === '' || $amount <= 0) {
-                $component->state(null);
-                return;
+        $toPesosInput = function ($state) {
+            if ($state instanceof Money) {
+                $state = (int) $state->getAmount(); // centavos
             }
 
-            $hydrate($component, $state);
+            if ($state === null || $state === '') return null;
+
+            $cents = (int) $state;
+            $mxn = $cents / 100;
+
+            return fmod($mxn, 1) == 0
+                ? number_format($mxn, 0, '.', ',')
+                : number_format($mxn, 2, '.', ',');
         };
 
-        // ✅ compare_at_price -> centavos o null
+        $toPesosStr = fn ($v) => number_format( (float) str_replace([',', '$', ' '], '', (string) $v), 2, '.', ',' );
+
+        $toPesosInputCompare = function ($state) use ($toPesosInput) {
+            if ($state === null || $state === '') return null;
+
+            $amount = $state instanceof Money
+                ? (int) $state->getAmount()
+                : (int) $state;
+
+            if ($amount <= 0) return null;
+
+            return $toPesosInput($state);
+        };
+
         $dehydrateCompare = function ($state, Get $get) use ($toCents) {
             if ($state === null || $state === '') return null;
 
@@ -106,8 +103,8 @@ class VariantsRelationManager extends RelationManager
                                         return parts.join('.');
                                     }
                                 JS))
-                                ->afterStateHydrated($hydrate)
-                                ->dehydrateStateUsing($dehydrate)
+                                ->formatStateUsing($toPesosInput)
+                                ->dehydrateStateUsing(fn ($state) => $toCents($state))
                                 ->live(onBlur: false, debounce: 300)
                                 ->required(),
                             TextInput::make('compare_at_price')
@@ -122,25 +119,8 @@ class VariantsRelationManager extends RelationManager
                                         return parts.join('.');
                                     }
                                 JS))
-                                ->afterStateHydrated($hydrateCompare)
-                                ->dehydrateStateUsing($dehydrateCompare)
-                                ->hint(function ($get) use ($toCents) {
-                                    $price   = $toCents($get('price'));
-                                    $compare = $toCents($get('compare_at_price'));
-
-                                    if ($price > 0 && $compare > $price) {
-                                        $p = (int) round((1 - ($price / $compare)) * 100);
-                                        return "Mostrará {$p}% de descuento";
-                                    }
-                                    return 'Dejar vacío si no hay oferta';
-                                })
-                                ->rule(function ($get) use ($toCents) {
-                                    $price = $toCents($get('price'));
-                                    return fn ($attr, $value, $fail) =>
-                                        ($value !== null && $value !== '' && $toCents($value) <= $price)
-                                            ? $fail('Debe ser mayor que el Precio para mostrar oferta.')
-                                            : null;
-                                }),
+                                ->formatStateUsing($toPesosInputCompare)
+                                ->dehydrateStateUsing($dehydrateCompare),
                             Actions::make([
                                 Action::make('marcar_oferta')
                                     ->label('Usar precio actual como "antes"')
@@ -173,7 +153,7 @@ class VariantsRelationManager extends RelationManager
                             ->schema([
                                 Select::make('attribute_id')
                                     ->label('Nombre')
-                                    ->relationship('attribute', 'key') // Relación con `attributes` (singular)
+                                    ->relationship('attribute', 'key')
                                     ->searchable()
                                     ->createOptionForm([
                                         TextInput::make('key')
@@ -223,12 +203,27 @@ class VariantsRelationManager extends RelationManager
                     ->sortable(),
                 TextColumn::make('price')
                     ->label('Precio')
-                    ->sortable()
-                    ->formatStateUsing(fn ($state) => number_format(((int) $state) / 100, 2, '.', ',')),
+                    ->sortable(query: fn ($query, $direction) => $query->orderBy('price', $direction))
+                    ->formatStateUsing(function ($state) {
+                        if ($state instanceof \Money\Money) {
+                            $state = (int) $state->getAmount(); // centavos
+                        }
+                        return number_format(((int) ($state ?? 0)) / 100, 2, '.', ',');
+                    }),
+
                 TextColumn::make('compare_at_price')
                     ->label('Antes')
                     ->toggleable(isToggledHiddenByDefault: true)
-                    ->formatStateUsing(fn ($state) => $state ? number_format(((int) $state) / 100, 2, '.', ',') : '—'),
+                    ->formatStateUsing(function ($state) {
+                        if ($state === null) return '—';
+
+                        if ($state instanceof \Money\Money) {
+                            $state = (int) $state->getAmount(); // centavos
+                        }
+
+                        $cents = (int) $state;
+                        return $cents > 0 ? number_format($cents / 100, 2, '.', ',') : '—';
+                    }),
                 TextColumn::make('is_active')
                     ->label('Estado')
                     ->sortable()
