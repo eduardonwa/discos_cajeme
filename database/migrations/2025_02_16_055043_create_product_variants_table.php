@@ -16,8 +16,14 @@ return new class extends Migration
             $table->id();
             $table->foreignIdFor(Product::class)->constrained()->onDelete('cascade');
             $table->unsignedInteger('total_variant_stock')->default(0);
-            $table->boolean('is_active')->default(true);
-            $table->timestamps();
+            $table->string('title')->default('Default title');
+            $table->unsignedInteger('price')->default(0);
+            $table->unsignedInteger('compare_at_price')->nullable();
+            $table->boolean('is_default')->default(false);
+            $table->boolean('is_active')->default(false);
+            $table->timestamps();                    
+            $table->index(['product_id', 'is_active']);
+            $table->index(['product_id', 'is_default']);
         });
     }
 

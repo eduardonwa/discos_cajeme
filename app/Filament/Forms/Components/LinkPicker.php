@@ -36,7 +36,10 @@ class LinkPicker
                 ->options(function (): array {
                     return Product::query()
                         ->where('published', true)
-                        ->where('total_product_stock', '>', 0)
+                        ->whereHas('variants', function ($q) {
+                            $q->where('is_active', true)
+                              ->where('total_variants_stock', '>', 0);
+                        })
                         ->orderBy('name')
                         ->limit(10)
                         ->get()
@@ -55,7 +58,10 @@ class LinkPicker
                 ->getSearchResultsUsing(function (string $search): array {
                     return Product::query()
                         ->where('published', true)
-                        ->where('total_product_stock', '>', 0)
+                        ->whereHas('variants', function ($q) {
+                            $q->where('is_active', true)
+                              ->where('total_variants_stock', '>', 0);
+                        })
                         ->where(function ($q) use ($search) {
                             $q->where('name', 'like', "%{$search}%")
                               ->orWhere('slug', 'like', "%{$search}%");
@@ -108,7 +114,7 @@ class LinkPicker
                 })
                 ->getOptionLabelUsing(function ($value): ?string {
                     if (! $value) return null;
-
+                    
                     return Collection::query()
                         ->where('slug', $value)
                         ->value('name') ?? $value;

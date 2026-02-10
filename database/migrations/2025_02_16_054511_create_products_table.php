@@ -17,8 +17,6 @@ return new class extends Migration
             $table->string('slug')->unique();
             $table->text('description');
             $table->string('cover_img_alt')->nullable();
-            $table->unsignedInteger('price');
-            $table->unsignedInteger('compare_at_price')->nullable();
             $table->string('promo_label')->nullable();
             $table->boolean('published')->default(false);
             $table->boolean('buy_now_enabled')->default(false);

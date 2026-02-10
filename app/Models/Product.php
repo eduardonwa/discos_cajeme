@@ -33,6 +33,27 @@ class Product extends Model implements HasMedia
         'low_stock_threshold'   => 'integer',
     ];
 
+    protected static function booted()
+    {
+        static::created(function (Product $product) {
+            if ($product->variants()->exists()) {
+                return;
+            }
+
+            $product->variants()->create([
+                'title' => 'Default title',
+                'price' => 0,
+                'total_variant_stock' => 0,
+                'compare_at_price' => null,
+                'is_default' => true,
+                'is_active' => false,
+            ]);
+
+            // cache/status del producto
+            $product->updateStockFromVariants();
+        });
+    }
+
     /* ─────────────────────────────────────────
      | Relaciones
      ───────────────────────────────────────── */
@@ -82,7 +103,6 @@ class Product extends Model implements HasMedia
     /* ─────────────────────────────────────────
      | Inventory (helpers/attrs)
      ───────────────────────────────────────── */
-
     public function getRouteKeyName(): string
     {
         return 'slug';
@@ -98,7 +118,9 @@ class Product extends Model implements HasMedia
     public function getComputedTotalStockAttribute(): int
     {
         if ($this->getHasVariantsAttribute()) {
-            return (int) ($this->variants()->sum('total_variant_stock') ?? 0);
+            return (int) $this->variants()
+                ->where('is_active', true)
+                ->sum('total_variant_stock');
         }
         return (int) ($this->total_product_stock ?? 0);
     }
@@ -121,13 +143,16 @@ class Product extends Model implements HasMedia
             return;
         }
 
-        $sum = (int) $this->variants()->sum('total_variant_stock');
+        $sum = (int) $this->variants()
+            ->where('is_active', true)
+            ->sum('total_variant_stock');
+
         if ((int) $this->total_product_stock !== $sum) {
             $this->total_product_stock = $sum;
             $this->save();
         }
     }
-
+    
     // Actualiza estado de stock según umbrales (usa computed)
     public function refreshStockStatus(): void
     {
@@ -151,9 +176,11 @@ class Product extends Model implements HasMedia
         DB::transaction(function () use ($quantity) {
             // bloquea la fila para consistencia
             $fresh = self::whereKey($this->id)->lockForUpdate()->first();
+            
             if ($fresh->total_product_stock < $quantity) {
                 throw new \RuntimeException('No hay stock suficiente.');
             }
+
             $fresh->decrement('total_product_stock', $quantity);
             $fresh->refreshStockStatus();
         });

@@ -59,9 +59,8 @@ class ProductVariant extends Model implements HasMedia
                 'total_variant_stock' => max($this->total_variant_stock - $quantity, 0)
             ]);
             
-            // sincronizza y recalcula el padre
+            // sincroniza y recalcula el padre
             $this->product->updateStockFromVariants();
-            $this->product->refreshStockStatus();
         });
     }
 
