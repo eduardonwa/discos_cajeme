@@ -39,4 +39,11 @@ class Order extends Model
     {
         return $this->belongsTo(Coupon::class, 'coupon_code', 'code');
     }
+
+    public function getCustomerEmailAttribute(): ?string
+    {
+        return $this->user_email
+            ?? $this->guest_email
+            ?? $this->user?->email;
+    }
 }

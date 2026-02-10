@@ -28,16 +28,6 @@
     pointer-events: none;
   }
 
-  &[data-type="hero-dot"] {
-    width: 89px;
-    height: 13px;
-    padding: 0;
-
-    &:focus {
-      outline: 0;
-    }
-  }
-
   &[data-type="primary"] {
     color: $color-neutral-100;
     background: $color-neutral-900;
@@ -70,6 +60,22 @@
     }
   }
 
+  &[data-type="ghost"] {
+    text-decoration: underline;
+    background: transparent;
+    padding: $size-2;
+  }
+  
+  &[data-type="hero-dot"] {
+    width: 89px;
+    height: 13px;
+    padding: 0;
+
+    &:focus {
+      outline: 0;
+    }
+  }
+
   &[data-type="cta"] {
     background: $color-accent-500;
     color: $color-neutral-900;
@@ -89,6 +95,14 @@
 
     &:focus {
       outline-color: $color-accent-100;
+    }
+  }
+
+  &[data-type="checkout"] {
+    background: $color-accent-400;
+
+    &:hover {
+      background: $color-accent-600;
     }
   }
 }

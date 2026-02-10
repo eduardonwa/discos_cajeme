@@ -39,6 +39,11 @@ class Cart extends Component
         ]);
     }
 
+    protected function itemUnitAmount($item): int
+    {
+        return (int) ($item->variant?->final_price?->getAmount() ?? 0);
+    }
+
     public function coupon()
     {
         return $this->cart->coupon_code
@@ -74,11 +79,15 @@ class Cart extends Component
                 // Si el cupón es para productos individuales, aplicar el descuento a cada producto
                 $total = 0;
                 foreach ($this->cart->items as $item) {
+                    $price = $this->itemUnitAmount($item);
+                    $qty   = (int) $item->quantity;
+
+                    $productId = $item->variant?->product?->id;
                     // Buscar si el cupón aplica a este producto
-                    if ($coupon->products->contains($item->product_id)) {
-                        $total += $coupon->applyDiscount($item->product->price->getAmount() * $item->quantity, $subtotal);
+                    if ($productId && $coupon->products->contains($productId)) {
+                        $total += $coupon->applyDiscount($price * $qty, $subtotal);
                     } else {
-                        $total += $item->product->price->getAmount() * $item->quantity;
+                        $total += $price * $qty;
                     }
                 }
                 return $total;
@@ -92,7 +101,7 @@ class Cart extends Component
     public function cartSubtotal()
     {
         return $this->cart->items->sum(fn($item) =>
-            $item->product->price->getAmount() * $item->quantity
+            $this->itemUnitAmount($item) * $item->quantity
         );
     }
 
@@ -101,9 +110,7 @@ class Cart extends Component
     {
         if (!$coupon = $this->coupon()) return null;
 
-        $subtotal = $this->cart->items->sum(fn($item) =>
-            $item->product->price->getAmount() * $item->quantity
-        );
+        $subtotal = $this->cartSubtotal();
 
         return [
             'code' => $coupon->code,
@@ -191,7 +198,7 @@ class Cart extends Component
     public function checkout(CreateStripeCheckoutSession $checkoutSession)
     {
         try {
-            if ($this->cart->total->getAmount() < 1000) {
+            if ($this->totalWithDiscount() < 1000) {
                 throw new MinimumPurchaseAmountException();
             }
     

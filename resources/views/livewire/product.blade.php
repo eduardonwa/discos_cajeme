@@ -5,11 +5,6 @@
         @endif
 
         <h2 class="name | ff-semibold">{{ $this->product->name }}</h2>
-        <div class="reviews-summary" aria-live="polite">
-            <span class="reviews__stars" aria-hidden="true">★★★★★</span>
-            <span class="sr-only">Calificación promedio 4.7 de 5 basada en 128 reseñas</span>
-        </div>
-        <hr line-type="inner" data-device="d">
     </header>
 
     <x-ui.product-gallery 
@@ -54,8 +49,8 @@
             </div>
         @endif
 
-        <x-ui.price-tag 
-            :finalPrice="$this->product->price" 
+        <x-ui.price-tag
+            :finalPrice="$this->finalPrice" 
             :originalPrice="$this->originalPrice"
         />
         
@@ -73,24 +68,24 @@
             <div class="tabs">
                 <button
                     @click="tab = 'details'"
-                    class="button"
-                    data-type="tab"
+                    class="badge"
+                    data-type="product-tab"
                     :class="tab === 'details' ? 'tabs--active' : ''"
                     :aria-expanded="tab === 'details'"
                 >Detalles del producto</button>
 
                 <button
                     @click="tab = 'envio'"
-                    class="button"
-                    data-type="tab"
+                    class="badge"
+                    data-type="product-tab"
                     :class="tab === 'envio' ? 'tabs--active' : ''"
                     :aria-expanded="tab === 'envio'"
                 >Envío y manipulación</button>
 
                 <button
                     @click="tab = 'description'"
-                    class="button"
-                    data-type="tab"
+                    class="badge"
+                    data-type="product-tab"
                     :class="tab === 'description' ? 'tabs--active' : ''"
                     :aria-expanded="tab === 'description'"
                 >Descripción</button>
@@ -123,7 +118,7 @@
     <aside class="product__action" aria-labelledby="purchase-heading">
         <h2 id="purchase-heading" class="sr-only">Comprar {{ $this->product->name }}</h2>
         
-        <p class="price">{{ $this->product->price }}</p>
+        <p class="price">{{ $this->finalPrice }}</p>
 
         {{-- disponibilidad --}}
         <p class="stock {{ $this->availableStock > 0 ? 'text-success' : 'text-error' }}">
@@ -144,7 +139,7 @@
 
         <button
             class="button"
-            data-type="cart"
+            data-type="primary"
             wire:click="addToCart"
             @disabled($this->availableStock < 1)"
         >

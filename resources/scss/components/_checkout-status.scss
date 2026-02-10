@@ -1,19 +1,16 @@
 @use "../abstracts" as *;
 
-.checkout-status {    
+.checkout-status {
+    margin-block: $size-5;
+    
     header {
         display: flex;
         flex-direction: column;
         gap: $size-4;
 
         .heading-3 { text-align: center; }
+        .button { align-self: center; }
         p { text-align: center; }
-
-        .button {
-            align-self: center;
-            border: 1px solid $color-neutral-900;
-            background: $color-neutral-000;
-        }
     }
 
     &__ticket {
@@ -102,12 +99,7 @@
     }
 
     &__order {
-        border: 1px solid $color-neutral-500;
         margin-block-end: $size-8;
-
-        @include mq(large) {
-            border: 1px solid transparent;
-        }
 
         .guest, .auth {
             display: flex;
@@ -118,5 +110,15 @@
         }
 
         .guest .button { padding: $size-2 $size-11; }
+
+        .button[data-type="primary"] {
+            width: 100%;
+            padding: $size-3;
+
+            @include mq(medium) {
+                width: fit-content;
+                padding: $size-3 $size-12;
+            }
+        }
     }
 }

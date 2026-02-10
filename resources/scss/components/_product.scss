@@ -247,15 +247,14 @@
                 scrollbar-width: none;
                 -ms-overflow-style: none;
 
-                @include mq(large) {
-                    display: none;
-                }
+                @include mq(large) { display: none; }
 
                 &--active {
-                    background: $color-neutral-300;
-                    color: $color-neutral-900;
+                    background: $color-accent-300;
+                    color: $color-accent-900;
                     font-family: $font-family-semibold;
-                    border: 2px solid $color-neutral-900;
+                    border: 1px solid $color-accent-600;
+                    cursor: pointer;
                 }
             }
 
@@ -386,9 +385,7 @@
             }
         }
         
-        .button[data-type="cart"] {
-            width: 100%;
-        }
+        .button[data-type="primary"] { width: 100%; }
     }
 
     &__reviews {

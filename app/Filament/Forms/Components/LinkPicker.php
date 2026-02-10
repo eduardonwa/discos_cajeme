@@ -38,7 +38,7 @@ class LinkPicker
                         ->where('published', true)
                         ->whereHas('variants', function ($q) {
                             $q->where('is_active', true)
-                              ->where('total_variants_stock', '>', 0);
+                              ->where('total_variant_stock', '>', 0);
                         })
                         ->orderBy('name')
                         ->limit(10)
@@ -60,7 +60,7 @@ class LinkPicker
                         ->where('published', true)
                         ->whereHas('variants', function ($q) {
                             $q->where('is_active', true)
-                              ->where('total_variants_stock', '>', 0);
+                              ->where('total_variant_stock', '>', 0);
                         })
                         ->where(function ($q) use ($search) {
                             $q->where('name', 'like', "%{$search}%")

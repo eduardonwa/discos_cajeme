@@ -264,14 +264,14 @@ class HandleCheckoutSessionCompleted
                 $cart->items()->delete();
                 $cart->delete();
 
-                if ($user) {
-                    Mail::to($user)->send(new OrderConfirmation($order));
-                    $user->notify(new NewOrderNotification($order));
-                } else {
-                    $guestEmail = $order->guest_email ?? null;
-                    throw_if(! $guestEmail, new \RuntimeException('Order guest sin email para confirmación.'));
-                    Mail::to($guestEmail)->send(new OrderConfirmation($order));
-                }
+                throw_if(
+                    ! $order->customer_email,
+                    new \RuntimeException('Orden sin email para confirmación.')
+                );
+
+                Mail::to($order->customer_email)->send(
+                    new OrderConfirmation($order)
+                );
 
                 \Log::info("$trace DONE", [
                     'order_id' => $order->id ?? null,

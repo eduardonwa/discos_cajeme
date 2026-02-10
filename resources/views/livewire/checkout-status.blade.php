@@ -2,7 +2,10 @@
     @if ($this->order)
         <header>
             <h2 class="heading-3">¡Gracias por tu compra! (#{{ $this->order->id }})</h2>
-            <p class="fs-500">Recibirás un correo de confirmación. Si no tienes cuenta, guarda este ticket como comprobante.</p>
+            <p class="fs-500">
+                Recibirás un correo de confirmación en <span class="ff-bold">{{ $this->order->customer_email }}</span>.
+                Si no tienes cuenta, guarda este ticket como comprobante.
+            </p>
             <button type="button" data-type="ghost" class="button no-print" onclick="window.print()">
                 Imprimir / Guardar PDF
             </button>
@@ -49,15 +52,15 @@
             </dl>
         </main>
 
-        <section class="checkout-status__order">
+        <section class="checkout-status__order | no-print">
             @auth
                 <div class="auth">
-                    <a href="{{ route('my-orders') }}" class="underline">Tu recibo de compra</a>
+                    <a href="{{ route('my-orders') }}" class="button" data-type="primary">Ver órdenes</a>
                 </div>
             @else
                 <div class="guest | no-print">
                     <p class="fs-500">¿Quieres ver tu historial? Crea una cuenta</p>
-                    <a class="button" data-type="cart" href="{{ route('register') }}">Crear cuenta</a>
+                    <a class="button" data-type="primary" href="{{ route('register') }}">Crear cuenta</a>
                 </div>
             @endauth
     @else

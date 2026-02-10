@@ -19,4 +19,8 @@
         border: 0;
         cursor: pointer;
     }
+
+    &[data-type="product-tab"] {
+        border: 1px solid $color-neutral-500;
+    }
 }
