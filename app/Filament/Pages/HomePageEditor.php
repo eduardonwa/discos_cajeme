@@ -24,6 +24,7 @@ use Filament\Notifications\Notification;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Placeholder;
 use App\Filament\Forms\Components\LinkPicker;
+use Filament\Forms\Components\Group;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 
@@ -306,49 +307,33 @@ class HomePageEditor extends Page implements HasForms
                         ->columnSpan(12)
                         ->extraAttributes([
                             'class' => 'font-bold',
-                            'style' => 'font-size: 2.2rem;'
+                            'style' => 'font-size: 2.2rem;',
                         ]),
-                    Grid::make(1)
-                        ->columnSpan([
-                            'default' => 12,
-                            'lg' => 6
+                    Grid::make()
+                        ->columnSpan(12)
+                        ->columns([
+                            'default' => 1,
+                            'lg' => 2,
                         ])
                         ->schema([
-                            SpatieMediaLibraryFileUpload::make('cta_media')
-                                ->label('Imagen')
-                                ->collection('home_cta_img')
-                                ->image(),
-                            TextInput::make('cta_bg_img_alt')
-                                ->label('Alt')
-                                ->maxLength(255),
-                        ]),
-                    Grid::make(1)
-                        ->columnSpan([
-                            'default' => 12,
-                            'lg' => 6,
-                        ])
-                        ->schema([
-                            Tabs::make('CTA')
-                                ->tabs([
-                                    Tab::make('Copy')
-                                        ->schema([
-                                            TextInput::make('cta_header')
-                                                ->label('Encabezado')
-                                                ->required()
-                                                ->maxLength(255),
-                                            Textarea::make('cta_description')
-                                                ->label('Descripción')
-                                                ->rows(3),
-                                        ]),
-                                    Tab::make('Botón')
-                                        ->schema([
-                                            TextInput::make('cta_button')
-                                                ->label('Texto del botón')
-                                                ->required()
-                                                ->maxLength(255),
-                                            ...LinkPicker::schema('cta_button_link')
-                                        ])
-                                ])                            
+                            Group::make()
+                                ->schema([
+                                    TextInput::make('cta_header')
+                                        ->label('Encabezado')
+                                        ->required()
+                                        ->maxLength(255),
+                                    Textarea::make('cta_description')
+                                        ->label('Descripción')
+                                        ->rows(3),
+                                ]),
+                            Group::make()
+                                ->schema([
+                                    TextInput::make('cta_button')
+                                        ->label('Texto del botón')
+                                        ->required()
+                                        ->maxLength(255),
+                                    ...LinkPicker::schema('cta_button_link'),
+                                ]),
                         ]),
                 ])
                 ->extraAttributes([
@@ -356,7 +341,7 @@ class HomePageEditor extends Page implements HasForms
                         margin: 2rem 0 4rem 0;
                         padding-bottom: 4rem;
                         border-bottom: 1px solid #ececec71;
-                    '
+                    ',
                 ]),
 
                 // 4) LATEST PRODUCTS

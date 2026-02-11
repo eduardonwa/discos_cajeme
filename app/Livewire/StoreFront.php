@@ -30,13 +30,11 @@ class StoreFront extends Component
     public string $latestProdsHeader = '';
     
     public bool $hasCta = false;
-    public ?string $ctaImage = null;
     public array $cta = [
         'header' => '',
         'description' => '',
         'button' => '',
         'button_link' => '',
-        'bg_img_alt' => '',
     ];
 
     private const MAX_RAIL_COLLECTIONS = 8;
@@ -108,17 +106,14 @@ class StoreFront extends Component
         $this->cta['header'] = $home->cta_header ?? '';
         $this->cta['description'] = $home->cta_description ?? '';
         $this->cta['button'] = $home->cta_button ?? '';
-        $this->cta['button_link'] = $home->cta_button_link ?? '';
         $this->cta['button_link'] = ResolveLink::href(
             $home->cta_button_link ?? null
         );
-        $this->cta['bg_img_alt'] = $home->cta_bg_img_alt ?? '';
-        $this->ctaImage = $home?->getFirstMediaUrl('home_cta_img');
+
         $this->hasCta = 
             filled($this->cta['header']) ||
             filled($this->cta['description']) ||
-            filled($this->cta['button']) ||
-            filled($this->ctaImage);
+            filled($this->cta['button']);
 
         /* SPOTLIGHT */
         $this->spotlight = $home->spotlight_data;

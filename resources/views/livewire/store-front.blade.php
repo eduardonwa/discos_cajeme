@@ -6,7 +6,7 @@
 
     <x-latest-products :products="$products" />
 
-    <x-home-cta :cta="$cta" :ctaImage="$ctaImage" />
+    <x-home-cta :cta="$cta" />
 
     <x-spotlight :spotlight="$spotlight" />
 
