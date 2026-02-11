@@ -248,14 +248,6 @@
                 -ms-overflow-style: none;
 
                 @include mq(large) { display: none; }
-
-                &--active {
-                    background: $color-accent-300;
-                    color: $color-accent-900;
-                    font-family: $font-family-semibold;
-                    border: 1px solid $color-accent-600;
-                    cursor: pointer;
-                }
             }
 
             .content {

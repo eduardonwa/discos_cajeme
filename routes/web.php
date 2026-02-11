@@ -1,9 +1,9 @@
 <?php
 
-use App\Http\Controllers\CollectionController;
 use App\Livewire\SearchPage;
-use App\Mail\OrderConfirmation;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\BuyNowController;
+use App\Http\Controllers\CollectionController;
 
 Route::get('/', \App\Livewire\StoreFront::class)->name('home');
 Route::get('/product/{product}', \App\Livewire\Product::class)->name('product');
@@ -11,14 +11,9 @@ Route::get('/cart', \App\Livewire\Cart::class)->name('cart');
 Route::get('/collections/all', [CollectionController::class, 'index'])->name('all-collections');
 Route::get('/collections/{collection}', \App\Livewire\Collections::class)->name('collection');
 Route::get('/search', SearchPage::class)->name('search');
-
-Route::get('/preview', function() {
-    $order = \App\Models\Order::with('items.variant.attributes')->first();
-
-    return new OrderConfirmation($order);
-});
-
 Route::get('/guest/checkout-status', \App\Livewire\CheckoutStatus::class)->name('guest.checkout-status');
+
+Route::post('/buy-now', BuyNowController::class)->name('buy-now');
 
 Route::middleware([
     'auth:sanctum',

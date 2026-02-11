@@ -66,29 +66,29 @@
             <hr line-type="inner" data-device="d">
 
             <div class="tabs">
-                <button
+                <span
                     @click="tab = 'details'"
                     class="badge"
                     data-type="product-tab"
-                    :class="tab === 'details' ? 'tabs--active' : ''"
+                    :class="tab === 'details' ? 'badge--active' : ''"
                     :aria-expanded="tab === 'details'"
-                >Detalles del producto</button>
+                >Detalles del producto</span>
 
-                <button
+                <span
                     @click="tab = 'envio'"
                     class="badge"
                     data-type="product-tab"
-                    :class="tab === 'envio' ? 'tabs--active' : ''"
+                    :class="tab === 'envio' ? 'badge--active' : ''"
                     :aria-expanded="tab === 'envio'"
-                >Envío y manipulación</button>
+                >Envío y manipulación</span>
 
-                <button
+                <span
                     @click="tab = 'description'"
                     class="badge"
                     data-type="product-tab"
-                    :class="tab === 'description' ? 'tabs--active' : ''"
+                    :class="tab === 'description' ? 'badge--active' : ''"
                     :aria-expanded="tab === 'description'"
-                >Descripción</button>
+                >Descripción</span>
             </div>
 
             <div class="content">
@@ -145,6 +145,17 @@
         >
             {{ $this->availableStock > 0 ? 'Añadir al carrito' : 'AGOTADO' }}
         </button>
+
+        <form method="POST" action="{{ route('buy-now') }}">
+            @csrf
+            <input type="hidden" name="variant_id" value="{{ $this->selectedVariant->id }}">
+            <input type="hidden" name="qty" value="1">
+            <button type="submit" class="button" data-type="buy-now"
+                @disabled(!$this->selectedVariant)
+            >
+                Comprar ahora
+            </button>
+        </form>
 
         {{-- cupones --}}
         @unless($this->product->total_product_stock < 0)

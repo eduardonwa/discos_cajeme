@@ -5,15 +5,15 @@
     <div class="home-collections__tabs">
         <div class="buttons">
             @foreach ($collections as $tab)
-                <button
+                <span
                     type="button"
                     wire:click="setActiveTab('{{ $tab->slug }}')"
                     wire:key="tab-btn-{{ $tab->slug }}"
-                    class="badge {{ $activeTab === $tab->slug ? 'active-tab' : '' }}"
+                    class="badge {{ $activeTab === $tab->slug ? 'badge--active' : '' }}"
                     data-type="h-collection"
                 >
                     {{ $tab->name }}
-                </button>
+                </span>
             @endforeach
         </div>
     </div>

@@ -4,9 +4,11 @@ namespace App\Actions\Webshop;
 
 use Stripe\Stripe;
 use App\Models\Cart;
+use App\Models\User;
 use RuntimeException;
 use App\Models\Coupon;
 use App\Models\CartItem;
+use App\Models\ProductVariant;
 use Illuminate\Database\Eloquent\Collection;
 use Stripe\Checkout\Session as StripeCheckoutSession;
 
@@ -32,7 +34,7 @@ class CreateStripeCheckoutSession
                 'line_items' => $lineItems,
                 'automatic_tax' => ['enabled' => false],
                 'shipping_address_collection' => [
-                    'allowed_countries' => ['US', 'MX'],
+                    'allowed_countries' => ['MX'],
                 ],
                 'success_url' => route('guest.checkout-status') . '?session_id={CHECKOUT_SESSION_ID}',
                 'cancel_url' => route('cart'),
@@ -59,7 +61,7 @@ class CreateStripeCheckoutSession
                     ],
                     // activar/desactivar esta opción si la tienda realiza envios a otro pais
                     'shipping_address_collection' => [
-                        'allowed_countries' => ['US', 'MX']
+                        'allowed_countries' => ['MX']
                     ],
                     'success_url' => route('checkout-status') . '?session_id={CHECKOUT_SESSION_ID}',
                     'cancel_url' => route('cart'),
@@ -157,5 +159,105 @@ class CreateStripeCheckoutSession
         ]);
 
         return $formattedItems;
+    }
+
+    public function createBuyNow(ProductVariant $productVariant, int $qty = 1, ?User $user = null, ?Coupon $coupon = null)
+    {
+        Stripe::setApiKey(config('services.stripe.secret'));
+
+        $qty = max(1, min($qty, 10));
+        $lineItems = $this->formatSingleVariant($productVariant, $qty, $coupon);
+
+        $successRoute = $user ? 'checkout-status' : 'guest.checkout-status';
+
+        $metadata = [
+            'flow' => 'buy_now',
+            'coupon_code' => $coupon?->code,
+            'discount_type' => $coupon?->discount_type,
+            'discount_value' => $coupon?->discount_value,
+            'user_id' => $user?->id,
+            'guest_session_id' => $user ? null : session()->getId(),
+        ];
+
+        // Stripe metadata: mejor sin nulls
+        $metadata = array_filter($metadata, fn($v) => !is_null($v));
+
+        $payload = [
+            'mode' => 'payment',
+            'line_items' => $lineItems,
+            'automatic_tax' => ['enabled' => false],
+            'shipping_address_collection' => ['allowed_countries' => ['US', 'MX']],
+            'success_url' => route($successRoute) . '?session_id={CHECKOUT_SESSION_ID}',
+            'cancel_url' => url()->previous(),
+            'metadata' => $metadata,
+        ];
+
+        // opcional: prellenar email si está logueado
+        if ($user?->email) {
+            $payload['customer_email'] = $user->email;
+        }
+
+        $session = StripeCheckoutSession::create($payload);
+
+        return redirect()->away($session->url);
+    }
+
+    private function formatSingleVariant(ProductVariant $productVariant, int $qty, ?Coupon $coupon)
+    {
+        $taxRate = 0.16;
+
+        $productVariant->loadMissing('product', 'attributes.attribute');
+
+        $basePrice = $productVariant->price->getAmount(); // centavos
+        $subtotal = $basePrice * $qty;
+
+        $discountedSubtotal = $coupon && $coupon->isValid()
+            ? $coupon->applyDiscount($subtotal, $subtotal)
+            : $subtotal;
+
+        // precio unitario con descuento proporcional (en este caso es directo)
+        $discountRatio = $subtotal > 0 ? $discountedSubtotal / $subtotal : 1;
+        $unitDiscounted = (int) round($basePrice * $discountRatio);
+
+        $desc = $productVariant->attributes->isNotEmpty()
+            ? $productVariant->attributes->map(fn($av) => "{$av->attribute->key}: {$av->value}")->implode(' / ')
+            : 'Variante estándar';
+
+        $items = [[
+            'price_data' => [
+                'currency' => 'MXN',
+                'unit_amount' => $unitDiscounted,
+                'product_data' => [
+                    'name' => $productVariant->product->name,
+                    'description' => $desc,
+                    'metadata' => [
+                        'product_variant_id' => $productVariant->id,
+                        'product_id' => $productVariant->product->id,
+                        'original_price' => $basePrice,
+                        'discounted_price' => $unitDiscounted,
+                        'coupon_code' => $coupon?->code,
+                    ],
+                ],
+            ],
+            'quantity' => $qty,
+        ]];
+
+        $totalTax = (int) round($discountedSubtotal * $taxRate);
+        if ($totalTax > 0) {
+            $items[] = [
+                'price_data' => [
+                    'currency' => 'MXN',
+                    'unit_amount' => $totalTax,
+                    'product_data' => [
+                        'name' => 'IVA (16%)',
+                        'description' => 'Impuesto al Valor Agregado',
+                        'metadata' => ['is_tax' => true],
+                    ],
+                ],
+                'quantity' => 1,
+            ];
+        }
+
+        return $items;
     }
 }

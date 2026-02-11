@@ -11,16 +11,16 @@
     white-space: nowrap;
     width: $badge-width;
     transition: all 250ms ease;
+    cursor: pointer;
+    border: 1px solid $color-neutral-500;
 
     svg, img { width: 1em; height: 1em; }
 
-    &[data-type="h-collection"] {
-        background: transparent;
-        border: 0;
+    &--active {
+        background: $color-accent-300;
+        color: $color-accent-900;
+        font-family: $font-family-semibold;
+        border: 1px solid $color-accent-600;
         cursor: pointer;
-    }
-
-    &[data-type="product-tab"] {
-        border: 1px solid $color-neutral-500;
     }
 }

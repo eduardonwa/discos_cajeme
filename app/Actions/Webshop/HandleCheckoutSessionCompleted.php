@@ -64,6 +64,8 @@ class HandleCheckoutSessionCompleted
                 $subtotal = 0;
 
                 // 2) Resolver user/cart desde metadata (falla temprano si falta algo)
+                $flow = $session->metadata->flow ?? 'cart_checkout';
+
                 $userId = $session->metadata->user_id ?? null;
                 $cartId = $session->metadata->cart_id ?? null;
 
@@ -83,8 +85,12 @@ class HandleCheckoutSessionCompleted
                     throw_if(!$user, new \RuntimeException('User no encontrado desde metadata'));
                 }
 
-                throw_if(!$cart, new \RuntimeException('Cart no encontrado desde metadata'));
+                // throw_if(!$cart, new \RuntimeException('Cart no encontrado desde metadata'));
                 throw_if(!$guestEmail && !$user, new \RuntimeException('Guest sin email en Stripe'));
+
+                if ($flow !== 'buy_now') {
+                    throw_if(!$cart, new \RuntimeException('Cart no encontrado desde metadata'));
+                }
 
                 // 3) Descontar stock por SKU (ProductVariant) usando metadata de Stripe Product
                 foreach ($session->line_items->data as $lineItem) {
@@ -261,8 +267,11 @@ class HandleCheckoutSessionCompleted
                 $order->items()->saveMany($orderItems);
 
                 // 6) Limpiar carrito y notificar
-                $cart->items()->delete();
-                $cart->delete();
+                if ($cart) {
+                    \Log::info("$trace CART CLEARED", ['cart_id' => $cart->id]);
+                    $cart->items()->delete();
+                    $cart->delete();
+                }
 
                 throw_if(
                     ! $order->customer_email,

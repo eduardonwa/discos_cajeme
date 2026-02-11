@@ -71,9 +71,7 @@
     height: 13px;
     padding: 0;
 
-    &:focus {
-      outline: 0;
-    }
+    &:focus { outline-offset: 2px; }
   }
 
   &[data-type="cta"] {
