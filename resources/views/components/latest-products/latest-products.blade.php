@@ -1,7 +1,5 @@
 <div class="container" data-type="wide">
-
     <h2 class="heading-2">{{ $this->latestProdsHeader }}</h2>
-    
     <section class="latest-products">
         @foreach ($latestItems as [
             'product' => $product,
@@ -16,7 +14,7 @@
                         <span class="badge" data-type="variant-attribute">{{ $variant->title }}</span>
                     @endif
                     
-                    <div class="price">    
+                    <div class="price">
                         @if($compareAt && $compareAt > $price)
                             <p class="line-through">
                                 @money($compareAt)
@@ -32,7 +30,6 @@
                         src="{{ $product->getFirstMediaUrl('featured', 'md_thumb') }}"
                         alt="{{ $product->name }}"
                     >
-                    <div class="overlay"></div>
                 </div>
 
                 <div class="actions">
