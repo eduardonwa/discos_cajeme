@@ -27,7 +27,6 @@
     
     .price {
       font-size: $font-size-600;
-      font-family: $font-family-semibold;
     }
   }
   
@@ -68,7 +67,7 @@
 
       @include mq(large) { z-index: 1; }
 
-      .overlay {
+/*       .overlay {
         display: none;
   
         @include mq(large) {
@@ -91,7 +90,20 @@
         }
       }
 
-      &:hover .overlay{ opacity: 1; }
+      &:hover .overlay{ opacity: 1; } */
+    }
+
+    .actions {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: $size-4;
+
+      form {
+        .ui-icon-btn {
+          width: 100%;
+        }
+      }
     }
   }
 

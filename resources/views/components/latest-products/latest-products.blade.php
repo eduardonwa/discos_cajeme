@@ -32,32 +32,34 @@
                         src="{{ $product->getFirstMediaUrl('featured', 'md_thumb') }}"
                         alt="{{ $product->name }}"
                     >
-                    <div class="overlay">
-                        <x-icon 
-                            href="{{ route('product', $product->slug) }}"
-                            class="button"
-                            data-type="secondary"
-                            label="Ver producto"
-                        >
-                            <x-ui.icons.view />
-                        </x-icon>
-                        
-                        <form method="POST" action="{{ route('buy-now') }}">
-                            @csrf
-                            <input type="hidden" name="variant_id" value="{{ $variant?->id }}">
-                            <input type="hidden" name="qty" value="1">
+                    <div class="overlay"></div>
+                </div>
 
-                            <x-icon
-                                type="submit"
-                                class="button"
-                                data-type="buy-now"
-                                :disabled="(!$variant)"
-                                label="Comprar ahora"
-                            >
-                                <x-ui.icons.thin-arrow />
-                            </x-icon>
-                        </form>
-                    </div>
+                <div class="actions">
+                    <x-icon
+                        href="{{ route('product', $product->slug) }}"
+                        class="button"
+                        data-type="primary"
+                        label="Ver producto"
+                    >
+                        <x-ui.icons.view />
+                    </x-icon>
+                    
+                    <form method="POST" action="{{ route('buy-now') }}">
+                        @csrf
+                        <input type="hidden" name="variant_id" value="{{ $variant?->id }}">
+                        <input type="hidden" name="qty" value="1">
+    
+                        <x-icon
+                            type="submit"
+                            class="button"
+                            data-type="buy-now"
+                            :disabled="(!$variant)"
+                            label="Comprar ahora"
+                        >
+                            <x-ui.icons.thin-arrow />
+                        </x-icon>
+                    </form>
                 </div>
             </div>
         @endforeach

@@ -2,22 +2,27 @@
 
 namespace App\Filament\Resources;
 
-use Filament\Tables;
-use Filament\Forms\Form;
-use App\Models\Attribute;
-use Filament\Tables\Table;
-use App\Models\ProductVariant;
-use Filament\Resources\Resource;
-use Filament\Forms\Components\Grid;
-use Filament\Forms\Components\Toggle;
-use Filament\Forms\Components\KeyValue;
-use Filament\Tables\Actions\EditAction;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Placeholder;
+use App\Filament\Forms\Components\PriceReader;
 use App\Filament\Resources\ProductVariantResource\Pages;
-use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
+use App\Models\Attribute;
+use App\Models\ProductVariant;
+use Filament\Forms\Components\Actions;
+use Filament\Forms\Components\Actions\Action;
+use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\Group;
+use Filament\Forms\Components\KeyValue;
+use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
+use Filament\Forms\Form;
+use Filament\Resources\Resource;
+use Filament\Tables;
+use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class ProductVariantResource extends Resource
 {
@@ -39,6 +44,19 @@ class ProductVariantResource extends Resource
         return 'Variaciones de productos';
     }
 
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()
+            ->select([
+                'id',
+                'product_id',
+                'total_variant_stock',
+                'is_active',
+                'title',
+                'is_default'
+            ]);
+    }
+
     public static function form(Form $form): Form
     {
         return $form
@@ -52,14 +70,28 @@ class ProductVariantResource extends Resource
                                     ->collection('product-variant-image')
                                     ->image()
                             ])->columnSpan(1),
-
                         Grid::make(1)
                             ->schema([
+                                Group::make([
+                                    PriceReader::make('price', 'price_readonly')->label('Precio'),
+                                    PriceReader::make('compare_at_price', 'compare_at_price_readonly')->label('Precio "compare at"'),
+                                ])->columns(2),
                                 Placeholder::make('name')
                                     ->label('Producto')
                                     ->content(function ($record) {
                                         return $record->product->name; // desde la relación de "product" iteramos y obtenemos el nombre de los productos
                                     }),
+                                Actions::make([
+                                    Action::make('goToProduct')
+                                        ->label('Ir al producto')
+                                        ->color('info')
+                                        ->icon('heroicon-o-arrow-top-right-on-square')
+                                        ->url(fn ($record) => route(
+                                            'filament.admin.resources.products.edit',
+                                            $record->product->slug
+                                        ))
+                                        ->openUrlInNewTab(),
+                                ])->columns(1),
                                 KeyValue::make('attributes')
                                     ->label('Atributos')
                                     ->keyLabel('Nombre')

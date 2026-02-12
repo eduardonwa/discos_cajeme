@@ -8,9 +8,10 @@
 @php $defaultVariant = $product->defaultVariant(); @endphp
 
 <article {{ $attributes->class([
-  'card',
-  "card--{$variant}",
-  ]) }}
+      'card',
+      "card--{$variant}",
+    ])
+  }}
 >
   @if ($href)
     <a class="card__link no-decor" wire:navigate href="{{ $href }}">

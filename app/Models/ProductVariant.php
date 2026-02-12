@@ -2,15 +2,16 @@
 
 namespace App\Models;
 
-use Money\Money;
 use App\Casts\MoneyCast;
-use Spatie\Image\Enums\Fit;
 use App\Models\AttributeVariant;
-use Spatie\MediaLibrary\HasMedia;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Database\Eloquent\Model;
-use Spatie\MediaLibrary\InteractsWithMedia;
+use App\Models\Product;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
+use Money\Money;
+use Spatie\Image\Enums\Fit;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class ProductVariant extends Model implements HasMedia

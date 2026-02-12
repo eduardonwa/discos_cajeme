@@ -35,7 +35,7 @@ class Product extends Component
 
     protected $listeners = [
         'couponApplied'     => 'handleCouponApplied',
-        'productAddedToCart'=> 'updateStockInfo',
+        'productAddedToCart'=> 'updateStockInfo'
     ];
 
     protected function messages()
