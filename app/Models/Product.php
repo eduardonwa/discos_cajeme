@@ -2,9 +2,9 @@
 
 namespace App\Models;
 
-use Money\Money;
 use App\Casts\MoneyCast;
 use Spatie\Image\Enums\Fit;
+use App\Models\ProductVariant;
 use Spatie\MediaLibrary\HasMedia;
 use Illuminate\Support\Facades\App;
 use Illuminate\Database\Eloquent\Model;
@@ -102,6 +102,15 @@ class Product extends Model implements HasMedia
     public function getRouteKeyName(): string
     {
         return 'slug';
+    }
+
+    public function defaultVariant(): ?ProductVariant
+    {
+        return $this->variants
+            ->where('is_active', true)
+            ->where('total_variant_stock', '>', 0)
+            ->sortByDesc('is_default')
+            ->first();
     }
 
     public function sumActiveVariantStock(): int

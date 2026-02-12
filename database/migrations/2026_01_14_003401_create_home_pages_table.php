@@ -32,8 +32,8 @@ return new class extends Migration
             $table->text('cta_description')->nullable();
 
             // 4) LATEST PRODS
+            $table->json('latest_products')->nullable();
             $table->string('latest_prods_heading')->nullable();
-            $table->unsignedInteger('latest_prods_limit')->nullable()->default(10);
 
             // 5) SPOTLIGHT (featured)
             $table->foreignId('spotlight_product_id')->nullable()->constrained('products')->nullOnDelete();

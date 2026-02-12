@@ -1,8 +1,8 @@
 <div class="price">
     @if ($originalPrice)
-        <span class="price__original">{{ $originalPrice }}</span>
-        <span class="price__final">{{ $finalPrice }}</span>
+        <span class="line-through">@money($originalPrice)</span>
+        <span>@money($finalPrice)</span>
     @else
-        <span class="price__final">{{ $finalPrice }}</span>
+        <span>@money($finalPrice)</span>
     @endif
 </div>

@@ -84,6 +84,10 @@ class AppServiceProvider extends ServiceProvider
             return $formattedValue;
         });
 
+        Blade::directive('money', function ($expression) {
+            return "<?php echo \\App\\Helpers\\FormatMoney::format($expression); ?>";
+        });
+
         // slide over en vez de modal para crear nueva variante en ProductsResource
         CreateAction::configureUsing(function ($action) {
             return $action->slideOver();

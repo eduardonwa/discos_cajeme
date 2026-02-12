@@ -118,7 +118,7 @@
     <aside class="product__action" aria-labelledby="purchase-heading">
         <h2 id="purchase-heading" class="sr-only">Comprar {{ $this->product->name }}</h2>
         
-        <p class="price">{{ $this->finalPrice }}</p>
+        <p class="price">@money($this->finalPrice)</p>
 
         {{-- disponibilidad --}}
         <p class="stock {{ $this->availableStock > 0 ? 'text-success' : 'text-error' }}">
@@ -137,25 +137,27 @@
             'label'    => 'Cantidad',
         ])
 
-        <button
-            class="button"
-            data-type="primary"
-            wire:click="addToCart"
-            @disabled($this->availableStock < 1)"
-        >
-            {{ $this->availableStock > 0 ? 'Añadir al carrito' : 'AGOTADO' }}
-        </button>
-
-        <form method="POST" action="{{ route('buy-now') }}">
-            @csrf
-            <input type="hidden" name="variant_id" value="{{ $this->selectedVariant->id }}">
-            <input type="hidden" name="qty" value="1">
-            <button type="submit" class="button" data-type="buy-now"
-                @disabled(!$this->selectedVariant)
+        <div class="buttons">
+            <button
+                class="button"
+                data-type="primary"
+                wire:click="addToCart"
+                @disabled($this->availableStock < 1)"
             >
-                Comprar ahora
+                {{ $this->availableStock > 0 ? 'Añadir al carrito' : 'AGOTADO' }}
             </button>
-        </form>
+    
+            <form method="POST" action="{{ route('buy-now') }}">
+                @csrf
+                <input type="hidden" name="variant_id" value="{{ $this->selectedVariant->id }}">
+                <input type="hidden" name="qty" value="1">
+                <button type="submit" class="button" data-type="buy-now"
+                    @disabled(!$this->selectedVariant)
+                >
+                    Comprar ahora
+                </button>
+            </form>
+        </div>
 
         {{-- cupones --}}
         @unless($this->product->total_product_stock < 0)

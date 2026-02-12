@@ -38,7 +38,7 @@
   @if (count($images) > 0)
     <div class="track-wrap">
       <x-icon @click="prev()" class="prev" data-type="arrow" orientation="left">
-        <x-ui.icons.arrow />
+        <x-ui.icons.chevron />
         <span class="sr-only">Ir a la izquierda</span>
       </x-icon>
 
@@ -67,7 +67,7 @@
       </div>
 
       <x-icon @click="next()" class="next" data-type="arrow" orientation="right">
-        <x-ui.icons.arrow />
+        <x-ui.icons.chevron />
         <span class="sr-only">Ir a la derecha</span>
       </x-icon>
     </div>

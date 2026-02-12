@@ -5,6 +5,8 @@
   'badge' => null,
 ])
 
+@php $defaultVariant = $product->defaultVariant(); @endphp
+
 <article {{ $attributes->class([
   'card',
   "card--{$variant}",
@@ -28,8 +30,8 @@
   <div class="card__meta">
     <h3 class="heading">{{ $product->name }}</h3>
     <x-ui.price-tag 
-      :finalPrice="$product->final_price" 
-      :originalPrice="$product->original_price" 
+      :finalPrice="$defaultVariant->final_price" 
+      :originalPrice="$defaultVariant->original_price" 
     />
   </div>
 

@@ -19,6 +19,7 @@ class HomePage extends Model implements HasMedia
     protected $casts = [
         'tab_collections' => 'array',
         'rail_collection_ids' => 'array',
+        'latest_products' => 'array',
         'hero_slides' => 'array',
         'spotlight_tags' => 'array',
         'cta_button_link' => 'array'

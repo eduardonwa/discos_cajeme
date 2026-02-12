@@ -24,6 +24,7 @@ use Filament\Notifications\Notification;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Placeholder;
 use App\Filament\Forms\Components\LinkPicker;
+use App\Models\ProductVariant;
 use Filament\Forms\Components\Group;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
@@ -355,17 +356,82 @@ class HomePageEditor extends Page implements HasForms
                             'style' => 'font-size: 2.2rem;'
                         ]),
                     Grid::make(12)
-                        ->columnSpan(12)
                         ->schema([
                             TextInput::make('latest_prods_heading')
                                 ->label('Encabezado')
-                                ->columnSpan(8),
-                            TextInput::make('latest_prods_limit')
-                                ->numeric()
-                                ->minValue(4)
-                                ->maxValue(15)
-                                ->default(10)
-                                ->columnSpan(4),
+                                ->columnSpanFull(),
+                            Repeater::make('latest_products')
+                                ->label('Productos a mostrar')
+                                ->collapsed()
+                                ->reorderable()
+                                ->maxItems(15)
+                                ->grid(5)
+                                ->schema([
+                                    Select::make('product_id')
+                                        ->label('Producto')
+                                        ->options(function ($get, $livewire) {
+
+                                            // Valor actual del item
+                                            $current = $get('product_id');
+
+                                            // Todos los productos ya seleccionados
+                                            $selected = collect($livewire->data['latest_products'] ?? [])
+                                                ->pluck('product_id')
+                                                ->filter()
+                                                ->reject(fn ($id) => $id == $current) // no excluirse a sí mismo
+                                                ->toArray();
+
+                                            return Product::query()
+                                                ->when(
+                                                    count($selected),
+                                                    fn ($q) => $q->whereNotIn('id', $selected)
+                                                )
+                                                ->orderBy('name')
+                                                ->pluck('name', 'id');
+                                        })
+                                        ->searchable()
+                                        ->reactive()
+                                        ->required()
+                                        ->rule(function ($get) {
+                                            return function (string $attribute, $value, $fail) use ($get) {
+
+                                                // Subimos 2 niveles: latest_products
+                                                $items = collect($get('../../') ?? []);
+
+                                                $products = $items->pluck('product_id')->filter();
+
+                                                if ($products->duplicates()->isNotEmpty()) {
+                                                    $fail('No puedes repetir productos en Novedades.');
+                                                }
+                                            };
+                                        }),
+                                    Select::make('variant_mode')
+                                        ->label('Variante')
+                                        ->options([
+                                            'default' => 'Default',
+                                            'cheapest_in_stock' => 'Más barata con stock',
+                                            'specific' => 'Elegir variante',
+                                        ])
+                                        ->default('default')
+                                        ->reactive()
+                                        ->required(),
+                                    Select::make('variant_id')
+                                        ->label('Variante específica')
+                                        ->visible(fn ($get) => $get('variant_mode') === 'specific')
+                                        ->options(function ($get) {
+                                            $productId = $get('product_id');
+                                            if (!$productId) return [];
+
+                                            return ProductVariant::query()
+                                                ->where('product_id', $productId)
+                                                ->orderByDesc('is_default')
+                                                ->orderBy('price')
+                                                ->pluck('title', 'id');
+                                        })
+                                        ->searchable()
+                                        ->nullable(),
+                                ])
+                                ->columnSpanFull()
                         ])
                 ])
                 ->extraAttributes([

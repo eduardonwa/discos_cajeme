@@ -1,0 +1,6 @@
+@use "../abstracts/" as *;
+
+.line-through {
+    text-decoration: line-through 2px;
+    color: red;
+}

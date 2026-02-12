@@ -11,5 +11,8 @@
         grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
         grid-template-rows: auto 1fr;
         gap: $size-10;
+        margin-block: 0;
     }
+
+    @include mq(large) { grid-template-columns: repeat(5, 1fr); }
 }

@@ -23,4 +23,11 @@
         border: 1px solid $color-accent-600;
         cursor: pointer;
     }
+
+    &[data-type="variant-attribute"] {
+        background: $color-neutral-900;
+        color: $color-neutral-100;
+        border: 1px solid transparent;
+        cursor: default;
+    }
 }

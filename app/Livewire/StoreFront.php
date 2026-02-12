@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use Money\Money;
 use App\Models\Product;
 use Livewire\Component;
 use App\Models\HomePage;
@@ -26,7 +27,7 @@ class StoreFront extends Component
     
     public array $spotlight = [];
 
-    public SupportCollection $products;
+    public SupportCollection $latestItems;
     public string $latestProdsHeader = '';
     
     public bool $hasCta = false;
@@ -98,9 +99,8 @@ class StoreFront extends Component
         }
 
         /* LATEST PRODUCTS */
-        $this->products = collect();
-        $this->products = $this->latestProducts();
         $this->latestProdsHeader = $home?->latest_prods_heading ?: 'Nuestras novedades';        
+        $this->latestItems = $this->buildLatestItems($home?->latest_products ?? []);
         
         /* CTA */
         $this->cta['header'] = $home->cta_header ?? '';
@@ -122,22 +122,57 @@ class StoreFront extends Component
         $this->railCollections = $this->buildCollectionBlock($home) ?? [];
     }
 
-    public function latestProducts()
+    public function latestProducts(array $latestProducts = []): SupportCollection
     {
-        return Product::query()
+        return $this->buildLatestItems($latestProducts);
+    }
+
+    protected function buildLatestItems(array $latestProducts): SupportCollection
+    {
+        $rows = collect($latestProducts)
+            ->filter(fn ($row) => !empty($row['product_id']))
+            ->take(15)
+            ->values();
+
+        if ($rows->isEmpty()) { return collect(); }
+
+        $productIds = $rows->pluck('product_id')->unique()->values()->all();
+
+        $productsById = Product::query()
+            ->whereIn('id', $productIds)
             ->where('published', true)
-            ->whereHas('variants', function ($q) {
-                $q->where('is_active', true)
-                ->where('total_variant_stock', '>', 0);
-            })
-            ->with('media')
-            ->withMin(['variants as min_variant_stock' => function ($q) {
-                $q->where('is_active', true)
-                ->where('total_variant_stock', '>', 0);
-            }], 'total_variant_stock')
-            ->orderBy('min_variant_stock', 'asc')
-            ->limit(10)
-            ->get();
+            ->with([
+                'media',
+                'variants' => function ($q) {
+                    $q->where('is_active', true)
+                    ->where('total_variant_stock', '>', 0);
+                },
+            ])
+            ->get()
+            ->keyBy('id');
+
+        return $rows->map(function ($row) use ($productsById) {
+            $product = $productsById->get($row['product_id']);
+            if (!$product) return null;
+
+            $mode = $row['variant_mode'] ?? 'default';
+            $variantId = !empty($row['variant_id']) ? (int) $row['variant_id'] : null;
+
+            // Si se eligió variante específica, úsala (si existe en las variantes filtradas)
+            if ($mode === 'specific' && $variantId) {
+                $variant = $product->variants->firstWhere('id', $variantId);
+            } else {
+                // Default simple: primera variante disponible (ya viene filtrada activa + stock)
+                $variant = $product->variants->first();
+            }
+
+            return [
+                'product' => $product,
+                'variant' => $variant,
+                'price' => $variant ? (int) ($variant->price instanceof \Money\Money ? $variant->price->getAmount() : $variant->price) : null,
+                'compare_at_price' => $variant ? (int) ($variant->compare_at_price instanceof \Money\Money ? $variant->compare_at_price->getAmount() : $variant->compare_at_price) : null,
+            ];
+        })->filter()->values();
     }
 
     public function addToCart(int $productId, ?int $variantId = null)

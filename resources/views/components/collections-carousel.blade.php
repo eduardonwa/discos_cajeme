@@ -46,12 +46,12 @@
       @if ($type === 'full-price')
         <div class="slide-buttons">
           <x-icon @click="prev()" data-type="arrow" orientation="left">
-            <x-ui.icons.arrow />
+            <x-ui.icons.chevron />
             <span class="sr-only">Ir a la izquierda</span>
           </x-icon>
           
           <x-icon @click="next()" data-type="arrow" orientation="right">
-            <x-ui.icons.arrow />
+            <x-ui.icons.chevron />
             <span class="sr-only">Ir a la derecha</span>
           </x-icon>
         </div>

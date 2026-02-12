@@ -6,6 +6,7 @@
   'orientation' => null,
   'fill' => null,
   'color' => null,
+  'type' => 'button'
 ])
 
 @php
@@ -26,9 +27,12 @@
     >
       {{ $slot }}
     </svg>
+    @if($label)
+        <span class="ui-icon-label">{{ $label }}</span>
+    @endif
   </a>
 @else
-  <button type="button" {{ $attributes->class('ui-icon-btn') }} aria-label="{{ $label }}" style="{{ $styleInline }}">
+  <button type="{{ $type }}" {{ $attributes->class('ui-icon-btn') }} aria-label="{{ $label }}" style="{{ $styleInline }}">
     <svg
       class="ui-icon {{ $dir }}"
       role="img"
@@ -38,5 +42,8 @@
     >
       {{ $slot }}
     </svg>
+      @if($label)
+        <span class="ui-icon-label">{{ $label }}</span>
+      @endif
   </button>
 @endif

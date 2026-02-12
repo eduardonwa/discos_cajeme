@@ -275,13 +275,8 @@
         margin-block-start: $size-8;
         margin-block-end: $size-8;
 
-        .price {
-            display: none;
-        }
-
-        .stock {
-            font-size: $font-size-500;
-        }
+        .price { display: none; }
+        .stock { font-size: $font-size-500; }
         
         .quantity {
             margin-block: $size-4;
@@ -370,7 +365,17 @@
             }
         }
 
-        .button[data-type="primary"] { width: 100%; }
+        .buttons {
+            display: flex;
+            flex-direction: column;
+            gap: $size-4;
+
+            .button[data-type="primary"],
+            [data-type="buy-now"] {
+                width: 100%;
+            }
+        }
+
     }
 
     &__reviews {
