@@ -55,13 +55,13 @@
         />
         
         <div class="details"
-                x-cloak
-                x-data="{
-                tab: 'details',
-                isTabs: window.innerWidth < 1280
-                }"
-                @resize.window="isTabs = window.innerWidth < 1280"
-                aria-label="Detalles del producto"
+            x-cloak
+            x-data="{
+            tab: 'details',
+            isTabs: window.innerWidth < 1280
+            }"
+            @resize.window="isTabs = window.innerWidth < 1280"
+            aria-label="Detalles del producto"
         >
             <hr line-type="inner" data-device="d">
 
@@ -166,8 +166,6 @@
     </aside>
 
     <hr line-type="base" data-device="m">
-
-    <section class="product__related-products"></section>
     
     <section class="product__reviews">
         <h2 class="header">La confianza también se viste</h2>

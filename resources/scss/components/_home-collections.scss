@@ -57,22 +57,7 @@
                 margin-inline: auto;
             }
 
-            @include mq(large) {
-                margin-inline: unset;
-            }
-
-            .image-wrapper {
-                height: auto;
-                width: 100%;
-                aspect-ratio: 1;
-                overflow: hidden;
-
-                .image {
-                    object-fit: cover;
-                    width: 100%;
-                    height: 100%;
-                }
-            }
+            @include mq(large) { margin-inline: unset; }
 
             .info {
                 padding-block: $size-2;
@@ -85,6 +70,8 @@
             }
 
             .actions {
+                margin-block-start: $size-6;
+
                 .button[data-type="primary"] {
                     display: flex;
                     align-items: center;

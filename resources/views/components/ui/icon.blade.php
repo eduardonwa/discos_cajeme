@@ -17,7 +17,7 @@
 @endphp
 
 @if($href)
-  <a href="{{ $href }}" {{ $attributes->class('ui-icon-btn') }} aria-label="{{ $label }}" target="_blank" style="{{ $styleInline }}">
+  <a href="{{ $href }}" {{ $attributes->class('ui-icon-btn') }} aria-label="{{ $label }}" style="{{ $styleInline }}">
     <svg
       class="ui-icon {{ $dir }}"
       role="img"

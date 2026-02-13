@@ -29,6 +29,7 @@
   <div
     class="featured-modal"
     x-show="showModal"
+    x-cloak
     x-transition.opacity.duration.300ms
     @click="showModal = false"
   >

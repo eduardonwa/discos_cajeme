@@ -28,26 +28,23 @@
                 <div class="content"
                     wire:key="prod-{{ $active->slug }}-{{ $product->id }}"
                 >
-                    <a class="no-decor" href="{{ route('product', $product->slug) }}">
-                        <div class="image-wrapper">
-                            <img
-                                class="image"
-                                src="{{ $product->getFirstMediaUrl('featured', 'md_thumb') }}"
-                                alt="{{ $product->name }}">
-                        </div>
-                     
-                        <div class="info">
-                            <p class="name">{{ $product->name }}</p>
-                        </div>
-                    </a>
+                    <div class="info">
+                        <p class="name">{{ $product->name }}</p>
+                    </div>
 
+                    <div class="u-media u-media--square">
+                        <img
+                            class="u-media__img"
+                            src="{{ $product->getFirstMediaUrl('featured', 'md_thumb') }}"
+                            alt="{{ $product->name }}">
+                    </div>
+                    
                     <div class="actions">
                         <a href="{{ route('product', $product->slug) }}" class="button" data-type="primary">
                             Ver producto
                         </a>
                     </div>
                 </div>
-                </button>
             @endforeach
 
             <a href="{{ route('collection', $active->slug) }}" class="button" data-type="outline">

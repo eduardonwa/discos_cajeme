@@ -12,6 +12,7 @@
     open:false,
     choose(n){ $wire.set('{{ $prop }}', n); this.open=false; }
   }"
+  x-cloak
 >
   <button
     type="button"
